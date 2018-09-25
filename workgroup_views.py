@@ -77,8 +77,7 @@ class Workgroup_NewInstance(AutoAdd):
         # Accept terms and condition
         workgroup.set_value('accept_terms_of_use', form['accept_terms_of_use'])
         # Set title in current language
-        workgroup.set_value('title', None, language=current_language)
-        workgroup.set_value('title', form['title'], language=current_language)
+        workgroup.set_value('title', form['title']['en'], language=current_language)
         # Set neutral banner
 #        theme = workgroup.get_resource('theme')
 #        style = theme.get_resource('style')
@@ -205,7 +204,6 @@ class Workgroup_View(Folder_BrowseContent):
 
     def get_namespace(self, resource, context):
         # Menu
-        resource.get_resource('theme')
         menu = Workgroup_Menu().GET(resource, context)
 
         # Batch
