@@ -1,15 +1,20 @@
+Goodforms is a community-driven free software solution to easily generate and work with complex online forms.
+
+
 Dependencies
 =====================
 
-  - itools (V 0.62)
-  - ikaaro (V 0.62)
-  - lpod-python (V master)
-  - itws (V 1.3)
+  - itools (V 0.78)
+  - ikaaro (V 0.68)
+  - lpod-python (master)
 
 Installation
 =====================
 
- $ python setup.py install
+Install via git repository:
+
+    $ python setup.py -r requirements.txt
+    $ python setup.py install
 
 
 Create a new instance
@@ -17,25 +22,12 @@ Create a new instance
 
 Initialize instance:
 
-  $ icms-init.py goodforms.localhost
-
-Set goodforms as a module
-
-  $ vi goodforms.localhost/config.conf
-
-    > + modules = goodforms
-    > - modules =
+    $ icms-init.py -w yourpassword -e email@example.com www.goodforms.localhosh
 
 Start instance:
 
-  $ icms-start.py goodforms.localhost
+    $ icms-start.py www.goodforms.localhost
 
-Open firefox
+Test goodform in Firefox:
 
-  $ firefox http://localhost:8080/
-
-Add a website
-
-  $ firefox http://localhost:8080/;new_resource?type=WebSite
-
-Your website is the demo website.
+    $ firefox http://localhost:8080/
