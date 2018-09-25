@@ -55,8 +55,8 @@ class Skin(BaseSkin):
         if styles[-1] == '/theme/style/;download':
             if site_root != context.root:
                 style = site_root.get_resource('theme/style')
-                ac = style.get_access_control()
-                if ac.is_allowed_to_view(context.user, style):
+                root = resource.get_resource('/')
+                if root.is_allowed_to_view(context.user, style):
                     del styles[-1]
                     styles.append('{0}/;download'.format(
                         context.get_link(style)))
@@ -75,39 +75,3 @@ class Skin(BaseSkin):
         scripts.append(
                 '/ui/goodforms/fancybox/jquery.fancybox-1.3.1.pack.js')
         return scripts
-
-
-    def build_namespace(self, context):
-        resource = context.resource
-        site_root = context.root
-        website_title = site_root.get_title()
-        website_href = context.get_link(site_root)
-        user = context.user
-        logo_href = None
-        logo_path = None
-        new_resource_allowed = True
-        namespace = merge_dicts(BaseSkin.build_namespace(self, context),
-            website_title=website_title, website_href=website_href,
-            logo_href=logo_href,
-            new_resource_allowed=new_resource_allowed)
-        # Hide as much as possible to form user
-        if user is not None:
-            role = site_root.get_user_role(user.name)
-            if role == 'guests':
-                #namespace['location'] = None
-                namespace['languages'] = None
-                #namespace['menu']['items'] = None
-
-        # Home page ?
-        page_css = None
-        if type(context.resource) == type(context.root):
-            if context.view_name in (None, 'view'):
-                page_css = 'home-page'
-        namespace['page_css'] = page_css
-
-        # Is Admin FIXME
-        namespace['is_admin'] = True
-        namespace['user'] = None
-        namespace['menu'] = {'items': []}
-
-        return namespace

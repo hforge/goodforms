@@ -22,7 +22,7 @@
     <link rel="shortcut icon" href="${favicon_href}" type="${favicon_type}" />
   </head>
   <body>
-    <div id="page" class="${page_css}">
+    <div id="page">
       <!-- Body -->
       <div id="body">
         <h1 stl:if="page_title">${page_title}</h1>
