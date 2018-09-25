@@ -18,7 +18,9 @@
 # Import from itools
 from itools.datatypes import Enumerate
 from itools.gettext import MSG
-from itools.workflow import Workflow
+
+# Import from ikaaro
+from ikaaro.fields import Select_Field
 
 
 # States
@@ -31,6 +33,7 @@ MODIFIED = 'modified'
 
 
 class WorkflowState(Enumerate):
+
     options = [
         {'name': NOT_REGISTERED, 'value': MSG(u"Not Registered")},
         {'name': EMPTY, 'value': MSG(u"Empty")},
@@ -41,8 +44,6 @@ class WorkflowState(Enumerate):
     ]
 
 
+class WorkflowState_Field(Select_Field):
 
-workflow = Workflow()
-for option in WorkflowState.get_options():
-    workflow.add_state(option['name'], title=option['value'])
-workflow.set_initstate(EMPTY)
+    datatype = WorkflowState

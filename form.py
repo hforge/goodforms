@@ -40,7 +40,7 @@ from ikaaro.utils import generate_name
 from datatypes import Numeric, NumDecimal, NumInteger, FileImage, SqlEnumerate
 from form_views import Form_View, Form_Send, Form_Export, Form_Print
 from utils import SI, get_page_number, parse_control
-from workflow import workflow, FINISHED
+from workflow import WorkflowState_Field, FINISHED
 
 
 
@@ -134,7 +134,7 @@ class Form(File):
 
     # Fields
     form_state = Text_Field(indexed=True, stored=True)
-    workflow = workflow
+    workflow = WorkflowState_Field
 
     # Views
     new_instance = File_NewInstance(access='is_allowed_to_add_form')
