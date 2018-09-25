@@ -21,8 +21,8 @@ from itools.datatypes import Unicode, Boolean
 from itools.gettext import MSG
 
 # Import from ikaaro
-from ikaaro.registry import register_resource_class
-from ikaaro.user import User, UserFolder
+from ikaaro.fields import Text_Field, Boolean_Field
+from ikaaro.users import User, Users
 
 # Import from goodforms
 from user_views import User_EditAccount, User_ConfirmRegistration
@@ -31,10 +31,10 @@ from user_views import UserFolder_BrowseContent
 
 
 class GoodFormsUser(User):
-    class_schema = freeze(merge_dicts(
-        User.class_schema,
-        company=Unicode(source='metadata', indexed=True, stored=True),
-        has_password=Boolean(indexed=True)))
+
+    # Fields
+    company = Text_Field(indexed=True, stored=True)
+    has_password = Boolean_Field(indexed=True)
 
     # Views
     edit_account = User_EditAccount()
@@ -82,11 +82,9 @@ Your password: {password}""")
 
 
 
-class GoodFormsUserFolder(UserFolder):
+class GoodFormsUserFolder(Users):
+
     class_views = ['view', 'browse_users', 'browse_content', 'edit']
+
+    # Views
     browse_users = UserFolder_BrowseContent()
-
-
-
-register_resource_class(GoodFormsUser)
-register_resource_class(GoodFormsUserFolder)

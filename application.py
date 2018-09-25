@@ -26,6 +26,7 @@ from itools.uri import Path
 from itools.web import ERROR, get_context
 
 # Import from ikaaro
+from ikaaro.fields import Char_Field, Integer_Field
 from ikaaro.folder import Folder
 
 # Import from goodforms
@@ -66,21 +67,23 @@ def find_title(table):
 
 
 class Application(Folder):
+
     class_id = 'Application'
     class_title = MSG(u"Collection Application")
     class_description = MSG(u"Create from an OpenDocument Spreadsheet file")
     class_icon16 = 'icons/16x16/tasks.png'
     class_icon48 = 'icons/48x48/tasks.png'
-    allowed_users = 10
-    class_schema = freeze(merge_dicts(
-        Folder.class_schema,
-        author=String(source='metadata', indexed=False, stored=True),
-        # Ctime is already indexed=False, stored=True in ITWS
-        ctime=DateTime(source='metadata'),
-        max_users=Integer(source='metadata', default=allowed_users),
-        subscription=Subscription(source='metadata',
-            default='restricted')))
     class_views = Folder.class_views + ['show']
+
+    # Configuration
+    allowed_users = 10
+
+
+    # Fields
+    author = Char_Field(indexed=True, stored=True)
+    max_users=  Integer_Field(default=allowed_users)
+    subscription = Subscription
+
 
     schema_class = Schema
     controls_class = Controls

@@ -16,42 +16,32 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 # Import from itools
-from itools.core import merge_dicts, is_thingy, freeze
+from itools.core import merge_dicts, is_prototype, freeze
 from itools.database import AndQuery, TextQuery
 from itools.datatypes import String, Unicode
 from itools.gettext import MSG
 from itools.web import INFO, ERROR, get_context
 
 # Import from ikaaro
-from ikaaro.autoform import TextWidget
-from ikaaro.buttons import RemoveButton
+from ikaaro.autoedit import AutoEdit
+from ikaaro.buttons import Remove_BrowseButton
 from ikaaro.folder_views import Folder_BrowseContent
-from ikaaro.user_views import User_EditAccount as BaseUser_EditAccount
-from ikaaro.user_views import (User_ConfirmRegistration
-                               as BaseUser_ConfirmRegistration)
-from ikaaro.user_views import (User_ChangePasswordForgotten
-                               as BaseUser_ChangePasswordForgotten)
-from ikaaro.user_views import UserFolder_BrowseContent as BaseUF_BrowseContent
 from ikaaro.utils import get_base_path_query
+from ikaaro.widgets import TextWidget
 
 # Import from goodforms
 from csv_views import Folder_CSV_Export, CSVExportFormatButton, CSVColumn
 
 
-class User_ConfirmRegistration(BaseUser_ConfirmRegistration):
-    schema = freeze(merge_dicts(
-        BaseUser_ConfirmRegistration.schema,
-        company=Unicode(mandatory=True)))
-    widgets = freeze(
-        BaseUser_ConfirmRegistration.widgets[:2]
-        + [TextWidget('company', title=MSG(u'Company/Organization'))]
-        + BaseUser_ConfirmRegistration.widgets[2:])
+class User_ConfirmRegistration(AutoEdit):
+
+    fields = ['company']
 
 
     def action(self, resource, context, form):
         proxy = super(User_ConfirmRegistration, self)
         proxy.action(resource, context, form)
-        if is_thingy(context.message, ERROR):
+        if is_prototype(context.message, ERROR):
             return
 
         # Company
@@ -62,23 +52,18 @@ class User_ConfirmRegistration(BaseUser_ConfirmRegistration):
 
 
 
-class User_ChangePasswordForgotten(BaseUser_ChangePasswordForgotten,
-        User_ConfirmRegistration):
+class User_ChangePasswordForgotten(AutoEdit):
     pass
 
 
 
-class User_EditAccount(BaseUser_EditAccount):
-    schema = freeze(merge_dicts(
-        BaseUser_EditAccount.schema,
-        company=Unicode(mandatory=True)))
-    widgets = freeze(BaseUser_EditAccount.widgets[:3]
-        + [TextWidget('company', title=MSG(u"Company/Organization"))]
-        + BaseUser_EditAccount.widgets[3:])
+class User_EditAccount(AutoEdit):
+
+    fields = ['company']
 
 
 
-class UserFolder_BrowseContent(Folder_CSV_Export, BaseUF_BrowseContent):
+class UserFolder_BrowseContent(Folder_CSV_Export):
     title = MSG(u"Browse Users")
 
     search_template = '/ui/generic/browse_search.xml'
@@ -105,7 +90,7 @@ class UserFolder_BrowseContent(Folder_CSV_Export, BaseUF_BrowseContent):
         ('email_domain', MSG(u"E-mail Domain"), True),
         ('mtime', MSG(u"Last Modified"), True)])
     table_actions = freeze([
-        RemoveButton, CSVExportFormatButton(access='is_admin')])
+        Remove_BrowseButton, CSVExportFormatButton(access='is_admin')])
 
     csv_columns = freeze([
         # Titles not translated for Gmail

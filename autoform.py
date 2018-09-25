@@ -19,7 +19,7 @@
 import urllib, urllib2
 
 # Import from itools
-from itools.core import thingy_lazy_property, freeze
+from itools.core import proto_lazy_property, freeze
 from itools.datatypes import String, PathDataType
 from itools.gettext import MSG
 from itools.uri import Path
@@ -28,8 +28,8 @@ from itools.web.messages import stl_namespaces
 from itools.xml import XMLParser
 
 # Import from ikaaro
-from ikaaro.autoform import ImageSelectorWidget as BaseImageSelectorWidget
-from ikaaro.autoform import Widget, make_stl_template
+from ikaaro.widgets import ImageSelectorWidget as BaseImageSelectorWidget, Widget
+from ikaaro.utils import make_stl_template
 from ikaaro.file import Image
 
 # Import from goodforms
@@ -91,7 +91,7 @@ class ImageSelectorWidget(BaseImageSelectorWidget):
     stl:if="value"/>""", format='none')
 
 
-    @thingy_lazy_property
+    @proto_lazy_property
     def template(self):
         return list(XMLParser(self._template.gettext().encode('utf_8'),
             namespaces=stl_namespaces))

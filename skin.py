@@ -20,7 +20,6 @@ from itools.core import merge_dicts
 from itools.web import get_context
 
 # Import from ikaaro
-from ikaaro.access import is_admin
 from ikaaro.skins import Skin as BaseSkin
 
 # Import from goodforms
@@ -31,10 +30,10 @@ from utils import is_print
 
 class Skin(BaseSkin):
 
-    def get_template(self):
+    def get_template(self, context):
         if is_print(get_context()):
             return self.get_resource('/ui/goodforms/print.xhtml')
-        return super(Skin, self).get_template()
+        return super(Skin, self).get_template(context)
 
 
     def get_styles(self, context):
@@ -44,11 +43,11 @@ class Skin(BaseSkin):
             styles.insert(1, '/ui/aruni/style.css')
         styles.insert(-2,
                 '/ui/goodforms/fancybox/jquery.fancybox-1.3.1.css')
-        site_root = context.resource.get_site_root()
+        site_root = context.root
         # Add specific style on root
-        if site_root is context.root:
-            wg_style = '%s/root/style.css' % self.get_canonical_path()
-            styles.insert(-1, wg_style)
+        #if site_root is context.root:
+        #    wg_style = '%s/root/style.css' % self.get_canonical_path()
+        #    styles.insert(-1, wg_style)
         # Replace root style by website style
         if styles[-1] == '/theme/style/;download':
             if site_root != context.root:
@@ -77,22 +76,13 @@ class Skin(BaseSkin):
 
     def build_namespace(self, context):
         resource = context.resource
-        site_root = resource.get_site_root()
+        site_root = context.root
         website_title = site_root.get_title()
         website_href = context.get_link(site_root)
         user = context.user
-        theme = site_root.get_resource('theme')
         logo_href = None
-        logo_path = theme.get_property('logo')
-        if logo_path:
-            logo = theme.get_resource(logo_path, soft=True)
-            if logo:
-                ac = logo.get_access_control()
-                if ac.is_allowed_to_view(user, logo):
-                    # XXX restore max height behaviour
-                    logo_href = '{0}/;thumb?width=475&height=70'.format(
-                            context.get_link(logo))
-        new_resource_allowed = is_admin(user, resource)
+        logo_path = None
+        new_resource_allowed = True
         namespace = merge_dicts(BaseSkin.build_namespace(self, context),
             website_title=website_title, website_href=website_href,
             logo_href=logo_href,
@@ -112,7 +102,9 @@ class Skin(BaseSkin):
                 page_css = 'home-page'
         namespace['page_css'] = page_css
 
-        # Is Admin
-        namespace['is_admin'] = is_admin(user, resource)
+        # Is Admin FIXME
+        namespace['is_admin'] = True
+        namespace['user'] = None
+        namespace['menu'] = {'items': []}
 
         return namespace

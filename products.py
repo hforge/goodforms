@@ -22,40 +22,33 @@ from itools.core import merge_dicts
 from itools.datatypes import Integer
 from itools.gettext import MSG
 
+# Import from agitools
+from agitools.autotable import AutoTable
+
 # Import from ikaaro
-from ikaaro.buttons import PublishButton, RemoveButton, RetireButton
+from ikaaro.buttons import Remove_BrowseButton
+from ikaaro.fields import Integer_Field
 from ikaaro.folder import Folder
 
-# Import from itws
-from itws.feed_views import FieldsTableFeed_View
-from itws.shop import Product as BaseProduct
-from itws.views import FieldsAutomaticEditView, FieldsAdvance_NewInstance
-
-
-class Product(BaseProduct):
+class Product(Folder):
 
     class_id = 'goodforms-product'
     class_title = MSG(u"Produit")
     class_views = ['view', 'edit']
 
-    class_schema = merge_dicts(
-        BaseProduct.class_schema,
-        nb_users=Integer(source='metadata', title=MSG(u'Nb users')))
-
-    # Views
-    _fields = BaseProduct._fields + ['nb_users']
-    new_instance = FieldsAdvance_NewInstance(fields=_fields, access='is_admin')
-    edit = FieldsAutomaticEditView(edit_fields=_fields)
+    # Fields
+    nb_users = Integer_Field(title=MSG(u'Nb users'))
 
 
-class Products_View(FieldsTableFeed_View):
+
+class Products_View(AutoTable):
 
     search_cls = Product
     search_fields = []
     search_class_id = 'goodforms-product'
     table_fields = ['checkbox', 'name', 'reference', 'title', 'description',
                     'nb_users', 'workflow_state']
-    table_actions = [RemoveButton, PublishButton, RetireButton]
+    table_actions = [Remove_BrowseButton]
 
 
 

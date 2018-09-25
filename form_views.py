@@ -24,7 +24,7 @@ from itools.core import merge_dicts, freeze
 from itools.datatypes import String, Enumerate
 from itools.gettext import MSG
 from itools.log import log_debug
-from itools.web import BaseView, STLView, STLForm, INFO, ERROR
+from itools.web import BaseView, STLView, STLView, INFO, ERROR
 from itools.handlers import checkid
 
 # Import from ikaaro
@@ -70,7 +70,7 @@ Multiple = Single(multiple=True)
 
 
 
-class Form_View(STLForm):
+class Form_View(STLView):
     access = 'is_allowed_to_view'
     access_POST = 'is_allowed_to_edit'
     template = '/ui/goodforms/form/view.xml'
@@ -370,7 +370,7 @@ class Form_View(STLForm):
 
 
 
-class Form_Send(STLForm):
+class Form_Send(STLView):
     access = 'is_allowed_to_view'
     access_POST = 'is_allowed_to_edit'
     template = '/ui/goodforms/form/send.xml'

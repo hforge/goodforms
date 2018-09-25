@@ -21,14 +21,12 @@
 
 # Import from itools
 from itools.core import freeze
-from itools.csv import Table as TableFile, parse
 from itools.datatypes import Enumerate, Unicode
 from itools.gettext import MSG
 from itools.web import ERROR
 
 # Import from ikaaro
-from ikaaro.table import Table
-from ikaaro.table_views import Table_View
+from ikaaro.folder import Folder
 
 # Import from goodforms
 from schema import FormatError, Variable, Expression
@@ -59,7 +57,9 @@ class ControlLevel(Enumerate):
 
 
 
-class ControlsHandler(TableFile):
+class ControlsHandler(Folder):
+
+    # Fields
     record_properties = {
         'number': Unicode(mandatory=True, title=MSG(u"Number")),
         'title': Unicode(mandatory=True, title=MSG(u"Title")),
@@ -69,7 +69,7 @@ class ControlsHandler(TableFile):
 
 
 
-class Controls(Table):
+class Controls(Folder):
     class_id = 'Controls'
     class_title = MSG(u"Controls")
     class_handler = ControlsHandler
@@ -80,7 +80,6 @@ class Controls(Table):
     columns = ['number', 'title', 'expression', 'level', 'variable']
 
     # Views
-    view = Table_View(table_actions=freeze([]))
     add_record = None
     edit_record = None
     edit = None

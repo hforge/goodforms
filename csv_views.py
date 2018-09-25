@@ -18,7 +18,7 @@
 from cStringIO import StringIO
 
 # Import from itools
-from itools.core import freeze, is_thingy, merge_dicts, thingy, OrderedDict
+from itools.core import freeze, is_prototype, merge_dicts, prototype, OrderedDict
 from itools.csv import CSVFile
 from itools.datatypes import Enumerate, String
 from itools.gettext import MSG
@@ -27,9 +27,9 @@ from itools.web import ERROR
 from itools.xml import XMLParser, xml_to_text
 
 # Import from ikaaro
-from ikaaro.autoform import SelectWidget
 from ikaaro.buttons import BrowseButton
 from ikaaro.utils import make_stl_template
+from ikaaro.widgets import SelectWidget
 
 """
 Generic CSV view to export a browse list.
@@ -62,7 +62,7 @@ The schema and columns are similar to CSVFile."""
 ERR_NO_DATA = ERROR(u"No data to export.")
 
 
-class CSVColumn(thingy):
+class CSVColumn(prototype):
     datatype = String
 
 
@@ -85,7 +85,7 @@ class CSVColumn(thingy):
         value_type = type(value)
         if value_type is XMLParser or value_type is list:
             return xml_to_text(value)
-        if is_thingy(value, MSG):
+        if is_prototype(value, MSG):
             value = value.gettext()
         return value
 
@@ -100,7 +100,7 @@ def register_csv_writer(writer, name=None):
 
 
 
-class CSV_ODS_Writer(thingy):
+class CSV_ODS_Writer(prototype):
     name = 'ooo'
     title = MSG(u"CSV for OpenOffice.org / LibreOffice")
     mimetype = 'text/comma-separated-values'
@@ -334,7 +334,7 @@ class CSV_Export(object):
 
     def get_csv_table_name(self, resource, context):
         table_name = self.csv_table_name
-        if is_thingy(table_name, MSG):
+        if is_prototype(table_name, MSG):
             table_name = table_name.gettext()
         return table_name
 

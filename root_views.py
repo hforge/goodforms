@@ -25,13 +25,12 @@ from itools.web import STLView
 from itools.xml import XMLParser
 
 # Import from ikaaro
-from ikaaro.autoform import AutoForm, TextWidget, MultilineWidget
-from ikaaro.buttons import RemoveButton
-from ikaaro.control_panel import CPEditContactOptions
-from ikaaro.website_views import ContactForm
+from ikaaro.autoform import AutoForm
+from ikaaro.widgets import TextWidget, MultilineWidget
+from ikaaro.buttons import Remove_BrowseButton
 
-# Import from itws
-from itws.feed_views import FieldsTableFeed_View
+# Import from agitools
+from agitools.autotable import AutoTable
 
 # Import from goodforms
 from application import Application
@@ -88,9 +87,7 @@ class Root_View(AutoForm):
 
         # widgets
         widgets_dict = {}
-        for widget in namespace['widgets']:
-            widgets_dict[widget['name']] = widget
-        namespace['widgets_dict'] = widgets_dict
+        namespace['widgets_dict'] = {}
 
         # extra anonymous requirements
         user = context.user
@@ -138,7 +135,10 @@ class Root_View(AutoForm):
 
         # slogan
         namespace['slogan'] = resource.get_property('slogan')
-
+        # Action
+        namespace['action'] = None
+        namespace['widgets'] = []
+        # Ok
         return namespace
 
 
@@ -189,7 +189,7 @@ class Root_Show(FrontView):
 
 
 
-class Root_Contact(ContactForm):
+class Root_Contact(AutoForm):
     template = '/ui/goodforms/root/contact.xml'
 
     extra_schema = freeze({
@@ -242,59 +242,15 @@ class Root_Contact(ContactForm):
 
 
 
-class Root_EditContactOptions(CPEditContactOptions):
-    recaptcha_schema = freeze({
-        'recaptcha_private_key': String(mandatory=True),
-        'recaptcha_public_key': String(mandatory=True),
-        'recaptcha_whitelist': String})
-    recaptcha_widgets = freeze([
-        TextWidget('recaptcha_private_key',
-            title=MSG(u"ReCaptcha Private Key")),
-        TextWidget('recaptcha_public_key',
-            title=MSG(u"ReCaptcha Public Key")),
-        MultilineWidget('recaptcha_whitelist',
-            title=MSG(u"ReCaptcha Whitelist of IPs"))])
 
-
-    def _get_schema(self, resource, context):
-        proxy = super(Root_EditContactOptions, self)
-        schema = dict(proxy._get_schema(resource, context))
-        del schema['captcha_question']
-        del schema['captcha_answer']
-        return freeze(merge_dicts(schema, self.recaptcha_schema))
-
-
-    def _get_widgets(self, resource, context):
-        proxy = super(Root_EditContactOptions, self)
-        widgets = proxy._get_widgets(resource, context)[:-2]
-        return freeze(widgets + self.recaptcha_widgets)
-
-
-    def get_value(self, resource, context, name, datatype):
-        if name == 'recaptcha_whitelist':
-            # XXX multiple
-            return '\n'.join(resource.get_property(name))
-        proxy = super(Root_EditContactOptions, self)
-        return proxy.get_value(resource, context, name, datatype)
-
-
-    def set_value(self, resource, context, name, form):
-        if name == 'recaptcha_whitelist':
-            # XXX multiple
-            return resource.set_property(name, form[name].split())
-        proxy = super(Root_EditContactOptions, self)
-        return proxy.set_value(resource, context, name, form)
-
-
-
-class Root_ShowAllWorkgroups(FieldsTableFeed_View):
+class Root_ShowAllWorkgroups(AutoTable):
 
     access = 'is_admin'
     search_cls = Workgroup
     search_class_id = 'Workgroup'
     search_fields = []
     table_fields = ['checkbox', 'logo', 'name', 'title', 'members', 'vhosts']
-    table_actions = [RemoveButton]
+    table_actions = [Remove_BrowseButton]
     batch_size = 0
 
     def get_item_value(self, resource, context, item, column):
@@ -314,14 +270,14 @@ class Root_ShowAllWorkgroups(FieldsTableFeed_View):
 
 
 
-class Root_ShowAllApplications(FieldsTableFeed_View):
+class Root_ShowAllApplications(AutoTable):
 
     access = 'is_admin'
     search_cls = Application
     search_class_id = 'Application'
     search_fields = []
     table_fields = ['checkbox', 'title', 'max_users']
-    table_actions = [RemoveButton]
+    table_actions = [Remove_BrowseButton]
     batch_size = 0
 
     def get_item_value(self, resource, context, item, column):

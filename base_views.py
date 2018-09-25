@@ -26,57 +26,20 @@ from itools.uri import get_reference, get_uri_path, Reference
 from itools.web import INFO, ERROR
 
 # Import from ikaaro
-from ikaaro.access import is_admin
 from ikaaro.folder import Folder
 from ikaaro.folder_views import Folder_BrowseContent, Folder_PreviewContent
 from ikaaro.resource_ import DBResource
-from ikaaro.resource_views import DBResource_Edit
 from ikaaro.resource_views import DBResource_Links, DBResource_Backlinks
 from ikaaro.resource_views import LoginView as BaseLoginView
 from ikaaro.resource_views import LogoutView as BaseLogoutView
 from ikaaro.revisions_views import DBResource_CommitLog
 from ikaaro.views import IconsView as BaseIconsView
-from ikaaro.workflow import state_widget, WorkflowAware, StateEnumerate
 
 # Import from goodforms
 from datatypes import EmailField
 
 
 MSG_NO_RESOURCE = ERROR(u'No {class_title} available.')
-
-
-class AutomaticEditView(DBResource_Edit):
-
-    def _get_schema(self, resource, context):
-        schema = merge_dicts(self.schema, resource.edit_schema)
-        if isinstance(resource, WorkflowAware):
-            schema['state'] = StateEnumerate(resource=resource,
-                    context=context)
-        return freeze(schema)
-
-
-    def _get_widgets(self, resource, context):
-        widgets = self.widgets + resource.edit_widgets
-        # Add state widget in bottom
-        if isinstance(resource, WorkflowAware):
-            widgets.append(state_widget)
-        return freeze(widgets)
-
-
-    def get_value(self, resource, context, name, datatype):
-        if name == 'state':
-            return resource.get_workflow_state()
-        proxy = super(AutomaticEditView, self)
-        return proxy.get_value(resource, context, name, datatype)
-
-
-    def set_value(self, resource, context, name, form):
-        schema = self.get_schema(resource, context)
-        datatype = schema[name]
-        if getattr(datatype, 'ignore', False) is True:
-            return False
-        proxy = super(AutomaticEditView, self)
-        return proxy.set_value(resource, context, name, form)
 
 
 

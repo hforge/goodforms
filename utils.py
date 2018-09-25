@@ -21,7 +21,6 @@
 # Import from itools
 
 # Import from ikaaro
-from ikaaro.config import get_config
 
 # Import from goodforms
 from datatypes import Numeric, UnicodeSQL

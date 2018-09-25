@@ -23,7 +23,7 @@
 from decimal import InvalidOperation
 
 # Import from itools
-from itools.core import is_thingy, merge_dicts
+from itools.core import is_prototype, merge_dicts
 from itools.datatypes import XMLContent, XMLAttribute
 from itools.gettext import MSG
 from itools.handlers import checkid
@@ -31,7 +31,7 @@ from itools.log import log_warning
 from itools.web import get_context
 
 # Import from ikaaro
-from ikaaro.autoform import RadioWidget
+from ikaaro.widgets import RadioWidget
 from ikaaro.file import Image
 from ikaaro.utils import make_stl_template
 
@@ -57,7 +57,7 @@ def is_mandatory_filled(datatype, name, value, schema, fields, context):
 
 
 def make_element(tagname, attributes={}, content=u""):
-    if is_thingy(content, MSG):
+    if is_prototype(content, MSG):
         content = content.gettext()
     element = [u"<", tagname]
     for key, value in attributes.iteritems():
@@ -65,7 +65,7 @@ def make_element(tagname, attributes={}, content=u""):
             continue
         if type(value) is list:
             value = u" ".join(value)
-        elif is_thingy(value, MSG):
+        elif is_prototype(value, MSG):
             value = value.gettext()
         element.extend((u" ", key, u'="', value, u'"'))
     if tagname in ('input', 'img'):
@@ -112,7 +112,7 @@ def _choice_widget(context, form, datatype, name, value, schema, fields,
             if option['selected']:
                 attributes[choice_checked] = choice_checked
             value = option['value']
-            if is_thingy(value, MSG):
+            if is_prototype(value, MSG):
                 value = value.gettext()
             content = XMLContent.encode(value)
             input = make_element(choice, attributes, content)
@@ -174,7 +174,7 @@ def _choice_widget(context, form, datatype, name, value, schema, fields,
 
             # 0005970 fin
             value = option['value']
-            if is_thingy(value, MSG):
+            if is_prototype(value, MSG):
                 value = value.gettext()
             content = XMLContent.encode(value)
             input = make_element(choice, attributes, content)

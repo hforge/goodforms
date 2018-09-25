@@ -18,7 +18,7 @@
 # Import from the Standard Library
 
 # Import from itools
-from itools.core import thingy_property
+from itools.core import proto_property
 from itools.gettext import MSG
 
 # Import from ikaaro
@@ -61,7 +61,7 @@ class SaveButton(Button):
     id = "form-submit"
 
 
-    @thingy_property
+    @proto_property
     def show(cls):
         if cls.readonly:
             return False

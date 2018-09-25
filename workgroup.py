@@ -22,14 +22,8 @@ from itools.gettext import MSG
 from itools.web import get_context
 
 # Import from ikaaro
-from ikaaro.access import is_admin
-from ikaaro.control_panel import ControlPanel
+from ikaaro.fields import Integer_Field, Char_Field, Boolean_Field
 from ikaaro.folder import Folder
-from ikaaro.theme_views import Theme_AddFavIcon, Theme_AddLogo
-from ikaaro.website import WebSite
-
-# Import from itws
-from itws.shop import Order
 
 # Import from goodforms
 from application import Application
@@ -42,15 +36,13 @@ from workgroup_views import Workgroup_Edit
 from workgroup_views import Workgroup_ViewOrders
 
 
-class Workgroup_Order(Order):
+class Workgroup_Order(Folder):
 
     class_id = 'workgroup-order'
     class_title = MSG(u'Workgroup order')
 
-    class_schema = freeze(merge_dicts(
-        Order.class_schema,
-        nb_users=Integer(source='metadata'),
-        application_abspath=String(source='metadata')))
+    nb_users = Integer_Field
+    application_abspath = Char_Field
 
     def onenter_paid(self):
         # Super
@@ -74,30 +66,26 @@ class Workgroup_Orders(Folder):
     view = Workgroup_ViewOrders()
 
 
-class Workgroup(WebSite):
+class Workgroup(Folder):
 
     class_id = 'Workgroup'
     class_title = MSG(u"GoodForms Workgroup")
     class_description = MSG(u"Create your client space to manage collection "
             u"applications and submit them.")
-    class_schema = freeze(merge_dicts(
-        WebSite.class_schema,
-        logo=PathDataType(source='metadata', default=''),
-        accept_terms_of_use=Boolean(source='metadata')))
     class_version = '20120411'
     class_views = ['view', 'show']
     class_skin = 'ui/goodforms'
+
+    # Fields
+    logo = Char_Field
+    accept_terms_of_use = Boolean_Field
 
     # Views
     new_instance = Workgroup_NewInstance()
     view = Workgroup_View()
     edit = Workgroup_Edit()
-    show = FrontView(title=MSG(u"Your Collection Applications"),
-            cls=Application)
-    add_favicon = Theme_AddFavIcon()
-    add_logo = Theme_AddLogo()
+    show = FrontView(title=MSG(u"Your Collection Applications"),)# cls=Application)
     # Security
-    control_panel = ControlPanel(access='is_admin')
     unauthorized = LoginView()
 
 

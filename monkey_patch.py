@@ -16,13 +16,3 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 # Import from standard library
-
-# Import from itools
-
-# Import from ikaaro
-from ikaaro.cc import Observable, SubscribeForm
-
-# Import from goodforms
-
-
-Observable.subscribe = SubscribeForm(access='is_admin')

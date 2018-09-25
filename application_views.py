@@ -20,7 +20,7 @@ from email.utils import parseaddr
 from urllib import quote
 
 # Import from itools
-from itools.core import merge_dicts, is_thingy, freeze
+from itools.core import merge_dicts, is_prototype, freeze
 from itools.database import PhraseQuery, TextQuery, StartQuery, AndQuery
 from itools.database import OrQuery, NotQuery
 from itools.datatypes import Integer, Unicode, Email, String
@@ -28,22 +28,16 @@ from itools.gettext import MSG
 from itools.handlers.utils import transmap
 from itools.stl import stl
 from itools.uri import get_reference, get_uri_path
-from itools.web import INFO, ERROR, BaseView, STLForm, get_context
+from itools.web import INFO, ERROR, BaseView, STLView, get_context
 
 # Import from ikaaro
-from ikaaro.access import is_admin
-from ikaaro.autoform import FileWidget, TextWidget, SelectWidget, file_widget
+from ikaaro.autoadd import AutoAdd
+from ikaaro.autoedit import AutoEdit
 from ikaaro.autoform import AutoForm
 from ikaaro.datatypes import FileDataType
 from ikaaro.folder_views import Folder_BrowseContent, GoToSpecificDocument
 from ikaaro.messages import MSG_PASSWORD_MISMATCH
-from ikaaro.resource_views import DBResource_Edit
-from ikaaro.views import SearchForm
-from ikaaro.views_new import NewInstance
-from ikaaro.workflow import get_workflow_preview
-
-# Import from itws
-from itws.shop import get_orders, NextButton, get_payments, Product_List
+from ikaaro.widgets import FileWidget, TextWidget, SelectWidget, file_widget
 
 # Import from goodforms
 from base_views import LoginView, IconsView
@@ -91,13 +85,9 @@ def get_users_query(query, context):
 
 
 
-class Application_NewInstance(NewInstance):
-    schema = freeze(merge_dicts(
-        NewInstance.schema,
-        title=Unicode(mandatory=True),
-        file=FileDataType(mandatory=True)))
-    widgets = (NewInstance.widgets[:2]
-            + [FileWidget('file', title=MSG(u"ODS or XLS File"))])
+class Application_NewInstance(AutoAdd):
+
+    fields = ['title', 'file']
     goto_view = None
 
 
@@ -242,10 +232,7 @@ class Application_View(Folder_BrowseContent):
     schema = freeze({})
 
     # Search Form
-    search_schema = freeze(merge_dicts(
-        Folder_BrowseContent.search_schema,
-        SearchForm.search_schema,
-        search_state=String))
+    search_schema = {}
     search_fields = []
     search_template = '/ui/goodforms/application/search.xml'
 
@@ -309,8 +296,7 @@ class Application_View(Folder_BrowseContent):
             if column == 'state':
                 if user is not None and not user.get_property('password'):
                     return WorkflowState.get_value(NOT_REGISTERED)
-                return (get_workflow_preview(item_resource, context),
-                        '{0}/;send'.format(context.get_link(item_resource)))
+                return 'XXX'
             elif column in ('firstname', 'lastname', 'company'):
                 if user is None:
                     return u""
@@ -397,7 +383,7 @@ class Application_View(Folder_BrowseContent):
 
 
     def get_search_namespace(self, resource, context):
-        namespace = SearchForm.get_search_namespace(self, resource, context)
+        namespace = {}
         namespace['state_widget'] = SelectWidget('search_state',
                 datatype=WorkflowState, value=context.query['search_state'])
         return namespace
@@ -466,7 +452,7 @@ class Application_View(Folder_BrowseContent):
                     value = value[0]
                 if type(value) is unicode:
                     pass
-                elif is_thingy(value, MSG):
+                elif is_prototype(value, MSG):
                     value = value.gettext()
                 elif type(value) is str:
                     value = unicode(value)
@@ -574,7 +560,7 @@ class Application_Export(BaseView):
 
 
 
-class Application_Register(STLForm):
+class Application_Register(STLView):
     access = 'is_allowed_to_edit'
     title = MSG(u"Subscribe Users")
     template = '/ui/goodforms/application/register.xml'
@@ -652,66 +638,10 @@ class Application_Register(STLForm):
 
 
 
-class Application_Edit(DBResource_Edit):
-    schema = freeze(merge_dicts(
-        DBResource_Edit.schema,
-        subscription=Subscription(mandatory=True),
-        file=FileDataType))
-    widgets = freeze(
-        DBResource_Edit.widgets + [
-        SelectWidget('subscription', has_empty_option=False,
-            title=MSG(u"Subscription Mode")),
-        file_widget])
-    admin_schema = freeze({
-        'max_users': Integer(mandatory=True)})
-    admin_widgets = freeze([
-        TextWidget('max_users',
-            title=MSG(u"Maximum form users (0 = unlimited)"))])
+class Application_Edit(AutoEdit):
 
 
-    def _get_schema(self, resource, context):
-        proxy = super(Application_Edit, self)
-        schema = proxy._get_schema(resource, context)
-        if not is_print(context) and is_admin(context.user, resource):
-            schema = freeze(merge_dicts(schema, self.admin_schema))
-        return schema
-
-
-    def _get_widgets(self, resource, context):
-        proxy = super(Application_Edit, self)
-        widgets = proxy._get_widgets(resource, context)
-        if not is_print(context) and is_admin(context.user, resource):
-            widgets = widgets + self.admin_widgets
-        return widgets
-
-
-    def get_value(self, resource, context, name, datatype):
-        if name == 'file':
-            return None
-        proxy = super(Application_Edit, self)
-        return proxy.get_value(resource, context, name, datatype)
-
-
-    def set_value(self, resource, context, name, form):
-        if name == 'file':
-            file = form['file']
-            if file is None:
-                return False
-            for name in ('parameters', 'schema', 'controls'):
-                resource.del_resource(name, ref_action='force')
-            for formpage in resource.search_resources(cls=FormPage):
-                resource.del_resource(formpage.name, ref_action='force')
-            try:
-                return resource._load_from_file(file, context)
-            except ValueError, exception:
-                if is_debug(context):
-                    raise
-                context.commit = False
-                context.message = ERROR(unicode(exception))
-                return True
-        proxy = super(Application_Edit, self)
-        return proxy.set_value(resource, context, name, form)
-
+    fields = ['subscription', 'file']
 
 
 class Application_Login(LoginView):
@@ -848,12 +778,7 @@ class Application_NewOrder(AutoForm):
 
     access = 'is_allowed_to_edit'
     title = MSG(u'Choose a product')
-    actions = [NextButton]
-
-
-    schema = {'product': Product_List(mandatory=True)}
-    widgets = [Products_Widget('product', title=MSG(u"Product"),
-            datatype=Product_List, multiple=False, has_empty_option=False)]
+    actions = []
 
 
     def action(self, resource, context, form):

@@ -25,19 +25,15 @@ from itools.web import INFO, ERROR
 from itools.xml import XMLParser
 
 # Import from ikaaro
+from ikaaro.autoadd import AutoAdd
+from ikaaro.autoedit import AutoEdit
 from ikaaro import messages
-from ikaaro.autoform import TextWidget, MultilineWidget, PasswordWidget
-from ikaaro.autoform import ReadOnlyWidget, CheckboxWidget
 from ikaaro.folder_views import Folder_BrowseContent
-from ikaaro.resource_views import DBResource_Edit
-from ikaaro.theme_views import Theme_Edit
-from ikaaro.views_new import NewInstance
+from ikaaro.widgets import TextWidget, MultilineWidget, PasswordWidget
+from ikaaro.widgets import ReadOnlyWidget, CheckboxWidget
 
-# Import from itws
-from itws.feed_views import FieldsTableFeed_View
-from itws.shop.order_views import OrderState_Template
-from itws.shop.workflows import OrderStateEnumerate
-
+# Import from agitiols
+from agitools.order import OrderAutoTable
 
 # Import from goodforms
 from application import Application
@@ -54,70 +50,10 @@ MSG_BAD_PASSWORD = ERROR(u'You already have an account but your password '
         format='html')
 
 
-class Workgroup_NewInstance(NewInstance):
+class Workgroup_NewInstance(AutoAdd):
+
     access = True
-    schema = freeze(merge_dicts(
-        NewInstance.schema,
-        title=Unicode(mandatory=True),
-        firstname=Unicode,
-        lastname=Unicode,
-        company=Unicode,
-        accept_terms_of_use=Boolean(mandatory=True)))
-    widgets = freeze([
-        ReadOnlyWidget('cls_description'),
-        TextWidget('title', title=MSG(u'Name of your client space'),
-            tip=MSG(u'You can type the name of your company or '
-                u'organization'))])
-    goto_view = None
-
-    anonymous_schema = freeze({
-        'email': Email(mandatory=True),
-        'password': String(mandatory=True),
-        'password2': String(mandatory=True)})
-    anonymous_widgets = freeze([
-        TextWidget('email', title=MSG(u"Your e-mail address")),
-        TextWidget('firstname', title=MSG(u"First Name")),
-        TextWidget('lastname', title=MSG(u"Last Name")),
-        TextWidget('company', title=MSG(u"Company")),
-        PasswordWidget('password', title=MSG(u"Password")),
-        PasswordWidget('password2', title=MSG(u"Repeat Password"))])
-
-    terms_of_use_widget = CheckboxWidget('accept_terms_of_use',
-             title=MSG(u'I have read and agree to the terms of use '
-                       u'(<a href="/terms-and-conditions" '
-                       u'title="Terms of use" target="_blank">Terms of use</a>)',
-                       format='html'))
-
-
-    def get_schema(self, resource, context):
-        schema = self.schema
-        if context.user is None:
-            schema = freeze(merge_dicts(schema, self.anonymous_schema))
-        if RecaptchaDatatype.is_required(context):
-            schema = freeze(merge_dicts(schema, captcha_schema))
-        return schema
-
-
-    def get_widgets(self, resource, context):
-        widgets = self.widgets
-        if context.user is None:
-            widgets = widgets + self.anonymous_widgets
-        if RecaptchaDatatype.is_required(context):
-            widgets = widgets + captcha_widgets
-        # Terms of use widget
-        widgets = widgets + [self.terms_of_use_widget]
-        return widgets
-
-
-    def get_value(self, resource, context, name, datatype):
-        if name == 'email':
-            value = context.get_query_value(name)
-            if value:
-                return value
-        proxy = super(Workgroup_NewInstance, self)
-        return proxy.get_value(resource, context, name, datatype)
-
-
+    fields = ['title', 'firstname', 'lastname', 'company', 'accept_terms_of_use']
     def get_namespace(self, resource, context):
         proxy = super(Workgroup_NewInstance, self)
         namespace = proxy.get_namespace(resource, context)
@@ -342,67 +278,13 @@ class Workgroup_View(Folder_BrowseContent):
 
 
 
-class Workgroup_Edit(Theme_Edit, DBResource_Edit):
+class Workgroup_Edit(AutoEdit):
+
     title = MSG(u"Edit Title, Logo and CSS")
-    schema = freeze(merge_dicts(
-        DBResource_Edit.schema,
-        favicon=ImagePathDataType,
-        logo=ImagePathDataType,
-        style=String))
-    widgets = freeze(
-            [DBResource_Edit.widgets[0]]
-            + [DBResource_Edit.widgets[1](title=MSG(u"Title (shown in "
-                u"the banner if no logo)"))]
-            + [ImageSelectorWidget('logo', action='add_logo',
-                    title=MSG(u'Logo (shown in the banner)')),
-                MultilineWidget('style', title=MSG(u"CSS"), rows=19,
-                    cols=69)])
+    fields = ['favicon', 'logo', 'style']
 
 
-    def get_value(self, resource, context, name, datatype):
-        if name == 'favicon':
-            return ''
-        elif name == 'logo':
-            # Path must be resolved relative to here
-            theme = resource.get_resource('theme')
-            path = theme.get_property(name)
-            if path == '':
-                return ''
-            logo = theme.get_resource(path)
-            return resource.get_pathto(logo)
-        elif name == 'style':
-            style = resource.get_resource('theme/style')
-            # FIXME links
-            return style.handler.to_str()
-        proxy = super(Workgroup_Edit, self)
-        return proxy.get_value(resource, context, name, datatype)
-
-
-    def set_value(self, resource, context, name, form):
-        if name == 'favicon':
-            return False
-        elif name == 'logo':
-            # Path must be saved relative to the theme
-            path = form[name]
-            theme = resource.get_resource('theme')
-            if path == '':
-                theme.set_property(name, '')
-                return False
-            logo = resource.get_resource(path)
-            logo.set_workflow_state('public')
-            theme.set_property(name, str(theme.get_pathto(logo)))
-            return False
-        elif name == 'style':
-            style = resource.get_resource('theme/style')
-            # FIXME links
-            style.handler.load_state_from_string(form['style'])
-            return False
-        proxy = super(Workgroup_Edit, self)
-        return proxy.set_value(resource, context, name, form)
-
-
-
-class Workgroup_ViewOrders(FieldsTableFeed_View):
+class Workgroup_ViewOrders(OrderAutoTable):
 
     title = MSG(u'Orders')
     access = 'is_allowed_to_view'
@@ -428,13 +310,9 @@ class Workgroup_ViewOrders(FieldsTableFeed_View):
             value = item_resource.get_property(column)
             return item_resource.format_price(value)
         elif column == 'name':
-            return OrderState_Template(title=brain.name,
-                link=context.get_link(item_resource), color='#BF0000')
+            return 'XXX'
         elif column == 'workflow_state':
-            value = item_resource.get_statename()
-            title = OrderStateEnumerate.get_value(value)
-            return OrderState_Template(title=title,
-                link=context.get_link(item_resource), color='#BF0000')
+            return 'XXX'
         elif column == 'bill':
             bill = item_resource.get_bill()
             if bill is None:

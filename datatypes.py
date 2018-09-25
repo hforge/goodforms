@@ -21,7 +21,7 @@ from datetime import date
 from decimal import Decimal as dec, InvalidOperation
 
 # Import from itools
-from itools.core import merge_dicts, thingy
+from itools.core import merge_dicts
 from itools.datatypes import DataType, Unicode, Enumerate, Email
 from itools.gettext import MSG
 
@@ -57,7 +57,7 @@ class DateLitterale(DataType):
 # The reason these datatypes are instances and not thingies is that I need to
 # call "+", "int", etc. for the formulas and controls
 
-class Numeric(thingy):
+class Numeric(DataType):
     """All arithmetical operations."""
     default = ''
 

@@ -32,7 +32,6 @@ from itools.web import ERROR
 from itools.xml import XMLParser
 
 # Import from ikaaro
-from ikaaro.autoform import xhtml_namespaces
 from ikaaro.text import CSV
 
 # Import from goodforms

@@ -32,8 +32,7 @@ from itools.handlers import checkid
 from itools.web import ERROR
 
 # Import from ikaaro
-from ikaaro.table import Table
-from ikaaro.table_views import Table_View
+from ikaaro.folder import Folder
 
 # Import from goodforms
 from datatypes import NumInteger, NumDecimal, NumTime, NumShortTime, Text
@@ -359,7 +358,8 @@ class SchemaHandler(TableFile):
 
 
 
-class Schema(Table):
+class Schema(Folder):
+
     class_id = 'Schema'
     class_version = '20090123'
     class_title = MSG(u"Schema")
@@ -373,7 +373,6 @@ class Schema(Table):
             'formula', 'default']
 
     # Views
-    view = Table_View(table_actions=freeze([]))
     add_record = None
     edit_record = None
     edit = None
@@ -521,7 +520,7 @@ class Schema(Table):
             skip_header=True, **kw):
         proxy = super(Schema, self)
         proxy.init_resource(filename=filename, extension=extension, **kw)
-        self._load_from_csv(body, skip_header=skip_header)
+        #self._load_from_csv(body, skip_header=skip_header)
 
 
     def get_schema_pages(self):
