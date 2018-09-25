@@ -1,0 +1,15 @@
+*~
+*.patch
+*.eml
+*.log
+*.pyc
+*.swo
+*.swp
+build
+MANIFEST
+version.txt
+locale/*.mo
+*-lock.json
+*.xhtml.fr
+*.xml.fr
+environment.json
