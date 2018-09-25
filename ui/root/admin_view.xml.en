@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<stl:block xmlns="http://www.w3.org/1999/xhtml"
+           xmlns:stl="http://www.hforge.org/xml-namespaces/stl">
+
+  <table cellpadding="5" cellspacing="5">
+    <tr>
+      <td>
+        <img src="/ui/icons/48x48/preferences.png"/>
+      </td>
+      <td>
+        <a href="/;edit">Configure website</a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <img src="/ui/icons/48x48/card.png"/>
+      </td>
+      <td>
+        <a href="/;edit_contact_options">Edit contact options</a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <img src="/ui/icons/48x48/website.png"/>
+      </td>
+      <td>
+        <a href="/;show_all_workgroups">List workgroups</a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <img src="/ui/icons/48x48/tasks.png"/>
+      </td>
+      <td>
+        <a href="/;show_all_applications">List applications</a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <img src="/ui/shop/images/products.png"/>
+      </td>
+      <td>
+        <a href="/products/">List GoodForms products</a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <img src="/ui/goodforms/images/upload48.png"/>
+      </td>
+      <td>
+        <a href="/products/;new_resource?type=goodforms-product">Create new GoodForms product</a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <img src="/ui/shop/images/payments.png"/>
+      </td>
+      <td>
+        <a href="/shop/">Configure Shop / List orders / List payments</a>
+      </td>
+    </tr>
+  </table>
+
+</stl:block>

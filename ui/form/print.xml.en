@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<stl:block xmlns="http://www.w3.org/1999/xhtml" xmlns:stl="http://www.hforge.org/xml-namespaces/stl">
+
+  <div stl:repeat="form forms" class="form-wrapper">
+    <div id="form-tables">
+      <label class="title">${form/title}</label>
+      <div class="clear separator"/>
+      <table stl:repeat="table form/tables" class="scrib-table print">
+        <tr stl:repeat="row table">
+          <td colspan="${column/colspan}" rowspan="${column/rowspan}" stl:repeat="column row" class="${column/class}">${column/body}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+</stl:block>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<stl:block xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:stl="http://www.hforge.org/xml-namespaces/stl">
+
+  <!-- Batch -->
+  ${batch}
+
+  <table class="icons-view">
+    <tbody>
+      <stl:block stl:repeat="row rows">
+        <tr>
+          <stl:block stl:repeat="item row">
+            <td width="${width}%">
+              <a href="${item/url}" onclick="${item/onclick}"
+                rel="${item/rel}" class="item ${item/class}"
+                stl:omit-tag="not item/url">
+                <img alt="" src="${item/icon}" class="icon"/>
+                ${item/title}<br/>
+                <span class="description">
+                  <a href="${item/description_url}"
+                    stl:omit-tag="not item/description_url">
+                    ${item/description}
+                  </a>
+                </span>
+              </a>
+              ${item/extra}
+            </td>
+          </stl:block>
+        </tr>
+      </stl:block>
+    </tbody>
+  </table>
+
+</stl:block>

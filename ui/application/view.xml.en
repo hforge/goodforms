@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<stl:block xmlns="http://www.w3.org/1999/xhtml" xmlns:stl="http://www.hforge.org/xml-namespaces/stl">
+  <script src="/ui/goodforms/Chart.js"></script>
+  <script src="/ui/goodforms/myChart.js"></script>
+
+
+
+  ${menu}
+
+  <h2 id="users">Application Status</h2>
+
+  <p>
+    <ul>
+      <li>
+        You have subscribed ${n_forms} users
+        <stl:inline stl:if="max_users">
+          out of ${max_users} allowed.
+        </stl:inline>
+      </li>
+      <li>
+        <a href="./;order">Buy new credits</a> if you want to add more than ${max_users} users.
+      </li>
+      <li>
+        <a href="./;register">Click here to register new users</a><br/>
+      </li>
+    </ul>
+  </p>
+
+  <stl:block stl:if="batch">
+    ${search}
+    ${batch}
+    ${table}
+  </stl:block>
+
+  <canvas id="stateChart" width="400" height="400"></canvas>
+
+  <script type="text/javascript">
+    //<!--
+    $(document).ready(function() {
+      $("a[rel='fancybox']").click(function() {
+        $.fancybox({
+          'type': 'iframe',
+          'transitionIn': 'elastic',
+          'transitionOut': 'elastic',
+          'speedIn': 600,
+          'speedOut': 200,
+          'width': 670,
+          'height': 400,
+          'overlayColor': '#729FCF',
+          'overlayOpacity': 0.8,
+          'href': this.href + '?view=print',
+          'onCleanup': function () {
+            var fancy_iframe = $("#fancybox-frame");
+            var message = fancy_iframe.find("#message .info");
+            this.reload_parent_window_on_close = message ? true : false;
+          },
+          'onClosed': function() {
+            // Reload parent if changes have been done
+             if (this.reload_parent_window_on_close)
+                 window.location.reload();
+          },
+        });
+        return false;
+      });
+    });
+    //-->
+
+
+    //Get the context of the canvas element we want to select
+    var ctx = document.getElementById("stateChart").getContext("2d");
+    var data = createData();
+    new Chart(ctx).Pie(data, {});
+  </script>
+
+</stl:block>

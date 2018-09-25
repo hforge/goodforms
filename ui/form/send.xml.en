@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<stl:block xmlns="http://www.w3.org/1999/xhtml" xmlns:stl="http://www.hforge.org/xml-namespaces/stl">
+
+  <p id="form-toolbar" stl:if="not skip_print">
+    <a id="form-fill" href="." class="button button-control"
+      title="Come back to the form">Back to Form</a>
+    <a id="form-print" href="?view=print" class="button button-print"
+      title="Print (in a new window)"
+      onclick="return popup(this.href, 800, 600)">Print this page</a>
+  </p>
+
+  <h2>Form State: <span class="wf-${statename}">${form_state}</span></h2>
+
+  <p stl:if="first_time">You must start by filling the form.</p>
+
+  <stl:block stl:if="not first_time">
+    <form action="" method="post" stl:if="can_send">
+      <p>When you have finished filling the form, you can click the "Finish"
+      button.</p>
+      <button value="send" class="button-ok" name="action"
+      type="submit">Finish</button>
+    </form>
+
+    <p stl:if="controls/errors">You must correct all of the errors below to
+    finish your form.</p>
+
+    <stl:block stl:if="is_allowed_to_export">
+      <form action="" method="post" stl:if="can_export">
+        <p>The form is correct, You can export it to an SQL database.</p>
+        <button value="export" class="button-ok" name="action"
+        type="submit">Export</button>
+      </form>
+      <!--p stl:if="not can_export">You cannot export the form to an SQL
+          database until it is correct.</p-->
+    </stl:block>
+
+    <hr/>
+
+    <h2>Errors</h2>
+    <stl:block stl:if="controls/errors">
+      <em>These errors must absolutely be corrected.</em>
+      <table width="100%" cellpadding="1"
+      cellspacing="1" border="1">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Control</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr stl:repeat="control controls/errors">
+            <td>${control/number}</td>
+            <td>
+              <span>${control/title}</span>
+              <pre class="form-debug" stl:if="debug">${control/debug}</pre>
+            </td>
+            <td>
+              <a href="${control/href}">To correct</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </stl:block>
+    <p stl:if="not controls/errors">
+      No error detected.
+    </p>
+
+    <h2>Warnings</h2>
+    <stl:block stl:if="controls/warnings">
+      <em>Please verify the consistency of these data.</em>
+      <table width="100%" cellpadding="1"
+      cellspacing="1" border="1">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Control</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr stl:repeat="control controls/warnings">
+            <td>${control/number}</td>
+            <td>
+              <span>${control/title}</span>
+              <pre class="form-debug" stl:if="debug">${control/debug}</pre>
+            </td>
+            <td>
+              <a href="${control/href}">To correct</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </stl:block>
+    <p stl:if="not controls/warnings">
+      No warning detected.
+    </p>
+
+    <h2>Information</h2>
+    <stl:block stl:if="controls/infos">
+      <em>For your information, with the given data.</em>
+      <table width="100%" cellpadding="1"
+      cellspacing="1" border="1">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Control</th>
+            <th>Value</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr stl:repeat="control controls/infos">
+            <td>${control/number}</td>
+            <td>
+              <span>${control/title}</span>
+              <pre class="form-debug" stl:if="debug">${control/debug}</pre>
+            </td>
+            <td>
+              ${control/value}
+            </td>
+            <td>
+              <a href="${control/href}">To correct</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </stl:block>
+    <p stl:if="not controls/infos">
+      No information available.
+    </p>
+  </stl:block>
+
+</stl:block>

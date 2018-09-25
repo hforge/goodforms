@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="${language}"
+  xmlns:stl="http://www.hforge.org/xml-namespaces/stl">
+  <head>
+    <title>${title}</title>
+    <base href="${base_uri}"/>
+    <!-- Meta -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta stl:repeat="meta meta_tags" name="${meta/name}" lang="${meta/lang}"
+      content="${meta/content}"/>
+    <!-- Canonical URL for search engines -->
+    <link rel="canonical" href="${canonical_uri}"/>
+    <!-- CSS -->
+    <link type="text/css" rel="stylesheet" stl:repeat="style styles"
+      href="${style}"/>
+    <!-- JavaScript -->
+    <script type="text/javascript" stl:repeat="script scripts"
+      src="${script}"/>
+    <!-- Icon -->
+    <link rel="shortcut icon" href="${favicon_href}" type="${favicon_type}"/>
+  </head>
+  <body>
+   <div id="page" class="${page_css}">
+
+    <!-- Header -->
+    <div id="header">
+      <!-- Languages & Searchbar -->
+      <table cellpadding="0" cellspacing="0" class="header-toolbar"
+        stl:if="languages">
+        <tr>
+          <td class="access" stl:if="user">
+            <a href="/;show" title="${user/title}"
+               id="links-menu-profile">${user/title}</a>
+            <a href="${logout}" title="Log out" id="links-menu-logout"
+              >Log out</a>
+          </td>
+          <td class="languages">${languages}</td>
+        </tr>
+      </table>
+      <!-- Menu -->
+      <ul stl:if="menu/items" id="menu">
+        <li stl:repeat="menu menu/items" class="${menu/class}">
+          <a href="${menu/path}" id="${menu/id}" target="${menu/target}"
+             title="${menu/title}">${menu/title}</a>
+        </li>
+        <li stl:if="is_admin">
+          <a href="/;view_admin" title="Administration"
+            stl:if="is_admin" class="admin-link">
+            Administration
+          </a>
+        </li>
+      </ul>
+      <!-- Logo -->
+      <div id="logo">
+        <a href="${website_href}" id="logo-image">
+          <img stl:if="logo_href" src="${logo_href}"/>
+          <stl:inline stl:if="not logo_href">${website_title}</stl:inline>
+        </a>
+      </div>
+      <div class="clear" />
+    </div>
+
+    <!-- Location & Views-->
+    ${location}
+
+    <!-- Body -->
+    <div id="body">
+      <h1 stl:if="page_title">${page_title}</h1>
+      ${message}
+      <table cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tr>
+          <td id="content" valign="top">
+            ${body}
+          </td>
+          <td id="right" valign="top" stl:if="context_menus">
+            <stl:block stl:repeat="menu context_menus">${menu}</stl:block>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div id="footer">
+    <div class="container">
+      <div class="col">
+        <h2>About GoodForms</h2>
+        <ul class="content">
+          <li><a href="/">Create Your Form</a></li>
+          <li><a href="http://www.itaapy.com" target="_blank">An Itaapy service</a></li>
+          <li><a href="/terms-and-conditions">Terms of Use</a></li>
+          <li><a href="http://blog.itaapy.com" target="_blank">Blog</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <h2>Business</h2>
+        <ul class="content">
+          <li><a href="http://www.itaapy.com/news" target="_blank">News</a></li>
+          <li><a href="/prix#partner">Become Partner</a></li>
+          <li><a href="/prix">Pricing</a></li>
+          <li><a href="http://download.openoffice.org" target="_blank">Download OpenOffice.org</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <h2>Aide</h2>
+        <ul class="content">
+          <li><a href="/;contact">Contact Us</a></li>
+          <li><a href="/samples">Examples, samples</a></li>
+          <!-- <li><a href="/#">FAQ</a></li> -->
+        </ul>
+      </div>
+    </div>
+    <div class="clear" />
+  </div>
+
+  <!-- Google analytics -->
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11323965-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+  </body>
+</html>

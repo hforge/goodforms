@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<stl:block xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:stl="http://www.hforge.org/xml-namespaces/stl">
+
+  <div id="application-menu" stl:if="application_menu">
+    <a id="application-menu-button" class="button" href="#"
+      onclick="$('.icons-view').toggle(); return false">Show/Hide Menu</a>
+    ${application_menu}
+  </div>
+
+  <form enctype="multipart/form-data" action=";page${page_number}"
+    method="post">
+    <input value="${page_number}" name="page_number" type="hidden"/>
+    <input value="${field/value}" stl:repeat="field hidden_fields"
+      name="${field/name}" type="hidden"/>
+
+    <p id="form-toolbar" stl:if="not skip_print">
+      <stl:block stl:repeat="action toolbar">${action}</stl:block>
+    </p>
+    <div class="clear"></div>
+
+    <div id="pages-menu" stl:if="not skip_print">
+      <ul stl:if="menu">
+        <li stl:repeat="item menu" class="${item/class}">
+          <a href="${item/href}">${item/title}</a>
+        </li>
+      </ul>
+      <div class="clear"></div>
+    </div>
+
+    <div id="form-tables">
+      <table stl:repeat="table tables" class="goodforms-table">
+        <tr stl:repeat="row table">
+          <td colspan="${column/colspan}" rowspan="${column/rowspan}"
+            class="${column/class}"
+            stl:repeat="column row">${column/body}</td>
+        </tr>
+      </table>
+      <p id="advert">
+        <strong>Create Your Own Form</strong><br/>
+        The form you have filled in was simply created from the upload of
+        this <a href="../parameters/;download">XLS/ODS file</a>.<br/>
+        <a href="/;new_resource?type=Workgroup">Create your form</a>
+        within 2 minutes.
+      </p>
+      <p id="form-buttons">
+        <stl:block stl:repeat="action actions">${action}</stl:block>
+      </p>
+    </div>
+
+  </form>
+
+  <script type="text/javascript">
+    <!--
+    var fragment = window.location.hash;
+    if (fragment.substr(0, 7) == "#field_") {
+      $(fragment).addClass('badtype').focus();
+    }
+    if (fragment != "#menu") {
+      $(document).ready(function() {
+        $(".icons-view").hide();
+      });
+    }
+    //-->
+  </script>
+
+  <script src="/ui/goodforms/jquery.js"></script>
+  <script src="/ui/goodforms/chosen.jquery.js"></script>
+
+  <script type="text/javascript">
+    var config = {
+      '.chosen-select'           : {},
+      '.chosen-select-deselect'  : {allow_single_deselect:true},
+      '.chosen-select-no-single' : {disable_search_threshold:10},
+      '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+      '.chosen-select-width'     : {width:"95%"}
+    }
+    for (var selector in config) {
+      $(selector).chosen(config[selector]);
+    }
+  </script>
+</stl:block>
