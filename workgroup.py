@@ -110,13 +110,6 @@ class Workgroup(Folder):
 
     def get_logo_icon(self, size=48):
         context = get_context()
-        if context is not None:
-            theme = self.get_resource('theme')
-            logo_path = theme.get_property('logo')
-            if logo_path not in ('', '.'):
-                logo = theme.get_resource(logo_path)
-                return '{0}/;thumb?width={1}&height={1}'.format(
-                        context.resource.get_pathto(logo), size)
         return super(Workgroup, self).get_class_icon(size=size)
 
 

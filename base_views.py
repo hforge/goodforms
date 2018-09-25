@@ -137,7 +137,7 @@ class FrontView(BaseIconsView):
             if not context.root.is_allowed_to_view(user, child):
                 continue
             title = child.get_title()
-            items.append({'icon': child.get_logo_icon(size=self.size),
+            items.append({'icon': None,
                 'title': title,
                 'description': child.get_property('description'),
                 'url': context.get_link(child),
