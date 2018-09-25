@@ -28,7 +28,6 @@ from ikaaro.folder import Folder
 # Import from goodforms
 from application import Application
 from base_views import FrontView, LoginView
-from demo import is_demo_application, is_demo_form
 from form import Form
 from workflow import FINISHED, EXPORTED, MODIFIED
 from workgroup_views import Workgroup_NewInstance, Workgroup_View
@@ -137,16 +136,6 @@ class Workgroup(Folder):
 
     def is_allowed_to_view(self, user, resource):
         if user is None:
-            if is_demo_application(resource):
-                if isinstance(resource, Application):
-                    return True
-                elif isinstance(resource, Form):
-                    return is_demo_form(resource)
-                # Allow public content (parameters, theme, etc.)
-                try:
-                    return resource.get_workflow_state() == 'public'
-                except AttributeError:
-                    pass
             return False
         if is_admin(user, resource):
             return True
@@ -169,9 +158,6 @@ class Workgroup(Folder):
 
     def is_allowed_to_edit(self, user, resource):
         if user is None:
-            if is_demo_application(resource):
-                if isinstance(resource, Form):
-                    return is_demo_form(resource)
             return False
         if is_admin(user, resource):
             return True

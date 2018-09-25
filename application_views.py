@@ -46,7 +46,6 @@ from agitools.autotable import AutoTable
 from base_views import LoginView, IconsView
 from buttons import ExportODSButton, ExportXLSButton, AddUsersButton
 from datatypes import Subscription, EmailField
-from demo import get_demo_user
 from form import Form
 from formpage import FormPage
 from rw import ODSWriter, XLSWriter
@@ -724,8 +723,6 @@ class Application_RedirectToForm(GoToSpecificDocument):
 
 
     def get_form_name(self, user, resource):
-        if user is None:
-            user = get_demo_user(resource)
         root = resource.get_resource('/')
         if root.is_allowed_to_edit(user, resource):
             return resource.default_form
