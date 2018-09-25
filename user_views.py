@@ -45,7 +45,7 @@ class User_ConfirmRegistration(AutoEdit):
             return
 
         # Company
-        resource.set_property('company', form['company'])
+        resource.set_value('company', form['company'])
 
         message = INFO(u'Operation successful! Welcome.')
         return context.come_back(message, goto='/;show')

@@ -53,7 +53,7 @@ class Workgroup_Order(Folder):
         application_abspath = self.get_property('application_abspath')
         application = root.get_resource(application_abspath)
         max_users = application.get_property('max_users')
-        application.set_property('max_users', max_users + nb_users)
+        application.set_value('max_users', max_users + nb_users)
 
 
 
@@ -92,8 +92,8 @@ class Workgroup(Folder):
     def init_resource(self, **kw):
         super(Workgroup, self).init_resource(**kw)
         # Laisse voir le nom du website
-        theme = self.get_resource('theme')
-        theme.set_property('logo', None)
+        #theme = self.get_resource('theme')
+        #theme.set_value('logo', None)
         # Orders
         self.make_resource('orders', Workgroup_Orders)
 

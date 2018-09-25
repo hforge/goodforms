@@ -621,7 +621,7 @@ class Application_Register(STLView):
             if user is None:
                 # Register the user
                 user = users.set_user(email, None)
-                user.set_property('lastname', lastname)
+                user.set_value('lastname', lastname)
             resource.subscribe_user(user)
             added.append(user.name)
             if len(added) == allowed:
@@ -793,8 +793,8 @@ class Application_NewOrder(AutoForm):
         orders_module = get_orders(resource)
         order = orders_module.make_order(workgroup_orders,
             context.user, lines, cls=Workgroup_Order)
-        order.set_property('nb_users', nb_users)
-        order.set_property('application_abspath', application_abspath)
+        order.set_value('nb_users', nb_users)
+        order.set_value('application_abspath', application_abspath)
         # Create payment into order
         customer = context.user
         amount = order.get_total_price()

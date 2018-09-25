@@ -42,7 +42,7 @@ from autoform import RecaptchaDatatype, captcha_schema, captcha_widgets
 from base_views import IconsView
 
 
-MSG_NEW_WORKGROUP = INFO(u'Your client space "{title}" is created. You can '
+MSG_NEW_WORKGROUP = INFO(u'Your client space is created. You can '
         u'add your logo.')
 MSG_ERR_NOT_IMAGE = ERROR(u'Not an image or invalid image.')
 MSG_BAD_PASSWORD = ERROR(u'You already have an account but your password '
@@ -70,46 +70,46 @@ class Workgroup_NewInstance(AutoAdd):
         # Set default language
         accept = context.accept_language
         ws_languages = context.root.get_property('website_languages')
-        current_language = accept.select_language(ws_languages)
-        workgroup.set_property('website_languages', (current_language,))
+        # FIXME
+        current_language = 'en'
+        #current_language = accept.select_language(ws_languages)
+        #workgroup.set_value('website_languages', (current_language,))
         # Accept terms and condition
-        workgroup.set_property('accept_terms_of_use',
-                               form['accept_terms_of_use'])
+        workgroup.set_value('accept_terms_of_use', form['accept_terms_of_use'])
         # Set title in current language
-        workgroup.set_property('title', None)
-        workgroup.set_property('title', form['title'],
-                language=current_language)
+        workgroup.set_value('title', None, language=current_language)
+        workgroup.set_value('title', form['title'], language=current_language)
         # Set neutral banner
-        theme = workgroup.get_resource('theme')
-        style = theme.get_resource('style')
-        style.handler.load_state_from_string("""/* Header colors / Couleurs de la bannière */
-#header { background-color: #ccc; }
-#header #links a, #header #languages a { color: #333; }
-#header #logo-title { color: #000; }
-
-/* Form pages menu / Menu des pages du formulaire */
-#pages-menu { border-bottom: 1px solid #339; }
-#pages-menu ul li a {
-  background-color: #339;
-  border-color: #339;
-}
-#pages-menu ul li a:hover {
-  background-color: #ccc;
-  color: #fff;
-}
-#pages-menu ul li.active a {
-  background-color: #fff;
-  color: #339;
-}
-
-/* Form titles / Titres dans les formulaires */
-td.section-header h2,
-td.section-header h3,
-td.section-header h4 {
-  color: #fff;
-  background-color: #339;
-}
-""")
+#        theme = workgroup.get_resource('theme')
+#        style = theme.get_resource('style')
+#        style.handler.load_state_from_string("""/* Header colors / Couleurs de la bannière */
+##header { background-color: #ccc; }
+##header #links a, #header #languages a { color: #333; }
+##header #logo-title { color: #000; }
+#
+#/* Form pages menu / Menu des pages du formulaire */
+##pages-menu { border-bottom: 1px solid #339; }
+##pages-menu ul li a {
+#  background-color: #339;
+#  border-color: #339;
+#}
+##pages-menu ul li a:hover {
+#  background-color: #ccc;
+#  color: #fff;
+#}
+##pages-menu ul li.active a {
+#  background-color: #fff;
+#  color: #339;
+#}
+#
+#/* Form titles / Titres dans les formulaires */
+#td.section-header h2,
+#td.section-header h3,
+#td.section-header h4 {
+#  color: #fff;
+#  background-color: #339;
+#}
+#""")
         user = context.user
         if user is None:
             email = form['email']
@@ -138,16 +138,17 @@ td.section-header h4 {
             # Automatic login
             context.login(user)
         # Update user info
-        for key in ('firstname', 'lastname', 'company'):
-            if form[key]:
-                user.set_property(key, form[key])
+        # FIXME
+        #for key in ('firstname', 'lastname', 'company'):
+        #    if form[key]:
+        #        user.set_value(key, form[key])
         # Set the user as workgroup member
         # 10/01/13: test as admin
         username = user.name
-        workgroup.set_user_role(username, 'admins')
+        #workgroup.set_user_role(username, 'admins')
         # Come back
-        message = MSG_NEW_WORKGROUP(title=form['title'])
-        return context.come_back(message, goto)
+        msg = MSG_NEW_WORKGROUP
+        return context.come_back(msg, goto)
 
 
 
