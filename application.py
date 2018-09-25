@@ -77,28 +77,15 @@ class Application(Folder):
 
     # Configuration
     allowed_users = 10
-
+    schema_class = Schema
+    controls_class = Controls
+    default_form = '0'
 
     # Fields
     author = Char_Field(indexed=True, stored=True)
     max_users=  Integer_Field(default=allowed_users)
     subscription = Subscription
 
-
-    schema_class = Schema
-    controls_class = Controls
-    default_form = '0'
-
-    # Views
-    new_instance = Application_NewInstance()
-    menu = Application_Menu()
-    view = Application_View()
-    edit = Application_Edit()
-    export = Application_Export()
-    register = Application_Register()
-    login = Application_Login()
-    show = Application_RedirectToForm()
-    order = Application_NewOrder()
 
 
     def _load_from_file(self, file, context):
@@ -205,7 +192,7 @@ class Application(Folder):
 
 
     def get_allowed_users(self):
-        max_users = self.get_property('max_users')
+        max_users = self.get_value('max_users')
         if not max_users:
             return float('inf')
         n_forms = self.get_n_forms()
@@ -276,9 +263,14 @@ class Application(Folder):
 
 
 
-    def get_catalog_values(self):
-        author = (self.get_property('author')
-                or self.get_property('last_author'))
-        ctime = self.get_property('ctime') or self.get_property('mtime')
-        return merge_dicts(Folder.get_catalog_values(self),
-                author=author, ctime=ctime)
+
+    # Views
+    new_instance = Application_NewInstance()
+    menu = Application_Menu()
+    view = Application_View()
+    edit = Application_Edit()
+    export = Application_Export()
+    register = Application_Register()
+    login = Application_Login()
+    show = Application_RedirectToForm()
+    order = Application_NewOrder()

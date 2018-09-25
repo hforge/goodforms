@@ -34,7 +34,7 @@ __version__ = get_version()
 
 # Give a language
 register_domain('goodforms', get_abspath('locale'))
-register_skin('goodforms', Skin(get_abspath('ui')))
+register_skin('goodforms', Skin(get_abspath('ui/goodforms')))
 
 # Silent Pyflakes
 __all__ = [

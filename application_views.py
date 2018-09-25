@@ -35,9 +35,12 @@ from ikaaro.autoadd import AutoAdd
 from ikaaro.autoedit import AutoEdit
 from ikaaro.autoform import AutoForm
 from ikaaro.datatypes import FileDataType
-from ikaaro.folder_views import Folder_BrowseContent, GoToSpecificDocument
+from ikaaro.folder_views import GoToSpecificDocument
 from ikaaro.messages import MSG_PASSWORD_MISMATCH
 from ikaaro.widgets import FileWidget, TextWidget, SelectWidget, file_widget
+
+# Import from agitools
+from agitools.autotable import AutoTable
 
 # Import from goodforms
 from base_views import LoginView, IconsView
@@ -91,20 +94,21 @@ class Application_NewInstance(AutoAdd):
     goto_view = None
 
 
-    def action(self, resource, context, form):
-        proxy = super(Application_NewInstance, self)
-        goto = proxy.action(resource, context, form)
-        child = resource.get_resource(form['name'])
-        try:
-            child._load_from_file(form['file'], context)
-        except ValueError, exception:
-            if is_debug(context):
-                raise
-            context.commit = False
-            context.message = ERROR(unicode(exception))
-            return
-        goto = goto.resolve2('0/;pageA#menu')
-        return context.come_back(INFO_NEW_APPLICATION, goto)
+# FIXME
+#    def action(self, resource, context, form):
+#        proxy = super(Application_NewInstance, self)
+#        goto = proxy.action(resource, context, form)
+#        child = resource.get_resource(form['name'])
+#        try:
+#            child._load_from_file(form['file'], context)
+#        except ValueError, exception:
+#            if is_debug(context):
+#                raise
+#            context.commit = False
+#            context.message = ERROR(unicode(exception))
+#            return
+#        goto = goto.resolve2('0/;pageA#menu')
+#        return context.come_back(INFO_NEW_APPLICATION, goto)
 
 
 
@@ -171,119 +175,87 @@ class Application_Menu(IconsView):
             return False
         return '/config/groups/admin' in user.get_catalog_values()['groups']
 
-    def get_items(self, resource, context):
-        proxy = super(Application_Menu, self)
-        items = proxy.get_items(resource, context)
-        spread_url = resource.get_spread_url(context)
-        items.insert(3, self.make_item(
-            icon='/ui/goodforms/images/spread48.png',
-            title=MSG(u"Spread your Form"),
-            extra=MSG(u"""
-<div id="spread-url">
-  <span><a href="#" title="Close"
-    onclick="return hide_spread_url()">X</a></span>
-  <ul>
-    <li>You can send this URL to your users:<br/>
-      <input id="spread-url-text" type="text" readonly="readonly"
-        value="{spread_url}"/>
-      <div id="spread-url-copy">
-        <a href="javascript:alert('You need Flash plugin to copy!');">
-          Copy</a>
-      </div>
-    </li>
-  </ul>
-</div>
-<script type="text/javascript">
-  $("#spread-url-text").focus(function() {{
-      this.select();
-  }});
-  path = '/ui/goodforms/zeroclipboard/ZeroClipboard.swf'
-  ZeroClipboard.setMoviePath(path);
-  var clip = new ZeroClipboard.Client();
-  clip.setHandCursor(true);
-  clip.setText("{spread_url}");
-  function hide_spread_url() {{
-    $('#spread-url').hide();
-    clip.hide();
-    return false;
-  }}
-  function show_spread_url() {{
-    $('#spread-url').show();
-    clip.show();
-    return false;
-  }}
-  $(document).ready(function() {{
-    clip.glue("spread-url-copy");
-    /* Hide #spread-url after the Flash movie is positioned */
-    hide_spread_url();
-  }});
-</script>""", format='replace_html', spread_url=spread_url),
-            url='#',
-            onclick='return show_spread_url()'))
-        return items
+#    def get_items(self, resource, context):
+#        proxy = super(Application_Menu, self)
+#        items = proxy.get_items(resource, context)
+#        spread_url = resource.get_spread_url(context)
+#        items.insert(3, self.make_item(
+#            icon='/ui/goodforms/images/spread48.png',
+#            title=MSG(u"Spread your Form"),
+#            extra=MSG(u"""
+#<div id="spread-url">
+#  <span><a href="#" title="Close"
+#    onclick="return hide_spread_url()">X</a></span>
+#  <ul>
+#    <li>You can send this URL to your users:<br/>
+#      <input id="spread-url-text" type="text" readonly="readonly"
+#        value="{spread_url}"/>
+#      <div id="spread-url-copy">
+#        <a href="javascript:alert('You need Flash plugin to copy!');">
+#          Copy</a>
+#      </div>
+#    </li>
+#  </ul>
+#</div>
+#<script type="text/javascript">
+#  $("#spread-url-text").focus(function() {{
+#      this.select();
+#  }});
+#  path = '/ui/goodforms/zeroclipboard/ZeroClipboard.swf'
+#  ZeroClipboard.setMoviePath(path);
+#  var clip = new ZeroClipboard.Client();
+#  clip.setHandCursor(true);
+#  clip.setText("{spread_url}");
+#  function hide_spread_url() {{
+#    $('#spread-url').hide();
+#    clip.hide();
+#    return false;
+#  }}
+#  function show_spread_url() {{
+#    $('#spread-url').show();
+#    clip.show();
+#    return false;
+#  }}
+#  $(document).ready(function() {{
+#    clip.glue("spread-url-copy");
+#    /* Hide #spread-url after the Flash movie is positioned */
+#    hide_spread_url();
+#  }});
+#</script>""", format='replace_html', spread_url=spread_url),
+#            url='#',
+#            onclick='return show_spread_url()'))
+#        return items
 
 
 
-class Application_View(Folder_BrowseContent):
+class Application_View(AutoTable):
+
     access = 'is_allowed_to_edit'
     title = MSG(u"Manage your Data Collection Application")
-    template = '/ui/goodforms/application/view.xml'
-
-    schema = freeze({})
+    #template = '/ui/goodforms/application/view.xml'
 
     # Search Form
     search_schema = {}
     search_fields = []
-    search_template = '/ui/goodforms/application/search.xml'
+
+    # Configuration
+    base_classes = Form.class_id
+
+    # FIXME
+    #search_template = '/ui/goodforms/application/search.xml'
 
     # Table
-    table_columns = freeze([
-            ('name', MSG(u"Form")),
-            ('state', MSG(u"State")),
-            ('mtime', MSG(u"Last Modified")),
-            ('firstname', MSG(u"First Name")),
-            ('lastname', MSG(u"Last Name")),
-            ('company', MSG(u"Company/Organization")),
-            ('email', MSG(u"E-mail"))])
-    table_actions = freeze([ExportODSButton, ExportXLSButton])
+    table_fields = ['name', 'state', 'mtime', 'firstname', 'lastname', 'company', 'email']
+
+    # FIXME
+    table_actions = []
+    #table_actions = freeze([ExportODSButton, ExportXLSButton])
 
 
     def get_page_title(self, resource, context):
         title = resource.get_page_title()
         return MSG_APPLICATION_TITLE.gettext(title=title)
 
-
-    def get_items(self, resource, context, *args):
-        query = PhraseQuery('format', Form.class_id)
-        # Filter on state
-        search_state = context.query['search_state']
-        if search_state:
-            if search_state == NOT_REGISTERED:
-                search_query = PhraseQuery('has_password', False)
-                users_query = get_users_query(search_query, context)
-                query = AndQuery(query, OrQuery(*users_query))
-            else:
-                search_query = PhraseQuery('has_password', True)
-                users_query = get_users_query(search_query, context)
-                state_query = PhraseQuery('workflow_state', search_state)
-                query = AndQuery(query, state_query, OrQuery(*users_query))
-        # Filter on user properties
-        search_term = context.query['search_term'].strip()
-        search_term_str = search_term.encode('utf_8')
-        if search_term:
-            search_query = OrQuery(
-                TextQuery('firstname', search_term),
-                TextQuery('lastname', search_term),
-                TextQuery('company', search_term),
-                StartQuery('username', search_term_str),
-                StartQuery('email_domain', search_term_str))
-            users_query = get_users_query(search_query, context)
-            query = AndQuery(query, OrQuery(*users_query))
-        # Filter out default form
-        default_form_query = PhraseQuery('name', resource.default_form)
-        query = AndQuery(query, NotQuery(default_form_query))
-        proxy = super(Application_View, self)
-        return proxy.get_items(resource, context, query, *args)
 
 
     def get_item_value(self, resource, context, item, column):
@@ -382,47 +354,47 @@ class Application_View(Folder_BrowseContent):
         return key
 
 
-    def get_search_namespace(self, resource, context):
-        namespace = {}
-        namespace['state_widget'] = SelectWidget('search_state',
-                datatype=WorkflowState, value=context.query['search_state'])
-        return namespace
+    #def get_search_namespace(self, resource, context):
+    #    namespace = {}
+    #    namespace['state_widget'] = SelectWidget('search_state',
+    #            datatype=WorkflowState, value=context.query['search_state'])
+    #    return namespace
 
 
-    def get_namespace(self, resource, context):
-        namespace = {}
-        namespace['menu'] = resource.menu.GET(resource, context)
-        namespace['n_forms'] = resource.get_n_forms()
-        namespace['max_users'] = resource.get_property('max_users')
-        namespace['spread_url'] = resource.get_spread_url(context)
+    #def get_namespace(self, resource, context):
+    #    namespace = {}
+    #    namespace['menu'] = resource.menu.GET(resource, context)
+    #    namespace['n_forms'] = resource.get_n_forms()
+    #    namespace['max_users'] = resource.get_property('max_users')
+    #    namespace['spread_url'] = resource.get_spread_url(context)
 
-        # Search
-        search_template = resource.get_resource(self.search_template)
-        search_namespace = self.get_search_namespace(resource, context)
-        namespace['search'] = stl(search_template, search_namespace)
+    #    # Search
+    #    search_template = resource.get_resource(self.search_template)
+    #    search_namespace = self.get_search_namespace(resource, context)
+    #    namespace['search'] = stl(search_template, search_namespace)
 
-        # Batch
-        results = self.get_items(resource, context)
-        query = context.query
-        if results or query['search_state'] or query['search_term']:
-            template = resource.get_resource(self.batch_template)
-            batch_namespace = self.get_batch_namespace(resource, context,
-                    results)
-            namespace['batch'] = stl(template, batch_namespace)
-        else:
-            namespace['batch'] = None
+    #    # Batch
+    #    results = self.get_items(resource, context)
+    #    query = context.query
+    #    if results or query['search_state'] or query['search_term']:
+    #        template = resource.get_resource(self.batch_template)
+    #        batch_namespace = self.get_batch_namespace(resource, context,
+    #                results)
+    #        namespace['batch'] = stl(template, batch_namespace)
+    #    else:
+    #        namespace['batch'] = None
 
-        # Table
-        if results:
-            items = self.sort_and_batch(resource, context, results)
-            template = resource.get_resource(self.table_template)
-            table_namespace = self.get_table_namespace(resource, context,
-                    items)
-            namespace['table'] = stl(template, table_namespace)
-        else:
-            namespace['table'] = None
+    #    # Table
+    #    if results:
+    #        items = self.sort_and_batch(resource, context, results)
+    #        template = resource.get_resource(self.table_template)
+    #        table_namespace = self.get_table_namespace(resource, context,
+    #                items)
+    #        namespace['table'] = stl(template, table_namespace)
+    #    else:
+    #        namespace['table'] = None
 
-        return namespace
+    #    return namespace
 
 
     def action_export(self, resource, context, form, writer_cls=ODSWriter):

@@ -195,12 +195,11 @@ class Workgroup_View(AutoTable):
 
     # FIXME
     # template = '/ui/goodforms/workgroup/view.xml'
-    base_classes = Application.class_id
+    base_classes = 'Application'
     search_template = None
 
     table_fields = ['form', 'subscribed', 'max_users', 'file', 'ctime']
     table_actions = []
-
 
 
     def get_item_value(self, resource, context, item, column):
