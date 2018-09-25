@@ -22,13 +22,16 @@ from itools.web import get_context
 # Import from ikaaro
 from ikaaro.skins import Skin as BaseSkin
 
+# Import from agitools
+from agitools.skins import PlatformSkin
+
 # Import from goodforms
 from form import Form
 from utils import is_print
 
 
 
-class Skin(BaseSkin):
+class Skin(PlatformSkin):
 
 
     is_backoffice_skin = False
@@ -40,32 +43,11 @@ class Skin(BaseSkin):
 
 
     def get_styles(self, context):
-        styles = super(Skin, self).get_styles(context)
-        # Restore Aruni
-        if '/ui/aruni/style.css' not in styles:
-            styles.insert(1, '/ui/aruni/style.css')
-        styles.insert(-2,
-                '/ui/goodforms/fancybox/jquery.fancybox-1.3.1.css')
-        site_root = context.root
-        # Add specific style on root
-        #if site_root is context.root:
-        #    wg_style = '%s/root/style.css' % self.get_canonical_path()
-        #    styles.insert(-1, wg_style)
-        # Replace root style by website style
-        if styles[-1] == '/theme/style/;download':
-            if site_root != context.root:
-                style = site_root.get_resource('theme/style')
-                root = resource.get_resource('/')
-                if root.is_allowed_to_view(context.user, style):
-                    del styles[-1]
-                    styles.append('{0}/;download'.format(
-                        context.get_link(style)))
-
-        if isinstance(context.resource, Form) and context.view_name == 'print':
-            # Disable custom CSS on print view
-            if styles[-1].endswith('/style/;download'):
-                del styles[-1]
-
+        #styles = super(Skin, self).get_styles(context)
+        styles = []
+        styles.append('/ui/goodforms/style_base.css')
+        #styles.append('/ui/goodforms/style.css')
+        styles.append('/ui/goodforms/fancybox/jquery.fancybox-1.3.1.css')
         return styles
 
 

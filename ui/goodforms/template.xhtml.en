@@ -1,82 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="${language}"
-  xmlns:stl="http://www.hforge.org/xml-namespaces/stl">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:stl="http://www.hforge.org/xml-namespaces/stl"
+      lang="${language}">
   <head>
     <title>${title}</title>
-    <base href="${base_uri}" />
+    <base href="${base_uri}"/>
     <!-- Meta -->
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta stl:repeat="meta meta_tags" name="${meta/name}" lang="${meta/lang}"
-      content="${meta/content}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+    <meta name="${meta/name}" lang="${meta/lang}" stl:repeat="meta meta_tags" content="${meta/content}"></meta>
     <!-- Canonical URL for search engines -->
-    <link rel="canonical" href="${canonical_uri}" />
+    <link rel="canonical" href="${canonical_uri}"/>
     <!-- CSS -->
-    <link type="text/css" rel="stylesheet" stl:repeat="style styles"
-      href="${style}" />
+    <link rel="stylesheet" href="${style}" stl:repeat="style styles" type="text/css"/>
     <!-- JavaScript -->
-    <script type="text/javascript" stl:repeat="script scripts" src="${script}"
-      />
+    <script src="${script}" stl:repeat="script scripts" type="text/javascript"/>
     <!-- Icon -->
-    <link rel="shortcut icon" href="${favicon_href}" type="${favicon_type}" />
+    <link rel="shortcut icon" href="/ui/platform/favicon.ico" type="image/x-icon"></link>
   </head>
   <body>
-  <div id="page">
-
+    <a name="top"/>
+    ${modal}
     <!-- Header -->
-    <div id="header">
-      <div id="links">
-        <a stl:repeat="link usermenu" href="${link/href}" id="${link/id}"
-          title="${link/title}">${link/title}</a>
-      </div>
-      <!-- Languages & Searchbar -->
-      <table cellpadding="0" cellspacing="0" class="header-toolbar">
-        <tr>
-          <td class="languages">${languages}</td>
-          <td class="search">
-            <form action="/;browse_content" method="get">
-              <input name="text" class="search_box" type="text"
-                value="" size="15" />
-            </form>
-          </td>
-        </tr>
-      </table>
-      <!-- Menu -->
-      <ul stl:if="menu" id="menu">
-        <li stl:repeat="menu menu" class="${menu/class}">
-          <a href="${menu/path}" id="${menu/id}" target="${menu/target}"
-             title="${menu/title}">${menu/title}</a>
-        </li>
-      </ul>
-      <!-- Logo -->
-      <a href="/" stl:if="logo_href" id="logo">
-        <img src="${logo_href}"/>
-      </a>
-      <div class="clear" />
-    </div>
-
-    <!-- Location & Views-->
-    ${location}
+    ${adminbar}
 
     <!-- Body -->
-    <div id="body">
-      <h1 stl:if="page_title">${page_title}</h1>
-      ${message}
-      <table cellpadding="0" cellspacing="0" border="0" width="100%">
-        <tr>
-          <td id="content" valign="top">
-            ${body}
-          </td>
-          <td id="right" valign="top" stl:if="context_menus">
-            <stl:block stl:repeat="menu context_menus">${menu}</stl:block>
-          </td>
-        </tr>
-      </table>
-    </div>
+    <div id="body" class="${page_css_id}">
+      <div class="container-liquid">
+        ${breadcrumb}
+        <div class="clearfix"/>
+        <div class="row">
+          <div id="right" valign="top" stl:if="menus"
+               class="left-sidebar col-lg-3 col-md-3 col-sm-12">
+            <stl:block stl:repeat="menu menus">${menu}</stl:block>
+          </div>
+          <div id="left" valign="top" class="${main_row_class} col-sm-12">
+            <div id="left-content">
+              <!--
+              <h1 stl:if="not tabs">${view_title}</h1>
+              <h1 stl:if="tabs">${page_title}</h1>
+              -->
+              ${tabs}
+              <div class="body-content">
+                ${message}
+                ${navigation_buttons}
+                ${body}
+              </div>
+              <div class="clear"/>
+            </div>
+          </div>
+        </div>
 
-    <!-- Footer -->
-    <div id="footer">${footer}</div>
-  </div>
+      </div>
+      <div id="footer">
+        <span>Goodforms</span>
+      </div>
+    </div>
   </body>
+
 </html>
