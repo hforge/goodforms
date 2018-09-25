@@ -146,8 +146,8 @@ class FormPage(CSV):
         page_number = self.get_page_number()
 
         # Lecture seule ?
-        ac = self.get_access_control()
-        if not skip_print and not ac.is_allowed_to_edit(context.user, form):
+        root = resource.get_resource('/')
+        if not skip_print and not root.is_allowed_to_edit(context.user, form):
             state = form.get_workflow_state()
             if state in (FINISHED, EXPORTED):
                 readonly = True

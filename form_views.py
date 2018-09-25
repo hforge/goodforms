@@ -151,8 +151,7 @@ class Form_View(STLView):
         skip_print = self.is_skip_print(resource, context)
         if is_print(context):
             skip_print = True
-        ac = resource.get_access_control()
-        readonly = not ac.is_allowed_to_edit(context.user, resource)
+        readonly = not context.root.is_allowed_to_edit(context.user, resource)
         formpage = resource.get_formpage(self.page_number)
         namespace = formpage.get_namespace(resource, self, context,
                 skip_print=skip_print, readonly=readonly)
@@ -441,8 +440,7 @@ class Form_Send(STLView):
                 'infos': infos}
         # ACLs
         user = context.user
-        ac = resource.get_access_control()
-        is_allowed_to_export = ac.is_allowed_to_export(user, resource)
+        is_allowed_to_export = context.root.is_allowed_to_export(user, resource)
         namespace['is_allowed_to_export'] = is_allowed_to_export
         # State
         namespace['statename'] = statename = resource.get_workflow_state()

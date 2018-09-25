@@ -754,8 +754,8 @@ class Application_RedirectToForm(GoToSpecificDocument):
     def get_form_name(self, user, resource):
         if user is None:
             user = get_demo_user(resource)
-        ac = resource.get_access_control()
-        if ac.is_allowed_to_edit(user, resource):
+        root = resource.get_resource('/')
+        if root.is_allowed_to_edit(user, resource):
             return resource.default_form
         if resource.get_resource(user.name, soft=True) is not None:
             return user.name

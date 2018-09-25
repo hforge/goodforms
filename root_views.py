@@ -99,11 +99,9 @@ class Root_View(AutoForm):
         if not anonymous:
             workgroups = []
             for child in resource.search_resources(cls=Workgroup):
-                ac = child.get_access_control()
-                if not ac.is_allowed_to_view(user, child):
+                root = resource.get_resource('/')
+                if not root.is_allowed_to_view(user, child):
                     continue
-                if child.has_user_role(user.name, 'members'):
-                    workgroups.append(child)
 
             workgroups_len = len(workgroups)
             if not workgroups_len:

@@ -134,8 +134,7 @@ class FrontView(BaseIconsView):
         user = context.user
         items = []
         for child in resource.search_resources(cls=self.cls):
-            ac = child.get_access_control()
-            if not ac.is_allowed_to_view(user, child):
+            if not context.root.is_allowed_to_view(user, child):
                 continue
             title = child.get_title()
             items.append({'icon': child.get_logo_icon(size=self.size),
