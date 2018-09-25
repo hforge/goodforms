@@ -73,7 +73,7 @@ class Workgroup(Folder):
     class_description = MSG(u"Create your client space to manage collection "
             u"applications and submit them.")
     class_version = '20120411'
-    class_views = ['view', 'show']
+    class_views = ['view', 'show', 'new_resource']
     class_skin = 'ui/goodforms'
 
     # Fields
@@ -99,7 +99,8 @@ class Workgroup(Folder):
 
 
     def get_document_types(self):
-        return super(Workgroup, self).get_document_types() + [Application]
+        return [Application]
+
 
     def _get_resource(self, name):
         if name == 'shop':

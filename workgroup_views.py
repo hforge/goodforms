@@ -33,6 +33,7 @@ from ikaaro.widgets import TextWidget, MultilineWidget, PasswordWidget
 from ikaaro.widgets import ReadOnlyWidget, CheckboxWidget
 
 # Import from agitiols
+from agitools.autotable import AutoTable
 from agitools.order import OrderAutoTable
 
 # Import from goodforms
@@ -187,77 +188,19 @@ class Workgroup_Menu(IconsView):
 
 
 
-class Workgroup_View(Folder_BrowseContent):
+class Workgroup_View(AutoTable):
+
     access = 'is_allowed_to_edit'
-    template = '/ui/goodforms/workgroup/view.xml'
     title = MSG(u"Manage your client space")
+
+    # FIXME
+    # template = '/ui/goodforms/workgroup/view.xml'
+    base_classes = Application.class_id
     search_template = None
 
-    table_columns = freeze([
-            ('form', MSG(u"Application")),
-            ('subscribed', MSG(u"Subscribed Users")),
-            ('max_users', MSG(u'Maximum users')),
-            ('file', MSG(u"Source File")),
-            ('ctime', MSG(u"Creation Date"))])
-    table_actions = freeze([])
+    table_fields = ['form', 'subscribed', 'max_users', 'file', 'ctime']
+    table_actions = []
 
-
-    def get_namespace(self, resource, context):
-        # Menu
-        menu = Workgroup_Menu().GET(resource, context)
-
-        # Batch
-        batch = None
-        items = self.get_items(resource, context)
-        if items and self.batch_template is not None:
-            template = resource.get_resource(self.batch_template)
-            namespace = self.get_batch_namespace(resource, context, items)
-            batch = stl(template, namespace)
-
-        # Table
-        table = None
-        if batch:
-            if self.table_template is not None:
-                items = self.sort_and_batch(resource, context, items)
-                template = resource.get_resource(self.table_template)
-                namespace = self.get_table_namespace(resource, context,
-                        items)
-                table = stl(template, namespace)
-
-        return {'menu': menu, 'batch': batch, 'table': table}
-
-
-    def get_items(self, resource, context, *args):
-        query = PhraseQuery('format', Application.class_id)
-        proxy = super(Workgroup_View, self)
-        return proxy.get_items(resource, context, query, *args)
-
-
-    def sort_and_batch(self, resource, context, results):
-        start = context.query['batch_start']
-        size = context.query['batch_size']
-        sort_by = context.query['sort_by']
-        reverse = context.query['reverse']
-        items = results.get_documents(sort_by=sort_by, reverse=reverse,
-                                      start=start, size=size)
-
-        # FIXME This must be done in the catalog.
-        if sort_by == 'title':
-            items.sort(cmp=lambda x,y: cmp(x.title, y.title))
-            if reverse:
-                items.reverse()
-
-        # Access Control (FIXME this should be done before batch)
-        root = context.root
-        allowed_items = []
-        for item in items:
-            resource = root.get_resource(item.abspath)
-            # On regarde mais sans toucher
-            #ac = resource.get_access_control()
-            #if ac.is_allowed_to_view(user, resource):
-            allowed_items.append((item, resource))
-
-        return allowed_items
 
 
     def get_item_value(self, resource, context, item, column):
