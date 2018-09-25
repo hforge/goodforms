@@ -25,7 +25,6 @@ from itools.gettext import MSG
 from ikaaro.buttons import BrowseButton, Button
 from ikaaro.utils import make_stl_template
 
-# Import from goodforms
 
 
 class CreateButton(Button):
