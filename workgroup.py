@@ -160,7 +160,7 @@ class Workgroup(Folder):
         elif isinstance(resource, Form):
             return (role in ('members', 'reviewers')
                     or user.name == resource.name)
-        abspath = resource.get_abspath()
+        abspath = str(resource.abspath)
         if len(abspath) > 1 and abspath[1] == 'theme':
             return role in ('guests', 'members', 'reviewers')
         return super(Workgroup, self).is_allowed_to_view(user, resource)
@@ -181,7 +181,7 @@ class Workgroup(Folder):
             if resource.name == resource.parent.default_form:
                 return role in ('members', 'reviewers')
             return resource.name == user.name or role == 'reviewers'
-        elif resource.get_abspath()[1] == 'theme':
+        elif resource.abspath[1] == 'theme':
             return role in ('members', 'reviewers')
         return super(Workgroup, self).is_allowed_to_edit(user, resource)
 

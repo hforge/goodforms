@@ -213,12 +213,12 @@ class Application(Folder):
 
 
     def get_admin_url(self, context):
-        base_url = context.uri.resolve(self.get_abspath())
+        base_url = context.uri.resolve(self.abspath)
         return base_url.resolve2(';view')
 
 
     def get_spread_url(self, context, email=None):
-        base_url = context.uri.resolve(self.get_abspath())
+        base_url = context.uri.resolve(self.abspath)
         spread_url = base_url.resolve2(';login')
         if email is not None:
             spread_url.query['username'] = email

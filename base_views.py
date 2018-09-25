@@ -79,8 +79,8 @@ class LoginView(BaseLoginView):
         # At the root, redirect to the workgroup or application
         if type(goto) is not Reference:
             goto = get_reference(goto)
-        if resource.get_abspath().resolve(goto.path) == '/':
-            if not is_admin(user, resource):
+        if resource.abspath.resolve(goto.path) == '/':
+            if not context.root.is_admin(user, resource):
                 goto = get_reference('/;show')
 
         # FIXME avoid redirecting to user home
@@ -144,7 +144,7 @@ class FrontView(BaseIconsView):
                 'url': context.get_link(child),
                 'sort': title.lower(),
                 # XXX Utilisé par Root_Show
-                'role': ac.get_user_role(user.name)})
+                'role': 'XXX'})
         if not items:
             class_title = self.cls.class_title.gettext()
             return context.come_back(MSG_NO_RESOURCE,
@@ -198,7 +198,7 @@ class IconsView(BaseIconsView):
             view = context.resource.get_default_view_name()
             here_path = here_path.resolve2(';' + view)
 
-        base_path = resource.get_abspath()
+        base_path = resource.abspath
 
         rows = [[]]
         for item in self.get_items(resource, context):

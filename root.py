@@ -88,6 +88,10 @@ class Root(BaseRoot):
     #    theme.set_property('favicon', name)
 
 
+    def get_user_role(self, name):
+        return u'XXX'
+
+
     def get_document_types(self):
         return super(Root, self).get_document_types() + [Workgroup]
 

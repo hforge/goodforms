@@ -30,6 +30,9 @@ from utils import is_print
 
 class Skin(BaseSkin):
 
+
+    is_backoffice_skin = False
+
     def get_template(self, context):
         if is_print(get_context()):
             return self.get_resource('/ui/goodforms/print.xhtml')
