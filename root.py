@@ -47,7 +47,7 @@ class Root(BaseRoot):
     class_id = 'goodforms'
     class_skin = 'goodforms'
     class_version = '20120411'
-    class_views = BaseRoot.class_views + ['show']
+    class_views = ['view', 'show']
 
     # Configuration
     __fixed_handlers__ = BaseRoot.__fixed_handlers__ + ['shop', 'products']

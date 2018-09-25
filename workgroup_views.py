@@ -232,8 +232,6 @@ class Workgroup_ViewOrders(OrderAutoTable):
 
     sort_by = 'ctime'
     reverse = True
-    batch_msg1 = MSG(u"There is 1 order")
-    batch_msg2 = MSG(u"There are {n} orders")
     table_actions = []
 
     styles = ['/ui/shop/style.css']
@@ -270,9 +268,3 @@ class Workgroup_ViewOrders(OrderAutoTable):
     def search_cls(self):
         from workgroup import Workgroup_Order
         return Workgroup_Order
-
-
-    def get_items(self, resource, context, *args):
-        query = PhraseQuery('is_order', True)
-        proxy = super(Workgroup_ViewOrders, self)
-        return proxy.get_items(resource, context, query)

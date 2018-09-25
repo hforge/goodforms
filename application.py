@@ -72,7 +72,7 @@ class Application(Folder):
     class_description = MSG(u"Create from an OpenDocument Spreadsheet file")
     class_icon16 = 'icons/16x16/tasks.png'
     class_icon48 = 'icons/48x48/tasks.png'
-    class_views = Folder.class_views + ['show']
+    class_views =  ['view', 'show']
 
     # Configuration
     allowed_users = 10
