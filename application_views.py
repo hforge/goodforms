@@ -265,17 +265,17 @@ class Application_View(AutoTable):
                 'email'):
             user = context.root.get_user(brain.name)
             if column == 'state':
-                if user is not None and not user.get_property('password'):
+                if user is not None and not user.get_value('password'):
                     return WorkflowState.get_value(NOT_REGISTERED)
                 return 'XXX'
             elif column in ('firstname', 'lastname', 'company'):
                 if user is None:
                     return u""
-                return user.get_property(column)
+                return user.get_value(column)
             elif column == 'email':
                 if user is None:
                     return u""
-                email = user.get_property('email')
+                email = user.get_value('email')
                 application_title = resource.get_title()
                 subject = MAILTO_SUBJECT.gettext(
                         workgroup_title=resource.parent.get_title(),
@@ -307,7 +307,7 @@ class Application_View(AutoTable):
             if name in cache:
                 return cache[name]
             user = get_user(name)
-            if user is not None and not user.get_property('password'):
+            if user is not None and not user.get_value('password'):
                 state = NOT_REGISTERED
             else:
                 state = item.workflow_state
@@ -344,7 +344,7 @@ class Application_View(AutoTable):
             if user is None:
                 value = None
             else:
-                email = user.get_property('email').lower()
+                email = user.get_value('email').lower()
                 # Group by domain
                 username, domain = email.split('@')
                 value = (domain, username)
@@ -364,7 +364,7 @@ class Application_View(AutoTable):
     #    namespace = {}
     #    namespace['menu'] = resource.menu.GET(resource, context)
     #    namespace['n_forms'] = resource.get_n_forms()
-    #    namespace['max_users'] = resource.get_property('max_users')
+    #    namespace['max_users'] = resource.get_value('max_users')
     #    namespace['spread_url'] = resource.get_spread_url(context)
 
     #    # Search
@@ -411,7 +411,7 @@ class Application_View(AutoTable):
                     item_brain, item_resource = item
                     user = context.root.get_user(item_brain.name)
                     if (user is not None
-                            and user.get_property('password') is None):
+                            and user.get_value('password') is None):
                         state = NOT_REGISTERED
                     else:
                         state = item_brain.workflow_state
@@ -498,10 +498,10 @@ class Application_Export(BaseView):
         for form in resource.get_forms():
             user = users.get_resource(form.name, soft=True)
             if user:
-                get_property = user.get_property
-                email = get_property('email')
-                firstname = get_property('firstname')
-                lastname = get_property('lastname')
+                get_value = user.get_value
+                email = get_value('email')
+                firstname = get_value('firstname')
+                lastname = get_value('lastname')
             else:
                 email = ""
                 firstname = ""
@@ -558,7 +558,7 @@ class Application_Register(STLView):
         namespace = proxy.get_namespace(resource, context)
         namespace['menu'] = resource.menu.GET(resource, context)
         namespace['title'] = self.title
-        namespace['max_users'] = resource.get_property('max_users')
+        namespace['max_users'] = resource.get_value('max_users')
         namespace['n_forms'] = resource.get_n_forms()
         namespace['allowed_users'] = resource.get_allowed_users()
         namespace['MSG_NO_MORE_ALLOWED'] = ERR_NO_MORE_ALLOWED
@@ -632,7 +632,7 @@ class Application_Login(LoginView):
             return
 
         user = context.root.get_user_from_login(email)
-        subscription = resource.get_property('subscription')
+        subscription = resource.get_value('subscription')
 
         # New user?
         if user is None:
@@ -648,7 +648,7 @@ class Application_Login(LoginView):
                 return
 
         # Is already registered?
-        if user.get_property('password') is not None:
+        if user.get_value('password') is not None:
             context.message = ERR_ALREADY_REGISTERED
             return
 
@@ -690,7 +690,7 @@ class Application_Login(LoginView):
 
         if not is_thingy(context.message, ERROR):
             # Create the form if necessary
-            if resource.get_property('subscription') == 'open':
+            if resource.get_value('subscription') == 'open':
                 user = context.user
                 resource.subscribe_user(user)
 
@@ -728,7 +728,7 @@ class Application_RedirectToForm(GoToSpecificDocument):
             return resource.default_form
         if resource.get_resource(user.name, soft=True) is not None:
             return user.name
-        subscription = resource.get_property('subscription')
+        subscription = resource.get_value('subscription')
         if subscription == 'demo':
             # Create form on the fly
             resource.subscribe_user(user)
@@ -753,7 +753,7 @@ class Application_NewOrder(AutoForm):
     def action(self, resource, context, form):
         from workgroup import Workgroup_Order
         product = resource.get_resource(form['product'])
-        nb_users = product.get_property('nb_users')
+        nb_users = product.get_value('nb_users')
         application_abspath = str(resource.abspath)
         lines = [(1, product)]
         # Create Order

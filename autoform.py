@@ -106,7 +106,7 @@ class RecaptchaDatatype(String):
         remote_ip = context.get_remote_ip() or '127.0.0.1'
         if remote_ip is None:
             return True
-        whitelist = context.root.get_property('recaptcha_whitelist')
+        whitelist = context.root.get_value('recaptcha_whitelist')
         return remote_ip not in whitelist
 
 
@@ -115,7 +115,7 @@ class RecaptchaDatatype(String):
         context = get_context()
         if getattr(context, 'recaptcha_return_code', None) == 'true':
             return True
-        private_key = context.root.get_property('recaptcha_private_key')
+        private_key = context.root.get_value('recaptcha_private_key')
         remote_ip = context.get_remote_ip() or '127.0.0.1'
         # Get Captcha fields
         recaptcha_challenge_field = context.get_form_value(
@@ -181,7 +181,7 @@ class RecaptchaWidget(Widget):
 
     def public_key(self):
         context = get_context()
-        return context.root.get_property('recaptcha_public_key')
+        return context.root.get_value('recaptcha_public_key')
 
 
 captcha_widgets = freeze([

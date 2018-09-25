@@ -125,14 +125,14 @@ class Root_View(AutoForm):
         namespace['your_workgroups'] = your_workgroups
 
         # home page content
-        homepage = resource.get_property('homepage')
+        homepage = resource.get_value('homepage')
         if homepage is None:
             # Avoid response abort
             homepage = None
         namespace['homepage_content'] = homepage
 
         # slogan
-        namespace['slogan'] = resource.get_property('slogan')
+        namespace['slogan'] = resource.get_value('slogan')
         # Action
         namespace['action'] = None
         namespace['widgets'] = []
@@ -254,14 +254,14 @@ class Root_ShowAllWorkgroups(AutoTable):
     def get_item_value(self, resource, context, item, column):
         brain, item_resource = item
         if column == 'vhosts':
-            return '\n'.join(item_resource.get_property(column))
+            return '\n'.join(item_resource.get_value(column))
         elif column == 'logo':
             icon = item_resource.get_logo_icon()
             icon = XMLContent.encode(icon)
             return XMLParser('<img src="%s"/>' % icon)
         elif column == 'members':
             members = [context.root.get_user(x).get_title()
-                for x in item_resource.get_property('members')]
+                for x in item_resource.get_value('members')]
             return u', '.join(members)
         proxy = super(Root_ShowAllWorkgroups, self)
         return proxy.get_item_value(resource, context, item, column)
@@ -287,7 +287,7 @@ class Root_ShowAllApplications(AutoTable):
             return title, context.get_link(item_resource)
         elif column == 'max_users':
             subscribed = len(list(item_resource.get_forms()))
-            max_users = item_resource.get_property('max_users')
+            max_users = item_resource.get_value('max_users')
             return u"%s/%s" % (subscribed, max_users)
         proxy = super(Root_ShowAllApplications, self)
         return proxy.get_item_value(resource, context, item, column)

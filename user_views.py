@@ -136,7 +136,7 @@ class UserFolder_BrowseContent(Folder_CSV_Export):
         root = get_context().root
         def key(item):
             resource = root.get_resource(item.abspath)
-            return bool(resource.get_property('user_must_confirm'))
+            return bool(resource.get_value('user_must_confirm'))
         return key
 
 

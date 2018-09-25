@@ -60,7 +60,7 @@ Your password: {password}""")
 
     def get_catalog_values(self):
         values = super(GoodFormsUser, self).get_catalog_values()
-        values['has_password'] = self.get_property('password') is not None
+        values['has_password'] = self.get_value('password') is not None
         return values
 
 

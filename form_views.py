@@ -478,15 +478,15 @@ Summary of the "{application_title}" campaign:
 - {pending_forms} pending forms;
 - {finished_forms} finished forms.""").gettext(
                 user_title=user.get_title(),
-                user_email=user.get_property('email'),
+                user_email=user.get_value('email'),
                 application_title=application.get_title(), **stats)
 
         # Send notification to workgroup members
         root = context.root
         users = resource.get_resource('/users')
-        for username in workgroup.get_property('members'):
+        for username in workgroup.get_value('members'):
             member = users.get_resource(username)
-            to_addr = (member.get_title(), member.get_property('email'))
+            to_addr = (member.get_title(), member.get_value('email'))
             root.send_email(to_addr, subject, text=text,
                     subject_with_host=False)
 

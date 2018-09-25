@@ -163,7 +163,7 @@ class Application(Folder):
 
     def get_stats(self):
         stats = {}
-        stats['available_users'] = self.get_property('max_users')
+        stats['available_users'] = self.get_value('max_users')
         stats['registered_users'] = 0
         stats['unconfirmed_users'] = 0
         stats['empty_forms'] = 0
@@ -173,7 +173,7 @@ class Application(Folder):
         for form in self.get_forms():
             stats['registered_users'] += 1
             user = users.get_resource(form.name)
-            if user.get_property('password') is None:
+            if user.get_value('password') is None:
                 stats['unconfirmed_users'] += 1
             else:
                 state = form.get_workflow_state()
@@ -234,7 +234,7 @@ class Application(Folder):
         """
         # Check if we have to send an alert ?
         nb_forms = self.get_n_forms()
-        max_users = self.get_property('max_users')
+        max_users = self.get_value('max_users')
         if (max_users - nb_forms) not in (0, 5, 10, 15, 20):
             return
         # Build alert kw
@@ -252,7 +252,7 @@ class Application(Folder):
         # Send Alert to workgroup administrators
         root = self.get_root()
         for user in workgroup.get_workgroup_administrators():
-            email = user.get_property('email')
+            email = user.get_value('email')
             kw['user_title'] = user.get_title()
             subject = email_credit_alert['subject'].gettext(**kw)
             text = email_credit_alert['text'].gettext(**kw)

@@ -48,10 +48,10 @@ class Workgroup_Order(Folder):
         super(Workgroup_Order, self).onenter_paid()
         # Increase nb mails on application
         root = self.get_root()
-        nb_users = self.get_property('nb_users')
-        application_abspath = self.get_property('application_abspath')
+        nb_users = self.get_value('nb_users')
+        application_abspath = self.get_value('application_abspath')
         application = root.get_resource(application_abspath)
-        max_users = application.get_property('max_users')
+        max_users = application.get_value('max_users')
         application.set_value('max_users', max_users + nb_users)
 
 
@@ -116,7 +116,7 @@ class Workgroup(Folder):
     def get_workgroup_administrators(self):
         root = self.get_root()
         administrators = []
-        for user_name in self.get_property('members'):
+        for user_name in self.get_value('members'):
             administrators.append(root.get_user(user_name))
         # XXX Maybe we have to alert root admins ?
         # But currently there's to many admins !
@@ -134,7 +134,7 @@ class Workgroup(Folder):
             return True
         role = self.get_user_role(user.name)
         if isinstance(resource, Application):
-            subscription = resource.get_property('subscription')
+            subscription = resource.get_value('subscription')
             if subscription == 'demo':
                 return True
             elif role in ('members', 'reviewers'):

@@ -361,7 +361,7 @@ class CSV_Export(object):
             try:
                 value = getattr(item, name)
             except AttributeError:
-                value = item.get_property(name)
+                value = item.get_value(name)
             else:
                 if callable(value):
                     value = value()

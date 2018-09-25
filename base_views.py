@@ -106,7 +106,7 @@ class LoginView(BaseLoginView):
             return
 
         # Case 2: Forgotten password
-        email = user.get_property('email')
+        email = user.get_value('email')
         user.send_forgotten_password(context, email)
         path = '/ui/website/forgotten_password.xml'
         handler = resource.get_resource(path)
@@ -139,7 +139,7 @@ class FrontView(BaseIconsView):
             title = child.get_title()
             items.append({'icon': None,
                 'title': title,
-                'description': child.get_property('description'),
+                'description': child.get_value('description'),
                 'url': context.get_link(child),
                 'sort': title.lower(),
                 # XXX Utilisé par Root_Show

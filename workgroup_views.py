@@ -70,7 +70,7 @@ class Workgroup_NewInstance(AutoAdd):
         workgroup = resource.get_resource(form['name'])
         # Set default language
         accept = context.accept_language
-        ws_languages = context.root.get_property('website_languages')
+        ws_languages = context.root.get_value('website_languages')
         # FIXME
         current_language = 'en'
         #current_language = accept.select_language(ws_languages)
@@ -210,7 +210,7 @@ class Workgroup_View(AutoTable):
             return len(list(item_resource.get_forms()))
         elif column == 'file':
             parameters = item_resource.get_resource('parameters')
-            return (parameters.get_property('filename') or u"Source",
+            return (parameters.get_value('filename') or u"Source",
                     '{0}/;download'.format(context.get_link(parameters)))
         elif column == 'ctime':
             return context.format_datetime(brain.ctime)
@@ -248,7 +248,7 @@ class Workgroup_ViewOrders(OrderAutoTable):
     def get_item_value(self, resource, context, item, column):
         brain, item_resource = item
         if column in ('total_price', 'total_paid'):
-            value = item_resource.get_property(column)
+            value = item_resource.get_value(column)
             return item_resource.format_price(value)
         elif column == 'name':
             return 'XXX'

@@ -429,7 +429,7 @@ class Products_Widget(RadioWidget):
         for option in self.options():
             kw = option
             product = root.get_resource(kw['name'])
-            kw['nb_users'] = product.get_property('nb_users')
+            kw['nb_users'] = product.get_value('nb_users')
             kw['price'] = product.get_price_with_tax(with_devise=True)
             options_computed.append(kw)
         return options_computed
