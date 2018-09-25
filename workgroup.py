@@ -198,7 +198,3 @@ class Workgroup(Folder):
             return False
         role = self.get_user_role(user.name)
         return role in ('members', 'reviewers')
-
-
-    def update_20120411(self):
-        self.make_resource('orders', Workgroup_Orders)

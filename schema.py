@@ -525,31 +525,3 @@ class Schema(Folder):
 
     def get_schema_pages(self):
         return self.handler.get_schema_pages()
-
-
-    def update_20090123(self):
-        handler = self.handler
-        for lineno, record in enumerate(handler.get_records()):
-            get_record_value = handler.get_record_value
-            update_record = handler.update_record
-            record_id = record.id
-            # representation -> length+enum_repr+decimals
-            # Default values at the time of writing
-            length = 20
-            enum_repr = 'radio'
-            decimals = 2
-            representation = get_record_value(record, 'representation')[0]
-            if "." in representation:
-                integer, decimals = representation.split(".")
-            elif representation.isdigit():
-                length = representation
-            elif EnumerateRepresentation.is_valid(representation):
-                enum_repr = representation
-            update_record(record_id, length=length, enum_repr=enum_repr,
-                    decimals=decimals, representation=None)
-            # vocabulary -> enum_options
-            vocabulary = get_record_value(record, 'vocabulary')[0]
-            vocabulary = Unicode.decode(vocabulary)
-            enum_options = EnumerateOptions.split(vocabulary)
-            handler.update_record(record_id, enum_options=enum_options,
-                    vocabulary=None)
