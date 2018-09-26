@@ -49,12 +49,9 @@ from workflow import EMPTY, PENDING, FINISHED
 
 
 ERR_NOT_ODS_XLS = ERROR(u"Not an ODS or XLS file.")
-ERR_WRONG_NUMBER_COLUMNS = ERROR(u'In the "{name}" sheet, wrong number of '
-        u'columns. Do you use the latest template?')
-ERR_FIRST_PAGE = ERROR(u'First form page must be named "A", not '
-        u'"{page}".')
-ERR_PAGE_NAME = ERROR(u'In the "{name}" sheet, page "{page}" is not '
-        u'related to any variable in the schema.')
+ERR_WRONG_NUMBER_COLUMNS = ERROR(u'In the "{name}" sheet, wrong number of columns. Do you use the latest template?')
+ERR_FIRST_PAGE = ERROR(u'First form page must be named "A", not "{page}".')
+ERR_PAGE_NAME = ERROR(u'In the "{name}" sheet, page "{page}" is not related to any variable in the schema.')
 
 
 def find_title(table):
@@ -112,8 +109,12 @@ class Application(Folder):
             if table.get_width() != len(cls.columns):
                 error = ERR_WRONG_NUMBER_COLUMNS.gettext(name=table.get_name())
                 raise FormatError(error)
-            # cls va transformer le CSV en table
-            self.make_resource(name, cls, title={'en': title}, data=table.to_csv())
+            # Create schema or controls
+            data = table.to_csv()
+            kw = {'title': {'en': title},
+                  'data': data}
+            r = self.make_resource(name, cls, **kw)
+            r._load_from_csv(data)
         schema_resource = self.get_resource('schema')
         schema, pages = schema_resource.get_schema_pages()
         # Pages

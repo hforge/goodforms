@@ -32,6 +32,7 @@ from itools.handlers import checkid
 from itools.web import ERROR
 
 # Import from ikaaro
+from ikaaro.fields import File_Field, Char_Field
 from ikaaro.folder import Folder
 
 # Import from goodforms
@@ -44,32 +45,19 @@ from utils import SI
 single_eq = re.compile(ur"""(?<=[^!<>=])[=](?=[^=])""")
 
 
-ERR_BAD_NAME = ERROR(u'In schema, line {line}, variable "{name}" is '
-        u'invalid.')
-ERR_DUPLICATE_NAME = ERROR(u'In schema, line {line}, variable "{name}" is '
-        u'duplicated.')
-ERR_BAD_TYPE = ERROR(u'In schema, line {line}, type "{type}" is '
-        u'invalid.')
-ERR_BAD_LENGTH = ERROR(u'In schema, line {line}, length "{length}" is '
-        u'invalid.')
-ERR_MISSING_OPTIONS = ERROR(u'In schema, line {line}, enum options are '
-        u'missing.')
-ERR_BAD_ENUM_REPR = ERROR(u'In schema, line {line}, enum representation '
-        u'"{enum_repr}" is invalid.')
-ERR_BAD_DECIMALS = ERROR(u'In schema, line {line}, decimals '
-        u'"{decimals}" are invalid.')
-ERR_BAD_MANDATORY = ERROR(u'In schema, line {line}, mandatory "{mandatory}" '
-        u'is invalid.')
-ERR_BAD_SIZE = ERROR(u'In schema, line {line}, size ' u'"{size}" is '
-        u'invalid.')
-ERR_BAD_DEPENDENCY = ERROR(u'In schema, line {line}, syntax error in '
-        u'dependency: {err}')
-ERR_BAD_FORMULA = ERROR(u'In schema, line {line}, syntax error in '
-        u'formula: {err}')
-ERR_NO_FORMULA = ERROR(u'In schema, line {line}, type "{type}" does not '
-        u'support formulas.')
-ERR_BAD_DEFAULT = ERROR(u'In schema, line {line}, default value '
-        u'"{default}" is invalid.')
+ERR_BAD_NAME = ERROR(u'In schema, line {line}, variable "{name}" isinvalid.')
+ERR_DUPLICATE_NAME = ERROR(u'In schema, line {line}, variable "{name}" is duplicated.')
+ERR_BAD_TYPE = ERROR(u'In schema, line {line}, type "{type}" is invalid.')
+ERR_BAD_LENGTH = ERROR(u'In schema, line {line}, length "{length}" is invalid.')
+ERR_MISSING_OPTIONS = ERROR(u'In schema, line {line}, enum options are missing.')
+ERR_BAD_ENUM_REPR = ERROR(u'In schema, line {line}, enum representation "{enum_repr}" is invalid.')
+ERR_BAD_DECIMALS = ERROR(u'In schema, line {line}, decimals "{decimals}" are invalid.')
+ERR_BAD_MANDATORY = ERROR(u'In schema, line {line}, mandatory "{mandatory}" is invalid.')
+ERR_BAD_SIZE = ERROR(u'In schema, line {line}, size ' u'"{size}" is invalid.')
+ERR_BAD_DEPENDENCY = ERROR(u'In schema, line {line}, syntax error in dependency: {err}')
+ERR_BAD_FORMULA = ERROR(u'In schema, line {line}, syntax error in formula: {err}')
+ERR_NO_FORMULA = ERROR(u'In schema, line {line}, type "{type}" does not support formulas.')
+ERR_BAD_DEFAULT = ERROR(u'In schema, line {line}, default value "{default}" is invalid.')
 
 
 class FormatError(ValueError):
@@ -368,15 +356,15 @@ class Schema(Folder):
     class_icon16 = 'icons/16x16/excel.png'
     class_icon48 = 'icons/48x48/excel.png'
 
+    # Fields
+    data = File_Field
+    extension = Char_Field
+    filename = Char_Field
+
     # To import from CSV
     columns = ['title', 'name', 'type', 'help', 'length', 'enum_options',
             'enum_repr', 'decimals', 'mandatory', 'size', 'dependency',
             'formula', 'default']
-
-    # Views
-    add_record = None
-    edit_record = None
-    edit = None
 
 
     def _load_from_csv(self, body, skip_header=True):
@@ -516,13 +504,10 @@ class Schema(Folder):
                     raise FormatError, ERR_BAD_FORMULA(line=lineno, err=err)
             lineno += 1
 
-
-    def init_resource(self, body=None, filename=None, extension=None,
-            skip_header=True, **kw):
-        proxy = super(Schema, self)
-        proxy.init_resource(filename=filename, extension=extension, **kw)
-        #self._load_from_csv(body, skip_header=skip_header)
-
-
     def get_schema_pages(self):
         return self.handler.get_schema_pages()
+
+    # Views
+    add_record = None
+    edit_record = None
+    edit = None

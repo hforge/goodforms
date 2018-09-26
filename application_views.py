@@ -100,7 +100,7 @@ class Application_NewInstance(AutoAdd):
         try:
             child._load_from_file(form['data'], context)
         except ValueError, e:
-            context.message = ERROR(u'Cannot load: {x}').gettext(x=str(e))
+            context.message = ERROR(u'Cannot load: {x}').gettext(x=unicode(e))
             return
         goto = goto.resolve2('0/;pageA#menu')
         return context.come_back(INFO_NEW_APPLICATION, goto)
