@@ -137,7 +137,7 @@ class Form(File):
     workflow = WorkflowState_Field
 
     # Views
-    new_instance = File_NewInstance(access='is_allowed_to_add_form')
+    new_instance = File_NewInstance
     send = Form_Send()
     export = Form_Export()
     print = Form_Print()
