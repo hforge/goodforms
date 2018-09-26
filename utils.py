@@ -19,6 +19,8 @@
 # Import from the Standard Library
 
 # Import from itools
+from itools.core import is_prototype
+from itools.gettext import MSG
 
 # Import from ikaaro
 
