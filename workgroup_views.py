@@ -38,7 +38,6 @@ from agitools.order import OrderAutoTable
 
 # Import from goodforms
 from application import Application
-from base_views import IconsView
 
 
 MSG_NEW_WORKGROUP = INFO(u'Your client space is created. You can '
@@ -147,42 +146,6 @@ class Workgroup_NewInstance(AutoAdd):
         # Come back
         msg = MSG_NEW_WORKGROUP
         return context.come_back(msg, goto)
-
-
-
-class Workgroup_Menu(IconsView):
-    make_item = IconsView.make_item
-    items = [make_item(icon='/ui/goodforms/images/download48.png',
-              title=MSG(u"Download the Template"),
-              description=MSG(u"Download this template and use it to "
-                  u"define to design your form."),
-              extra=MSG(u"""
-<div id="choose-format">
-  <span><a href="#" title="Close"
-    onclick="$('#choose-format').hide(); return false">X</a></span>
-  <ul>
-    <li>Download <a href="/template/;download">ODS Version</a></li>
-    <li>Download <a href="/template-xls/;download">XLS Version</a></li>
-    <li><a href="/samples">More Examples</a></li>
-  </ul>
-</div>
-<script type="text/javascript">
-  $("#choose-format").hide();
-</script>""", format='html'),
-              url='#',
-              onclick='$("#choose-format").show(); return false'),
-             make_item(icon='/ui/goodforms/images/upload48.png',
-              title=MSG(u"Create a Data Collection Application"),
-              description=MSG(u"Uploading this spreadsheet file in GoodForms will generate in one click your data collection application."),
-              url=';new_resource?type=Application'),
-             make_item(icon='/ui/goodforms/images/logo48.png',
-              title=MSG(u"Edit Title, Logo and CSS"),
-              description=MSG(u"Configure your client space"),
-              url=';edit'),
-             make_item(icon='/ui/shop/images/orders.png',
-              title=MSG(u"Manage my bills"),
-              description=MSG(u"Manage my bills & buy new products"),
-              url='./orders')]
 
 
 

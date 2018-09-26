@@ -35,9 +35,8 @@ from agitools.fields import File_Field
 # Import from goodforms
 from application_views import Application_Edit, Application_Export
 from application_views import Application_NewInstance, Application_View
-from application_views import Application_RedirectToForm, Application_Menu
+from application_views import Application_RedirectToForm
 from application_views import Application_Register, Application_Login
-from application_views import Application_NewOrder
 from controls import Controls
 from datatypes import Subscription
 from form import Form
@@ -70,7 +69,7 @@ class Application(Folder):
     class_id = 'Application'
     class_title = MSG(u"Collection Application")
     class_description = MSG(u"Create from an OpenDocument Spreadsheet file")
-    class_views =  ['view', 'show']
+    class_views =  ['view', 'show', 'edit', 'export', 'register']
 
     # Configuration
     allowed_users = 10
@@ -232,10 +231,8 @@ class Application(Folder):
 
     # Views
     new_instance = Application_NewInstance()
-    menu = Application_Menu()
     view = Application_View()
     edit = Application_Edit()
     export = Application_Export()
     register = Application_Register()
     show = Application_RedirectToForm()
-    order = Application_NewOrder()

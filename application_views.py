@@ -43,7 +43,6 @@ from ikaaro.widgets import FileWidget, TextWidget, SelectWidget, file_widget
 from agitools.autotable import AutoTable
 
 # Import from goodforms
-from base_views import LoginView, IconsView
 from buttons import ExportODSButton, ExportXLSButton, AddUsersButton
 from datatypes import Subscription, EmailField
 from form import Form
@@ -55,33 +54,17 @@ from customization import custom_flag
 
 
 ERR_NO_DATA = ERROR(u"No data to collect for now.")
-ERR_NO_MORE_ALLOWED = ERROR(u"You have reached the maximum allowed users. "
-        u'<a href="./;order">Buy new credits</a> if you want to add more '
-        u"users.", format='html')
-INFO_NEW_APPLICATION = INFO(u'Your application is created. You are now on '
-        u'the test form.')
+ERR_NO_MORE_ALLOWED = ERROR(u"You have reached the maximum allowed users. <a href="./;order">Buy new credits</a> if you want to add more users.", format='html')
+INFO_NEW_APPLICATION = INFO(u'Your application is created. You are now on the test form.')
 ERR_PASSWORD_MISSING = ERROR(u"The password is missing.")
 ERR_BAD_EMAIL = ERROR(u"The given username is not an e-mail address.")
 ERR_SUBSCRIPTION_FULL = ERROR(u"No more users are allowed to register.")
 ERR_NOT_ALLOWED = ERROR(u"You are not allowed to register.")
-ERR_ALREADY_REGISTERED = ERROR(u"You are already registered. "
-        u"Log in using your password.")
-MSG_APPLICATION_TITLE = MSG(u'''<span class="application-title">Title of your
-application:</span> {title}''', format='replace_html')
-
+ERR_ALREADY_REGISTERED = ERROR(u"You are already registered. Log in using your password.")
+MSG_APPLICATION_TITLE = MSG(u'''<span class="application-title">Title of your application:</span> {title}''', format='replace_html')
 MAILTO_SUBJECT = MSG(u'{workgroup_title}, form "{application_title}"')
-MAILTO_BODY = MSG(u'Please fill in the form "{application_title}" available '
-        u'here:\r\n'
-        u'<{application_url}>.\r\n')
+MAILTO_BODY = MSG(u'Please fill in the form "{application_title}" available here:\r\n <{application_url}>.\r\n')
 
-
-def get_users_query(query, context):
-    """Filter forms from users list with same name.
-    """
-    query = AndQuery(PhraseQuery('format', 'user'), query)
-    results = context.root.search(query)
-    users = (brain.name for brain in results.get_documents())
-    return (PhraseQuery('name', user) for user in users)
 
 
 
@@ -102,122 +85,6 @@ class Application_NewInstance(AutoAdd):
             return
         goto = goto.resolve2('0/;pageA#menu')
         return context.come_back(INFO_NEW_APPLICATION, goto)
-
-
-
-class Application_Menu(IconsView):
-    cols = 5
-    make_item = IconsView.make_item
-    items = [
-        make_item(icon='/ui/goodforms/images/edit48.png',
-            title=MSG(u"Edit and configure application"),
-            url=';edit',
-            description=None,
-            rel='fancybox',
-            access='is_admin'),
-        make_item(icon='/ui/goodforms/images/download48.png',
-            title=MSG(u'Download App'),
-            description=MSG(u"Get application source file"),
-            url='parameters/;download'),
-        make_item(icon='/ui/goodforms/images/form48.png',
-            title=MSG(u"Show Test Form"),
-            url='0/;pageA'),
-        make_item(icon='/ui/goodforms/images/register48.png',
-            title=MSG(u"Manage Users"),
-            url=';view#users',
-            description=MSG(u"List and add new users"),
-            access='is_allowed_to_register'),
-        # "Spread your Form" here
-        make_item(icon='/ui/goodforms/images/export48.png',
-            title=MSG(u"Collect Data"),
-            extra=MSG(u"""
-<div id="choose-format">
-  <span><a href="#" title="Close"
-    onclick="$('#choose-format').hide(); return false">X</a></span>
-  <ul>
-    <li>Download <a href=";export">ODS Version</a></li>
-    <li>Download <a href=";export?format=xls">XLS Version</a></li>
-  </ul>
-</div>
-<script type="text/javascript">
-  $("#choose-format").hide();
-</script>""", format='html'),
-            url='#',
-            onclick='$("#choose-format").show(); return false',
-            access='is_allowed_to_export')]
-
-
-    def is_allowed_to_register(self, item, resource, context):
-        allowed_users = resource.get_allowed_users()
-        if not bool(allowed_users):
-            item['title'] = ERR_NO_MORE_ALLOWED
-            return False
-        return True
-
-
-    def is_allowed_to_export(self, item, resource, context):
-        for form in resource.get_forms():
-            if form.get_workflow_state() != EMPTY:
-                return True
-        item['title'] = ERR_NO_DATA
-        return False
-
-    def is_admin(self, item, resource, context):
-        user = context.user
-        if user is None:
-            return False
-        return '/config/groups/admin' in user.get_catalog_values()['groups']
-
-#    def get_items(self, resource, context):
-#        proxy = super(Application_Menu, self)
-#        items = proxy.get_items(resource, context)
-#        spread_url = resource.get_spread_url(context)
-#        items.insert(3, self.make_item(
-#            icon='/ui/goodforms/images/spread48.png',
-#            title=MSG(u"Spread your Form"),
-#            extra=MSG(u"""
-#<div id="spread-url">
-#  <span><a href="#" title="Close"
-#    onclick="return hide_spread_url()">X</a></span>
-#  <ul>
-#    <li>You can send this URL to your users:<br/>
-#      <input id="spread-url-text" type="text" readonly="readonly"
-#        value="{spread_url}"/>
-#      <div id="spread-url-copy">
-#        <a href="javascript:alert('You need Flash plugin to copy!');">
-#          Copy</a>
-#      </div>
-#    </li>
-#  </ul>
-#</div>
-#<script type="text/javascript">
-#  $("#spread-url-text").focus(function() {{
-#      this.select();
-#  }});
-#  path = '/ui/goodforms/zeroclipboard/ZeroClipboard.swf'
-#  ZeroClipboard.setMoviePath(path);
-#  var clip = new ZeroClipboard.Client();
-#  clip.setHandCursor(true);
-#  clip.setText("{spread_url}");
-#  function hide_spread_url() {{
-#    $('#spread-url').hide();
-#    clip.hide();
-#    return false;
-#  }}
-#  function show_spread_url() {{
-#    $('#spread-url').show();
-#    clip.show();
-#    return false;
-#  }}
-#  $(document).ready(function() {{
-#    clip.glue("spread-url-copy");
-#    /* Hide #spread-url after the Flash movie is positioned */
-#    hide_spread_url();
-#  }});
-#</script>""", format='replace_html', spread_url=spread_url),
-#            url='#',
-#            onclick='return show_spread_url()'))
-#        return items
 
 
 
@@ -633,37 +500,3 @@ class Application_RedirectToForm(GoToSpecificDocument):
 
     def get_specific_document(self, resource, context):
         return self.get_form_name(context.user, resource)
-
-
-
-class Application_NewOrder(AutoForm):
-
-    access = 'is_allowed_to_edit'
-    title = MSG(u'Choose a product')
-    actions = []
-
-
-    def action(self, resource, context, form):
-        from workgroup import Workgroup_Order
-        product = resource.get_resource(form['product'])
-        nb_users = product.get_value('nb_users')
-        application_abspath = str(resource.abspath)
-        lines = [(1, product)]
-        # Create Order
-        workgroup = resource.get_site_root()
-        workgroup_orders = workgroup.get_resource('orders')
-        orders_module = get_orders(resource)
-        order = orders_module.make_order(workgroup_orders,
-            context.user, lines, cls=Workgroup_Order)
-        order.set_value('nb_users', nb_users)
-        order.set_value('application_abspath', application_abspath)
-        # Create payment into order
-        customer = context.user
-        amount = order.get_total_price()
-        payments_module = get_payments(resource)
-        payment = payments_module.make_payment(order, 'paybox', amount,
-                      customer, order=order)
-        # Goto payment
-        return_message = MSG(u'Payment form')
-        goto = '%s/;payment_form' % context.get_link(payment)
-        return context.come_back(return_message, goto=goto)
