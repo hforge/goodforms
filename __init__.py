@@ -26,7 +26,6 @@ from ikaaro.skins import register_skin
 # Import from goodforms
 from root import Root
 from skin import Skin
-import monkey_patch
 import user
 
 # Give a version
@@ -39,6 +38,5 @@ register_skin('goodforms', Skin(get_abspath('ui/goodforms')))
 # Silent Pyflakes
 __all__ = [
         'Root',
-        'monkey_patch',
         'user',
         ]
