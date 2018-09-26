@@ -34,7 +34,6 @@ from agitools.autotable import AutoTable
 
 # Import from goodforms
 from application import Application
-from autoform import RecaptchaDatatype, captcha_schema, captcha_widgets
 from base_views import FrontView
 from buttons import CreateButton
 from workgroup import Workgroup
@@ -184,58 +183,6 @@ class Root_Show(FrontView):
         namespace['members'] = members
         namespace['guests'] = guests
         return namespace
-
-
-
-class Root_Contact(AutoForm):
-    template = '/ui/goodforms/root/contact.xml'
-
-    extra_schema = freeze({
-        'name': Unicode,
-        'company': Unicode,
-        'function': Unicode,
-        'phone': Unicode(mandatory=True)})
-    extra_widgets = freeze([
-        TextWidget('name', title=MSG(u"Name")),
-        TextWidget('company', title=MSG(u"Company/Organization")),
-        TextWidget('function', title=MSG(u"Function")),
-        TextWidget('phone', title=MSG(u"Phone Number"))])
-
-
-    def get_schema(self, resource, context):
-        proxy = super(Root_Contact, self)
-        schema = proxy.get_schema(resource, context)
-        schema = merge_dicts(schema, self.extra_schema)
-        if RecaptchaDatatype.is_required(context):
-            schema = merge_dicts(schema, captcha_schema)
-        return freeze(schema)
-
-
-    def get_widgets(self, resource, context):
-        proxy = super(Root_Contact, self)
-        widgets = proxy.get_widgets(resource, context)
-        widgets = widgets[:2] + self.extra_widgets + widgets[2:-1]
-        if RecaptchaDatatype.is_required(context):
-            widgets = widgets + captcha_widgets
-        return freeze(widgets)
-
-
-    def _get_form(self, resource, context):
-        proxy = super(Root_Contact, self)
-        form = proxy._get_form(resource, context)
-        body = form['message_body']
-        body = MSG(u"\r\n{body}").gettext(body=body)
-        for name in ('phone', 'from', 'function', 'company', 'name'):
-            title = None
-            for widget in self.get_widgets(resource, context):
-                if widget.name == name:
-                    title = widget.title.gettext()
-            value = form[name]
-            body = MSG(u"{title}: {value}\r\n{body}").gettext(title=title,
-                    value=value, body=body)
-        form['message_body'] = body
-
-        return form
 
 
 

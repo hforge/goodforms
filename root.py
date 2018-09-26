@@ -35,7 +35,7 @@ from ikaaro.widgets import RTEWidget, TextWidget
 # Import from goodforms
 from base_views import  LoginView
 from products import Products
-from root_views import Root_View, Root_Show, Root_Contact
+from root_views import Root_View, Root_Show
 from root_views import Root_ViewAdmin
 from root_views import Root_ShowAllWorkgroups, Root_ShowAllApplications
 from utils import is_debug
@@ -119,7 +119,6 @@ class Root(BaseRoot):
     show = Root_Show()
     show_all_workgroups = Root_ShowAllWorkgroups()
     show_all_applications = Root_ShowAllApplications()
-    contact = Root_Contact()
     # Security
     login = LoginView()
     unauthorized = LoginView()

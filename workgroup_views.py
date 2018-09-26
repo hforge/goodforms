@@ -38,8 +38,6 @@ from agitools.order import OrderAutoTable
 
 # Import from goodforms
 from application import Application
-from autoform import ImagePathDataType, ImageSelectorWidget
-from autoform import RecaptchaDatatype, captcha_schema, captcha_widgets
 from base_views import IconsView
 
 
