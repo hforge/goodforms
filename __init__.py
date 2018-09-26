@@ -20,9 +20,6 @@
 from itools.core import get_version, get_abspath
 from itools.gettext import register_domain
 
-# Import from ikaaro
-from ikaaro.skins import register_skin
-
 # Import from goodforms
 from root import Root
 from skin import Skin
@@ -33,10 +30,10 @@ __version__ = get_version()
 
 # Give a language
 register_domain('goodforms', get_abspath('locale'))
-register_skin('goodforms', Skin(get_abspath('ui/goodforms')))
 
 # Silent Pyflakes
 __all__ = [
         'Root',
         'user',
+        'Skin',
         ]

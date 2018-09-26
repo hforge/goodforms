@@ -16,11 +16,12 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 # Import from itools
-from itools.core import merge_dicts
+from itools.core import merge_dicts, get_abspath
 from itools.web import get_context
 
 # Import from ikaaro
 from ikaaro.skins import Skin as BaseSkin
+from ikaaro.skins import register_skin
 
 # Import from agitools
 from agitools.skins import PlatformSkin
@@ -57,3 +58,6 @@ class Skin(PlatformSkin):
         scripts.append(
                 '/ui/goodforms/fancybox/jquery.fancybox-1.3.1.pack.js')
         return scripts
+
+
+register_skin('goodforms', Skin(get_abspath('ui/goodforms')))
