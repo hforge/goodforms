@@ -16,18 +16,17 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 # Import from itools
-from itools.core import merge_dicts, get_abspath
+from itools.core import get_abspath
 from itools.web import get_context
 
 # Import from ikaaro
-from ikaaro.skins import Skin as BaseSkin
+#from ikaaro.skins import Skin as BaseSkin
 from ikaaro.skins import register_skin
 
 # Import from agitools
 from agitools.skins import PlatformSkin
 
 # Import from goodforms
-from form import Form
 from utils import is_print
 
 
