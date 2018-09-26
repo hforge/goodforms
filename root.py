@@ -23,7 +23,6 @@ from ikaaro.autoedit import AutoEdit
 from ikaaro.root import Root as BaseRoot
 
 # Import from goodforms
-from base_views import  LoginView
 from root_views import Root_View, Root_Show
 from root_views import Root_ViewAdmin
 from root_views import Root_ShowAllWorkgroups, Root_ShowAllApplications
@@ -61,7 +60,3 @@ class Root(BaseRoot):
     show = Root_Show()
     show_all_workgroups = Root_ShowAllWorkgroups()
     show_all_applications = Root_ShowAllApplications()
-
-    # Security
-    login = LoginView()
-    unauthorized = LoginView()

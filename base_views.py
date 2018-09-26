@@ -30,8 +30,6 @@ from ikaaro.folder import Folder
 from ikaaro.folder_views import Folder_BrowseContent, Folder_PreviewContent
 from ikaaro.resource_ import DBResource
 from ikaaro.resource_views import DBResource_Links, DBResource_Backlinks
-from ikaaro.resource_views import LoginView as BaseLoginView
-from ikaaro.resource_views import LogoutView as BaseLogoutView
 from ikaaro.revisions_views import DBResource_CommitLog
 from ikaaro.views import IconsView as BaseIconsView
 
@@ -40,88 +38,6 @@ from datatypes import EmailField
 
 
 MSG_NO_RESOURCE = ERROR(u'No {class_title} available.')
-
-
-
-# Pas d'héritage pour pas de méthode "action"
-class LoginView(BaseLoginView):
-    template = '/ui/goodforms/base/login.xml'
-    schema = freeze({
-        'username': String,
-        'password': String,
-        'email': EmailField})
-
-
-    def action_login(self, resource, context, form):
-        email = form['username'].strip()
-        password = form['password']
-
-        user = context.root.get_user_from_login(email)
-        if user is None or not user.authenticate(password):
-            message = u'The e-mail or the password is incorrect.'
-            context.message = ERROR(message)
-            return
-
-        # Set cookie & context
-        context.login(user)
-
-        # Come back
-        referrer = context.get_referrer()
-        if referrer is None:
-            goto = get_reference('./')
-        else:
-            path = get_uri_path(referrer)
-            if path.endswith(';login'):
-                goto = get_reference('./')
-            else:
-                goto = referrer
-
-        # At the root, redirect to the workgroup or application
-        if type(goto) is not Reference:
-            goto = get_reference(goto)
-        if resource.abspath.resolve(goto.path) == '/':
-            if not context.root.is_admin(user, resource):
-                goto = get_reference('/;show')
-
-        # FIXME avoid redirecting to user home
-        print "goto", goto
-        return context.come_back(INFO(u"Welcome!"), goto)
-
-
-    def action_register(self, resource, context, form):
-        email = form['email'].strip()
-        if not Email.is_valid(email):
-            message = u'The given username is not an e-mail address.'
-            context.message = ERROR(message)
-            return
-
-        user = context.root.get_user_from_login(email)
-
-        # Case 1: Register
-        if user is None:
-            if context.site_root.is_allowed_to_register():
-                return self._register(resource, context, email)
-            error = u"You are not allowed to register."
-            context.message = ERROR(error)
-            return
-
-        # Case 2: Forgotten password
-        email = user.get_value('email')
-        user.send_forgotten_password(context, email)
-        path = '/ui/website/forgotten_password.xml'
-        handler = resource.get_resource(path)
-        return stl(handler)
-
-
-
-class LogoutView(BaseLogoutView):
-
-    def GET(self, resource, context):
-        proxy = super(LogoutView, self)
-        goto = proxy.GET(resource, context)
-        goto.path = goto.path.resolve('/')
-        return goto
-
 
 
 class FrontView(BaseIconsView):
@@ -225,8 +141,6 @@ class IconsView(BaseIconsView):
 
 
 
-DBResource.login = LoginView()
-DBResource.logout = LogoutView()
 # Security
 DBResource.links = DBResource_Links(access='is_admin')
 DBResource.backlinks = DBResource_Backlinks(access='is_admin')
