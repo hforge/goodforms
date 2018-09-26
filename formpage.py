@@ -32,7 +32,8 @@ from itools.web import ERROR
 from itools.xml import XMLParser
 
 # Import from ikaaro
-from ikaaro.text import CSV
+from ikaaro.folder import Folder
+from ikaaro.fields import Char_Field, File_Field
 
 # Import from goodforms
 from datatypes import NumTime
@@ -59,8 +60,8 @@ def is_disabled(row):
 
 
 class FormPageHandler(CSVFile):
-    schema = freeze({
-        'null': Unicode})
+
+    schema = freeze({'null': Unicode})
 
 
     def _load_state_from_file(self, file, encoding='UTF-8'):
@@ -81,6 +82,7 @@ class FormPageHandler(CSVFile):
 
 
     def to_str(self, encoding='UTF-8', separator=',', newline='\n'):
+        # FIXME WHY ?
         lines = []
         for row in self.get_rows():
             line = []
@@ -92,11 +94,23 @@ class FormPageHandler(CSVFile):
 
 
 
-class FormPage(CSV):
+class FormPage(Folder):
 
     class_id = 'FormPage'
     class_title = MSG(u"Form Page")
-    class_handler = FormPageHandler
+
+    # Fields
+    data = File_Field(class_handler=FormPageHandler)
+    filename = Char_Field
+    extension = Char_Field
+
+
+    def init_resource(self, body=None, filename=None, extension=None, **kw):
+        # Proxy
+        proxy = super(FormPage, self)
+        proxy.init_resource(filename=filename, extension=extension, **kw)
+        # Load from CSV
+        self._load_from_csv(body)
 
 
     def _load_from_csv(self, body):
@@ -114,12 +128,6 @@ class FormPage(CSV):
                     if name and name not in schema:
                         raise FormatError, ERR_BAD_NAME(title=title,
                                 line=lineno, name=name)
-
-
-    def init_resource(self, body=None, filename=None, extension=None, **kw):
-        proxy = super(FormPage, self)
-        proxy.init_resource(filename=filename, extension=extension, **kw)
-        self._load_from_csv(body)
 
 
     def get_page_number(self):
@@ -145,7 +153,7 @@ class FormPage(CSV):
         page_number = self.get_page_number()
 
         # Lecture seule ?
-        root = resource.get_resource('/')
+        root = self.get_resource('/')
         if not skip_print and not root.is_allowed_to_edit(context.user, form):
             state = form.get_workflow_state()
             if state in (FINISHED, EXPORTED):
@@ -233,8 +241,7 @@ class FormPage(CSV):
                             column = u"%.1f" % column
                         else:
                             column = unicode(column)
-                    body = XMLParser(column.encode('utf8'),
-                            namespaces=xhtml_namespaces)
+                    body = XMLParser(column.encode('utf8'))
                     columns.append({
                         'rowspan': None,
                         'colspan': None,
@@ -266,8 +273,7 @@ class FormPage(CSV):
                         css_class = u"field-label"
                     if column == u"100%":
                         css_class += u" num"
-                    body = XMLParser(column.encode('utf8'),
-                            namespaces=xhtml_namespaces)
+                    body = XMLParser(column.encode('utf8'))
                     columns.append({
                         'rowspan': None,
                         'colspan': None,
