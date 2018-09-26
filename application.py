@@ -36,7 +36,6 @@ from agitools.fields import File_Field
 from application_views import Application_Edit, Application_Export
 from application_views import Application_NewInstance, Application_View
 from application_views import Application_RedirectToForm
-from application_views import Application_Register, Application_Login
 from controls import Controls
 from datatypes import Subscription
 from form import Form
@@ -234,5 +233,4 @@ class Application(Folder):
     view = Application_View()
     edit = Application_Edit()
     export = Application_Export()
-    register = Application_Register()
     show = Application_RedirectToForm()

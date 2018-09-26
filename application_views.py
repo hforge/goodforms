@@ -54,14 +54,14 @@ from customization import custom_flag
 
 
 ERR_NO_DATA = ERROR(u"No data to collect for now.")
-ERR_NO_MORE_ALLOWED = ERROR(u"You have reached the maximum allowed users. <a href="./;order">Buy new credits</a> if you want to add more users.", format='html')
+ERR_NO_MORE_ALLOWED = ERROR(u'You have reached the maximum allowed users. <a href="./;order">Buy new credits</a> if you want to add more users.', format='html')
 INFO_NEW_APPLICATION = INFO(u'Your application is created. You are now on the test form.')
 ERR_PASSWORD_MISSING = ERROR(u"The password is missing.")
 ERR_BAD_EMAIL = ERROR(u"The given username is not an e-mail address.")
 ERR_SUBSCRIPTION_FULL = ERROR(u"No more users are allowed to register.")
 ERR_NOT_ALLOWED = ERROR(u"You are not allowed to register.")
 ERR_ALREADY_REGISTERED = ERROR(u"You are already registered. Log in using your password.")
-MSG_APPLICATION_TITLE = MSG(u'''<span class="application-title">Title of your application:</span> {title}''', format='replace_html')
+MSG_APPLICATION_TITLE = MSG(u'<span class="application-title">Title of your application:</span> {title}', format='replace_html')
 MAILTO_SUBJECT = MSG(u'{workgroup_title}, form "{application_title}"')
 MAILTO_BODY = MSG(u'Please fill in the form "{application_title}" available here:\r\n <{application_url}>.\r\n')
 
@@ -391,82 +391,6 @@ class Application_Export(BaseView):
         return body
 
 
-
-class Application_Register(STLView):
-    access = 'is_allowed_to_edit'
-    title = MSG(u"Subscribe Users")
-    template = '/ui/goodforms/application/register.xml'
-
-    schema = freeze({
-        'new_users': Unicode})
-    actions = freeze([AddUsersButton])
-
-
-    def get_page_title(self, resource, context):
-        title = resource.get_page_title()
-        return MSG_APPLICATION_TITLE.gettext( title=title)
-
-
-    def get_actions_namespace(self, resource, context):
-        actions = []
-        for button in self.actions:
-            actions.append(button(resource=resource, context=context))
-        return actions
-
-
-    def get_namespace(self, resource, context):
-        proxy = super(Application_Register, self)
-        namespace = proxy.get_namespace(resource, context)
-        namespace['menu'] = resource.menu.GET(resource, context)
-        namespace['title'] = self.title
-        namespace['max_users'] = resource.get_value('max_users')
-        namespace['n_forms'] = resource.get_n_forms()
-        namespace['allowed_users'] = resource.get_allowed_users()
-        namespace['MSG_NO_MORE_ALLOWED'] = ERR_NO_MORE_ALLOWED
-        namespace['new_users'] = context.get_form_value('new_users')
-        namespace['actions'] = self.get_actions_namespace(resource, context)
-        namespace.update(resource.get_stats())
-        return namespace
-
-
-    def action_add_users(self, resource, context, form):
-        new_users = form['new_users'].strip()
-        users = resource.get_resource('/users')
-        root = context.root
-        added = []
-        allowed = resource.get_allowed_users()
-        for lineno, line in enumerate(new_users.splitlines()):
-            lastname, email = parseaddr(line)
-            try:
-                email = email.encode('utf-8')
-            except UnicodeEncodeError:
-                email = None
-            if not email or not EmailField.is_valid(email):
-                context.commit = False
-                message = u"Unrecognized line {lineno}: {line}"
-                context.message = ERROR(message, lineno=lineno+1, line=line)
-                return
-            if type(lastname) is str:
-                lastname = unicode(lastname)
-            # Is the user already known?
-            user = root.get_user_from_login(email)
-            if user is None:
-                # Register the user
-                user = users.set_user(email, None)
-                user.set_value('lastname', lastname)
-            resource.subscribe_user(user)
-            added.append(user.name)
-            if len(added) == allowed:
-                break
-
-        if not added:
-            context.message = ERROR(u"No user added.")
-            return
-
-        context.body['new_users'] = u""
-
-        message = u"{n} user(s) added."
-        context.message = INFO(message, n=len(added))
 
 
 
