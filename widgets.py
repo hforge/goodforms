@@ -26,17 +26,11 @@ from decimal import InvalidOperation
 from itools.core import is_prototype, merge_dicts
 from itools.datatypes import XMLContent, XMLAttribute
 from itools.gettext import MSG
-from itools.handlers import checkid
 from itools.log import log_warning
 from itools.web import get_context
 
-# Import from ikaaro
-from ikaaro.widgets import RadioWidget
-from ikaaro.file import Image
-from ikaaro.utils import make_stl_template
-
 # Import from goodforms
-from datatypes import Numeric, Text, EnumBoolean, SqlEnumerate, NumDecimal, NumInteger
+from datatypes import Numeric, Text, EnumBoolean, SqlEnumerate, NumDecimal
 from datatypes import NumDate, NumTime, FileImage
 from schema import Expression
 
@@ -392,41 +386,3 @@ def get_input_widget(name, form, schema, fields, context, tabindex=None,
             html = make_element(u"div", {u"title": help, u"rel": u"tooltip"},
                     html)
     return html
-
-
-
-class Products_Widget(RadioWidget):
-
-
-    template = make_stl_template("""
-    <table id="${id}" class="products-widget ${css}"
-      cellpadding="5" cellspacing="5">
-      <tr>
-        <th></th>
-        <th>Title</th>
-        <th>Nb users</th>
-        <th>Price (Taxes included)</th>
-      </tr>
-      <tr stl:repeat="option options_computed">
-        <td>
-          <input type="radio" id="${id}-${option/name}" name="${name}"
-            value="${option/name}" checked="${option/selected}" />
-        </td>
-        <td>
-          <label for="${id}-${option/name}">${option/value}</label>
-        </td>
-        <td>${option/nb_users}</td>
-        <td>${option/price}</td>
-      </tr>
-    </table>""")
-
-    def options_computed(self):
-        root = get_context().root
-        options_computed = []
-        for option in self.options():
-            kw = option
-            product = root.get_resource(kw['name'])
-            kw['nb_users'] = product.get_value('nb_users')
-            kw['price'] = product.get_price_with_tax(with_devise=True)
-            options_computed.append(kw)
-        return options_computed
