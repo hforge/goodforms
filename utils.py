@@ -39,6 +39,7 @@ def is_debug(context):
 def is_print(context):
     return context.get_query_value('view') == 'print'
 
+
 def set_print(context):
     context.query['view'] = 'print'
 
@@ -97,20 +98,6 @@ def force_encode(value, datatype, encoding):
     except ValueError:
         return unicode(value).encode(encoding)
 
-
-
-class ProgressMeter(object):
-    last_percent = 0
-
-    def __init__(self, max):
-        self.max = max
-
-
-    def show(self, i):
-        percent = i * 100 / self.max
-        if percent % 10 == 0 and percent != self.last_percent:
-            print "  %s %%" % percent
-            self.last_percent = percent
 
 
 class FormatError(ValueError):
