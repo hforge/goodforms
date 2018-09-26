@@ -49,7 +49,7 @@ from datatypes import Subscription, EmailField
 from form import Form
 from formpage import FormPage
 from rw import ODSWriter, XLSWriter
-from utils import force_encode, is_debug, is_print, FormatError
+from utils import force_encode, is_print, FormatError
 from widgets import Products_Widget
 from workflow import WorkflowState, NOT_REGISTERED, EMPTY
 from customization import custom_flag

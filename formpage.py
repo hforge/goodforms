@@ -37,7 +37,7 @@ from ikaaro.text import CSV
 # Import from goodforms
 from datatypes import NumTime
 from schema import Variable
-from utils import FormatError, is_debug
+from utils import FormatError
 from widgets import get_input_widget, make_element
 from workflow import FINISHED, EXPORTED
 
@@ -286,7 +286,7 @@ class FormPage(CSV):
                         'body': '',
                         'class': u"empty"})
             # Filtre les lignes vides
-            if not is_debug and is_disabled(columns):
+            if is_disabled(columns):
                 tables[-1].append([{
                     'rowspan': None,
                     'colspan': len(row),
@@ -296,55 +296,52 @@ class FormPage(CSV):
                 tables[-1].append(columns)
 
         # Filtre en-têtes vides
-        if not is_debug:
-            for i, table in reversed(list(enumerate(tables))):
-                label_without_widget =  False
-                for j, row in reversed(list(enumerate(table))):
-                    for column in row:
-                        css_class = column['class']
-                        if u"field-widget" in css_class:
-                            break
-                        elif u"field-label" in css_class:
-                            label_without_widget = True
-                    else:
-                        if label_without_widget is True:
-                            del table[j]
-                        continue
-                    break
+        for i, table in reversed(list(enumerate(tables))):
+            label_without_widget =  False
+            for j, row in reversed(list(enumerate(table))):
+                for column in row:
+                    css_class = column['class']
+                    if u"field-widget" in css_class:
+                        break
+                    elif u"field-label" in css_class:
+                        label_without_widget = True
                 else:
                     if label_without_widget is True:
-                        del tables[i]
+                        del table[j]
+                    continue
+                break
+            else:
+                if label_without_widget is True:
+                    del tables[i]
 
         # Filtre titres vides
-        if not is_debug:
-            for i, table in reversed(list(enumerate(tables))):
-                has_title = False
-                has_removed = False
-                for j, row in reversed(list(enumerate(table))):
-                    for column in row:
-                        css_class = column['class']
-                        if u"field-widget" in css_class:
-                            break
-                        elif u"section-header" in css_class:
-                            has_title = True
-                        elif u"removed" in css_class:
-                            has_removed = True
-                    else:
-                        continue
-                    break
+        for i, table in reversed(list(enumerate(tables))):
+            has_title = False
+            has_removed = False
+            for j, row in reversed(list(enumerate(table))):
+                for column in row:
+                    css_class = column['class']
+                    if u"field-widget" in css_class:
+                        break
+                    elif u"section-header" in css_class:
+                        has_title = True
+                    elif u"removed" in css_class:
+                        has_removed = True
                 else:
-                    if has_title and has_removed:
-                        del tables[i]
+                    continue
+                break
+            else:
+                if has_title and has_removed:
+                    del tables[i]
 
         # Filtre lignes supprimées
-        if not is_debug:
-            for i, table in reversed(list(enumerate(tables))):
-                for j, row in reversed(list(enumerate(table))):
-                    for column in row:
-                        css_class = column['class']
-                        if u"removed" in css_class:
-                            del table[j]
-                            break
+        for i, table in reversed(list(enumerate(tables))):
+            for j, row in reversed(list(enumerate(table))):
+                for column in row:
+                    css_class = column['class']
+                    if u"removed" in css_class:
+                        del table[j]
+                        break
 
         namespace = {}
         namespace['form_title'] = form.get_title()

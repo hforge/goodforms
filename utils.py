@@ -26,16 +26,6 @@
 from datatypes import Numeric, UnicodeSQL
 
 
-_is_debug = None
-
-def is_debug(context):
-    global _is_debug
-    if _is_debug is None:
-        config = get_config(context.server.target)
-        _is_debug = config.get_value('log-level') == 'debug'
-    return _is_debug
-
-
 def is_print(context):
     return context.get_query_value('view') == 'print'
 
