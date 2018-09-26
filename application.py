@@ -237,6 +237,5 @@ class Application(Folder):
     edit = Application_Edit()
     export = Application_Export()
     register = Application_Register()
-    login = Application_Login()
     show = Application_RedirectToForm()
     order = Application_NewOrder()
