@@ -111,3 +111,11 @@ class ProgressMeter(object):
         if percent % 10 == 0 and percent != self.last_percent:
             print "  %s %%" % percent
             self.last_percent = percent
+
+
+class FormatError(ValueError):
+
+    def __init__(self, message, *args, **kw):
+        if is_prototype(message, MSG):
+            message = message.gettext()
+        return super(FormatError, self).__init__(message, *args, **kw)

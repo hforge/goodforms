@@ -38,11 +38,10 @@ from itools.web import ERROR
 from ikaaro.file import ODS, MSExcel
 
 # Import from goodforms
-from schema import FormatError
+from utils import FormatError
 
 
-ERR_XLS_LIMIT = ERROR(u"The XLS format is too limited "
-        u"to export all of the data. Try the ODS format.")
+ERR_XLS_LIMIT = ERROR(u"The XLS format is too limited to export all of the data. Try the ODS format.")
 
 
 def get_reader_and_cls(mimetype):

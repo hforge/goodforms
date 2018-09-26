@@ -39,8 +39,7 @@ from ikaaro.folder import Folder
 from datatypes import NumInteger, NumDecimal, NumTime, NumShortTime, Text
 from datatypes import NumDate, NumShortDate, NumDigit, UnicodeSQL, EnumBoolean, Email, EmailField
 from datatypes import SqlEnumerate, Numeric, FileImage
-from utils import SI
-
+from utils import SI, FormatError
 
 
 
@@ -57,15 +56,6 @@ ERR_BAD_DEPENDENCY = ERROR(u'In schema, line {line}, syntax error in dependency:
 ERR_BAD_FORMULA = ERROR(u'In schema, line {line}, syntax error in formula: {err}')
 ERR_NO_FORMULA = ERROR(u'In schema, line {line}, type "{type}" does not support formulas.')
 ERR_BAD_DEFAULT = ERROR(u'In schema, line {line}, default value "{default}" is invalid.')
-
-
-class FormatError(ValueError):
-
-    def __init__(self, message, *args, **kw):
-        if is_prototype(message, MSG):
-            message = message.gettext()
-        return super(FormatError, self).__init__(message, *args, **kw)
-
 
 
 class Variable(String):

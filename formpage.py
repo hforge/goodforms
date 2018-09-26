@@ -36,8 +36,8 @@ from ikaaro.text import CSV
 
 # Import from goodforms
 from datatypes import NumTime
-from schema import FormatError, Variable
-from utils import is_debug
+from schema import Variable
+from utils import FormatError, is_debug
 from widgets import get_input_widget, make_element
 from workflow import FINISHED, EXPORTED
 

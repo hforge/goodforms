@@ -43,7 +43,8 @@ from datatypes import Subscription
 from form import Form
 from formpage import FormPage
 from rw import get_reader_and_cls
-from schema import Schema, FormatError
+from schema import Schema
+from utils import FormatError
 from workflow import EMPTY, PENDING, FINISHED
 
 

@@ -29,7 +29,9 @@ from itools.web import ERROR
 from ikaaro.folder import Folder
 
 # Import from goodforms
-from schema import FormatError, Variable, Expression
+from schema import Variable, Expression
+from utils import FormatError
+
 
 
 ERR_EMPTY_TITLE = ERROR(u'In controls, line {line}, title is missing.')
