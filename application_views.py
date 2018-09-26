@@ -89,25 +89,21 @@ def get_users_query(query, context):
 
 class Application_NewInstance(AutoAdd):
 
-    fields = ['title', 'file']
+    fields = ['title', 'data']
     goto_view = None
+    automatic_resource_name = True
 
-
-# FIXME
-#    def action(self, resource, context, form):
-#        proxy = super(Application_NewInstance, self)
-#        goto = proxy.action(resource, context, form)
-#        child = resource.get_resource(form['name'])
-#        try:
-#            child._load_from_file(form['file'], context)
-#        except ValueError, exception:
-#            if is_debug(context):
-#                raise
-#            context.commit = False
-#            context.message = ERROR(unicode(exception))
-#            return
-#        goto = goto.resolve2('0/;pageA#menu')
-#        return context.come_back(INFO_NEW_APPLICATION, goto)
+    def action(self, resource, context, form):
+        child = self.make_new_resource(resource, context, form)
+        if child is None:
+            return
+        try:
+            child._load_from_file(form['data'], context)
+        except ValueError, e:
+            context.message = ERROR(u'Cannot load: {x}').gettext(x=str(e))
+            return
+        goto = goto.resolve2('0/;pageA#menu')
+        return context.come_back(INFO_NEW_APPLICATION, goto)
 
 
 

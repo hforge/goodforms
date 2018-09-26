@@ -23,7 +23,7 @@
 import re
 
 # Import from itools
-from itools.core import freeze
+from itools.core import freeze, is_prototype
 from itools.csv import Table as TableFile, parse
 from itools.datatypes import Enumerate, String, Integer, Boolean, Date
 from itools.datatypes import Unicode
@@ -75,7 +75,8 @@ ERR_BAD_DEFAULT = ERROR(u'In schema, line {line}, default value '
 class FormatError(ValueError):
 
     def __init__(self, message, *args, **kw):
-        message = message.gettext()
+        if is_prototype(message, MSG):
+            message = message.gettext()
         return super(FormatError, self).__init__(message, *args, **kw)
 
 

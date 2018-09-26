@@ -29,6 +29,9 @@ from itools.web import ERROR, get_context
 from ikaaro.fields import Char_Field, Integer_Field
 from ikaaro.folder import Folder
 
+# Import from agitools
+from agitools.fields import File_Field
+
 # Import from goodforms
 from application_views import Application_Edit, Application_Export
 from application_views import Application_NewInstance, Application_View
@@ -84,17 +87,19 @@ class Application(Folder):
     author = Char_Field(indexed=True, stored=True)
     max_users=  Integer_Field(default=allowed_users)
     subscription = Subscription
+    data = File_Field(title=MSG(u'Fichier ODS'), multilingual=False, required=True)
 
 
-
-    def _load_from_file(self, file, context):
-        filename, mimetype, body = file
+    def _load_from_file(self, data, context):
+        filename, mimetype, body = data
         reader, cls = get_reader_and_cls(mimetype)
         if reader is None:
-            raise FormatError, ERR_NOT_ODS_XLS
-        # Save file used
-        self.make_resource('parameters', cls, body=body, filename=filename,
-                title={'en': u"Parameters"}, state='public')
+            raise FormatError(ERR_NOT_ODS_XLS)
+        # Save ODS file
+        kw = {'data': body,
+              'filename': filename,
+              'title': {'en': u"Parameters"}}
+        self.make_resource('parameters', cls, **kw)
         # Split tables
         document = reader(body)
         tables = iter(document.get_tables())
@@ -105,11 +110,10 @@ class Application(Folder):
             table = tables.next()
             table.rstrip(aggressive=True)
             if table.get_width() != len(cls.columns):
-                raise FormatError, ERR_WRONG_NUMBER_COLUMNS(
-                        name=table.get_name())
-            self.make_resource(name, cls, title={'en': title},
-                    # cls va transformer le CSV en table
-                    body=table.to_csv())
+                error = ERR_WRONG_NUMBER_COLUMNS.gettext(name=table.get_name())
+                raise FormatError(error)
+            # cls va transformer le CSV en table
+            self.make_resource(name, cls, title={'en': title}, data=table.to_csv())
         schema_resource = self.get_resource('schema')
         schema, pages = schema_resource.get_schema_pages()
         # Pages
@@ -134,8 +138,7 @@ class Application(Folder):
                 title = find_title(table)
                 if title is None:
                     title = u"Page {0}".format(page_number)
-            self.make_resource(name, FormPage, title={'en': title},
-                    body=table.to_csv())
+            self.make_resource(name, FormPage, title={'en': title}, data=table.to_csv())
         # Initial form
         name = self.default_form
         if self.get_resource(name, soft=True) is None:
