@@ -171,7 +171,7 @@ class Root_Show(FrontView):
         guests = []
         for item in namespace['items']:
             if item['icon'] is None:
-                item['icon'] = self.cls.get_class_icon(size=48)
+                item['icon'] = None
             if item['role'] == 'members':
                 rows = members
             else:

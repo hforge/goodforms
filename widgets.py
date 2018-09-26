@@ -341,10 +341,7 @@ def file_widget(context, form, datatype, name, value, schema, fields,
     context = get_context()
     link = context.get_link(resource)
     href = u"{0}/;download".format(link)
-    if isinstance(resource, Image):
-        src = u"{0}/;thumb?width=128&amp;height=128".format(link)
-    else:
-        src = u"/ui/{0}".format(resource.class_icon48)
+    src = u"{0}/;thumb?width=128&amp;height=128".format(link)
     preview = make_element(u"a", {u"href": href, u"target": u"_new"},
             make_element(u"img", {u"src": src}))
     field_id = u"field_{name}_delete".format(name=name)

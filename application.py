@@ -70,8 +70,6 @@ class Application(Folder):
     class_id = 'Application'
     class_title = MSG(u"Collection Application")
     class_description = MSG(u"Create from an OpenDocument Spreadsheet file")
-    class_icon16 = 'icons/16x16/tasks.png'
-    class_icon48 = 'icons/48x48/tasks.png'
     class_views =  ['view', 'show']
 
     # Configuration
@@ -148,7 +146,7 @@ class Application(Folder):
 
 
     def get_logo_icon(self, size=48):
-        return self.get_class_icon(size=size)
+        return None
 
 
     def get_form(self):

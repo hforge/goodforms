@@ -109,8 +109,7 @@ class Workgroup(Folder):
 
 
     def get_logo_icon(self, size=48):
-        context = get_context()
-        return super(Workgroup, self).get_class_icon(size=size)
+        return None
 
 
     def get_workgroup_administrators(self):

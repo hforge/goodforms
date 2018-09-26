@@ -94,9 +94,9 @@ class FormPageHandler(CSVFile):
 
 
 class FormPage(CSV):
+
     class_id = 'FormPage'
     class_title = MSG(u"Form Page")
-    class_icon48 = 'icons/48x48/tasks.png'
     class_handler = FormPageHandler
 
 

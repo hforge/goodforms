@@ -353,8 +353,6 @@ class Schema(Folder):
     class_version = '20090123'
     class_title = MSG(u"Schema")
     class_handler = SchemaHandler
-    class_icon16 = 'icons/16x16/excel.png'
-    class_icon48 = 'icons/48x48/excel.png'
 
     # Fields
     data = File_Field

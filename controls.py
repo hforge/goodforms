@@ -70,11 +70,10 @@ class ControlsHandler(Folder):
 
 
 class Controls(Folder):
+
     class_id = 'Controls'
     class_title = MSG(u"Controls")
     class_handler = ControlsHandler
-    class_icon16 = 'icons/16x16/excel.png'
-    class_icon48 = 'icons/48x48/excel.png'
 
     # To import from CSV
     columns = ['number', 'title', 'expression', 'level', 'variable']
