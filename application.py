@@ -40,7 +40,6 @@ from application_views import Application_Register, Application_Login
 from application_views import Application_NewOrder
 from controls import Controls
 from datatypes import Subscription
-from emails import email_credit_alert
 from form import Form
 from formpage import FormPage
 from rw import get_reader_and_cls
@@ -225,40 +224,7 @@ class Application(Folder):
         if self.get_resource(username, soft=True) is None:
             self.make_resource(username, Form,
                     title={'en': user.get_title()})
-        # Send credit alert
-        self.send_credit_alert()
 
-
-    def send_credit_alert(self):
-        """
-        Send an alert to workgroup administrators
-        if max_users-nb_forms = 0 or 5 or 10 or 15 or 20
-        """
-        # Check if we have to send an alert ?
-        nb_forms = self.get_n_forms()
-        max_users = self.get_value('max_users')
-        if (max_users - nb_forms) not in (0, 5, 10, 15, 20):
-            return
-        # Build alert kw
-        context = get_context()
-        root = self.get_root()
-        workgroup = self.parent
-        order_uri = deepcopy(context.uri)
-        order_uri.path = Path('%s/;order' % root.get_pathto(self))
-        kw = {'application_title': self.get_title(),
-              'workgroup_title': workgroup.get_title(),
-              'nb_forms': nb_forms,
-              'max_users': max_users,
-              'remaining_users': max_users - nb_forms,
-              'order_uri': str(order_uri)}
-        # Send Alert to workgroup administrators
-        root = self.get_root()
-        for user in workgroup.get_workgroup_administrators():
-            email = user.get_value('email')
-            kw['user_title'] = user.get_title()
-            subject = email_credit_alert['subject'].gettext(**kw)
-            text = email_credit_alert['text'].gettext(**kw)
-            root.send_email(email, subject, text=text)
 
 
 
