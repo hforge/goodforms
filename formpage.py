@@ -44,8 +44,7 @@ from workflow import FINISHED, EXPORTED
 
 NBSP = u"\u00a0".encode('utf8')
 FIELD_PREFIX = u"#"
-ERR_BAD_NAME = ERROR(u'In "{title}" sheet, line {line}, variable "{name}" '
-        u'is unknown.')
+ERR_BAD_NAME = ERROR(u'In "{title}" sheet, line {line}, variable "{name}" is unknown.')
 
 
 def is_disabled(row):
