@@ -139,10 +139,6 @@ class Application(Folder):
         return False
 
 
-    def get_logo_icon(self, size=48):
-        return None
-
-
     def get_form(self):
         return self.get_resource(self.default_form, soft=True)
 
@@ -186,14 +182,6 @@ class Application(Folder):
         return self
 
 
-    def get_allowed_users(self):
-        max_users = self.get_value('max_users')
-        if not max_users:
-            return float('inf')
-        n_forms = self.get_n_forms()
-        return (max_users - n_forms)
-
-
     def get_admin_url(self, context):
         base_url = context.uri.resolve(self.abspath)
         return base_url.resolve2(';view')
@@ -205,22 +193,6 @@ class Application(Folder):
         if email is not None:
             spread_url.query['username'] = email
         return spread_url
-
-
-    def subscribe_user(self, user):
-        site_root = self.get_site_root()
-        username = user.name
-        # Give the role "guests" to see public resources (logo, etc.)
-        if (site_root.get_user_role(username) is None
-                # Except to top-level admins
-                and not site_root.is_admin(user, self)):
-            site_root.set_user_role(username, 'guests')
-        # Add the form
-        if self.get_resource(username, soft=True) is None:
-            self.make_resource(username, Form,
-                    title={'en': user.get_title()})
-
-
 
 
 

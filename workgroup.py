@@ -45,10 +45,6 @@ class Workgroup(Folder):
     def get_document_types(self):
         return [Application]
 
-
-    def get_logo_icon(self, size=48):
-        return None
-
     # Views
     view = Workgroup_View()
     edit = Workgroup_Edit()

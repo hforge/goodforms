@@ -507,9 +507,8 @@ class Form_Export(BaseView):
 
     def GET(self, resource, context, encoding='cp1252'):
         if not resource.is_ready():
-            return MSG(u"Your form is not finished "
-                    u"yet.").gettext().encode('utf8')
-
+            context.message = MSG(u"Your form is not finished yet.")
+            return
         # construct the csv
         csv = CSVFile()
         csv.add_row(["Chapitre du formulaire", "rubrique", "valeur"])
@@ -525,7 +524,7 @@ class Form_Export(BaseView):
         context.set_content_type('text/comma-separated-values')
         context.set_content_disposition('attachment',
                 filename="%s.csv" % (resource.name))
-
+        # Ok
         return csv.to_str(separator=';')
 
 

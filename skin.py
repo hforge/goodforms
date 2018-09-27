@@ -54,8 +54,7 @@ class Skin(PlatformSkin):
     def get_scripts(self, context):
         scripts = super(Skin, self).get_scripts(context)
         scripts.append('/ui/goodforms/zeroclipboard/ZeroClipboard.js')
-        scripts.append(
-                '/ui/goodforms/fancybox/jquery.fancybox-1.3.1.pack.js')
+        scripts.append('/ui/goodforms/fancybox/jquery.fancybox-1.3.1.pack.js')
         return scripts
 
 

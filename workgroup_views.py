@@ -59,11 +59,8 @@ class Workgroup_View(AutoTable):
     access = 'is_allowed_to_edit'
     title = MSG(u"Manage your client space")
 
-    # FIXME
-    # template = '/ui/goodforms/workgroup/view.xml'
     base_classes = ('Application', )
     search_template = None
-
     table_fields = ['form', 'subscribed', 'max_users', 'file', 'ctime']
     table_actions = []
 

@@ -403,13 +403,6 @@ class Application_RedirectToForm(GoToSpecificDocument):
             return resource.default_form
         if resource.get_resource(user.name, soft=True) is not None:
             return user.name
-        subscription = resource.get_value('subscription')
-        if subscription == 'demo':
-            # Create form on the fly
-            resource.subscribe_user(user)
-            # XXX
-            get_context().commit = True
-            return user.name
         return None
 
 

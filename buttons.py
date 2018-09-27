@@ -28,6 +28,7 @@ from ikaaro.utils import make_stl_template
 
 
 class CreateButton(Button):
+
     access = True
     title = None
     css = 'button-create'
@@ -35,6 +36,7 @@ class CreateButton(Button):
 
 
 class ExportODSButton(BrowseButton):
+
     access = 'is_allowed_to_edit'
     name = 'export'
     title = MSG(u"Export This List in ODS Format")
@@ -42,12 +44,14 @@ class ExportODSButton(BrowseButton):
 
 
 class ExportXLSButton(ExportODSButton):
+
     name = 'export_xls'
     title = MSG(u"Export This List in XLS Format")
 
 
 
 class AddUsersButton(Button):
+
     access = 'is_allowed_to_edit'
     name = "add_users"
     title = MSG(u"Add Users")
@@ -55,6 +59,7 @@ class AddUsersButton(Button):
 
 
 class SaveButton(Button):
+
     access = 'is_allowed_to_edit'
     title = MSG(u"Save")
     id = "form-submit"
@@ -69,16 +74,18 @@ class SaveButton(Button):
 
 
 class Link(Button):
-    template = make_stl_template('''
-        <a id="${id}" href="${href}" class="button ${css}" title="${title}"
-            onclick="${onclick}">${content}</a>''')
+
     id = None
     href = None
     onclick = None
+    template = make_stl_template('''
+        <a id="${id}" href="${href}" class="button ${css}" title="${title}"
+            onclick="${onclick}">${content}</a>''')
 
 
 
 class InputControlLink(Link):
+
     access = 'is_allowed_to_view'
     id = "button-control"
     css = "button-control"
@@ -88,6 +95,7 @@ class InputControlLink(Link):
 
 
 class PagePrintLink(Link):
+
     access = 'is_allowed_to_view'
     id = "button-page-print"
     css = "button-print"
@@ -99,6 +107,7 @@ class PagePrintLink(Link):
 
 
 class FormPrintLink(PagePrintLink):
+
     id = "button-form-print"
     href = ";print?view=print"
     content = MSG(u"Print Form")
