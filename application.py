@@ -98,7 +98,8 @@ class Application(Folder):
                 ('controls', u"Controls", self.controls_class)]:
             table = tables.next()
             table.rstrip(aggressive=True)
-            if table.get_width() != len(cls.columns):
+            field = cls.get_field('data')
+            if table.get_width() != len(field.class_handler.columns):
                 error = ERR_WRONG_NUMBER_COLUMNS.gettext(name=table.get_name())
                 raise FormatError(error)
             # Create schema or controls
@@ -106,7 +107,7 @@ class Application(Folder):
             kw = {'title': {'en': title},
                   'data': data}
             r = self.make_resource(name, cls, **kw)
-            r._load_from_csv(data)
+            r._load_from_csv()
         schema_resource = self.get_resource('schema')
         schema, pages = schema_resource.get_schema_pages()
         # Pages
@@ -120,9 +121,9 @@ class Application(Folder):
             else:
                 page_number, title = name
             if i == 0 and page_number != 'A':
-                raise FormatError, ERR_FIRST_PAGE(page=page_number)
+                raise FormatError, ERR_FIRST_PAGE.gettext(page=page_number)
             if page_number not in pages:
-                raise FormatError, ERR_PAGE_NAME(name=name, page=page_number)
+                raise FormatError, ERR_PAGE_NAME.gettext(name=name, page=page_number)
             # Name
             name = 'page' + page_number.lower().encode()
             # Title
@@ -131,7 +132,9 @@ class Application(Folder):
                 title = find_title(table)
                 if title is None:
                     title = u"Page {0}".format(page_number)
-            self.make_resource(name, FormPage, title={'en': title}, data=table.to_csv())
+            kw = {'title': {'en': title},
+                  'data': table.to_csv()}
+            self.make_resource(name, FormPage, **kw)
         # Initial form
         name = self.default_form
         if self.get_resource(name, soft=True) is None:

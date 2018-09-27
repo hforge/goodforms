@@ -136,20 +136,6 @@ class Form(Folder):
         return Form_View(page_number=page.get_page_number())
 
 
-    def get_links(self):
-        links = super(Form, self).get_links()
-        base = self.parent.get_canonical_path()
-        schema = self.get_schema()
-        for key, datatype in schema.iteritems():
-            if isinstance(datatype, Numeric):
-                pass
-            elif issubclass(datatype, FileImage):
-                value = self.handler.get_value(key, schema)
-                if value:
-                    links.add(str(base.resolve2(value)))
-        return links
-
-
     ######################################################################
     # API
     def get_param_folder(self):
@@ -180,7 +166,7 @@ class Form(Folder):
         return pages
 
 
-    def get_fields(self, schema):
+    def get_form_fields(self, schema):
         handler = self.get_form().handler
         fields = {}
         for name in schema:
@@ -296,6 +282,11 @@ class Form(Folder):
 
     ######################################################################
     # Security
+    def get_workflow_state(self):
+        # FIXME
+        return 'pending'
+
+
     def is_ready(self):
         return self.get_workflow_state() == FINISHED
 
@@ -342,7 +333,7 @@ class Form(Folder):
 
     def get_invalid_fields(self, pages=freeze([]), exclude=freeze([''])):
         schema = self.get_schema()
-        fields = self.get_fields(schema)
+        fields = self.get_form_fields(schema)
         for name in sorted(fields):
             if pages and name[0] not in pages:
                 continue
@@ -381,7 +372,7 @@ class Form(Folder):
     def get_controls_namespace(self, context, levels=freeze([]),
             pages=freeze([]), exclude=freeze([''])):
         schema = self.get_schema()
-        fields = self.get_fields(schema)
+        fields = self.get_form_fields(schema)
         for num, title, expr, level, page, variable in self.get_controls():
             if not expr:
                 continue

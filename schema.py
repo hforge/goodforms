@@ -103,6 +103,7 @@ class Type(Enumerate):
         {'name': 'email', 'value': u"Email", 'type': EmailField}]
 
 
+    @classmethod
     def decode(cls, data):
         data = data.strip().lower()
         if not data:
@@ -111,6 +112,7 @@ class Type(Enumerate):
         return Enumerate.decode(data)
 
 
+    @classmethod
     def get_type(cls, name):
         for option in cls.options:
             if option['name'] == name:
@@ -253,6 +255,10 @@ class SchemaHandler(CSVFile):
     # Don't store default values here because any value needs to be written
     # down in case the default value changes later.
 
+    skip_header = True
+    has_header = True
+    class_csv_guess = True
+
     schema = {
         'title': Unicode(mandatory=True, title=MSG(u"Title")),
         'name': Variable(mandatory=True, title=MSG(u"Variable")),
@@ -270,6 +276,21 @@ class SchemaHandler(CSVFile):
         'formula': Expression(title=MSG(u"Formula")),
         'default': String(default='', title=MSG(u"Default Value"))}
 
+    columns = [
+        'title',
+        'name',
+        'type',
+        'help',
+        'length',
+        'enum_options',
+        'enum_repr',
+        'decimals',
+        'mandatory',
+        'size',
+        'dependency',
+        'formula',
+        'default']
+
 
 
 class Schema(Folder):
@@ -277,55 +298,50 @@ class Schema(Folder):
     class_id = 'Schema'
     class_version = '20090123'
     class_title = MSG(u"Schema")
-    class_handler = SchemaHandler
 
     # Fields
     data = File_Field(class_handler=SchemaHandler)
     extension = Char_Field
     filename = Char_Field
 
-    # To import from CSV
-    columns = ['title', 'name', 'type', 'help', 'length', 'enum_options',
-            'enum_repr', 'decimals', 'mandatory', 'size', 'dependency',
-            'formula', 'default']
-
-
-    def _load_from_csv(self, body, skip_header=True):
-        handler = self.handler
+    def _load_from_csv(self):
+        handler = self.get_value('data')
+        print handler.to_str()
         # Consistency check
         # First round on variables
         # Starting from 1 + header
         lineno = 2
         locals_ = {}
-        for line in parse(body, self.columns, handler.record_properties,
-                skip_header=skip_header):
+        for line in handler.get_rows():
+            print '================='
+            print line
+            print '================='
             record = {}
-            for index, key in enumerate(self.columns):
+            for index, key in enumerate(handler.columns):
                 record[key] = line[index]
             # Name
             name = record['name']
             if name is None:
                 continue
             if not Variable.is_valid(name):
-                raise FormatError, ERR_BAD_NAME(line=lineno, name=name)
+                raise FormatError, ERR_BAD_NAME.gettext(line=lineno, name=name)
             if name in locals_:
-                raise FormatError, ERR_DUPLICATE_NAME(line=lineno,
-                        name=name)
+                raise FormatError, ERR_DUPLICATE_NAME.gettext(line=lineno, name=name)
             # Type
             type_name = record['type']
             if type_name is None:
                 # Write down default at this time
                 record['type'] = type_name = 'str'
-            datatype = handler.get_type(type_name)
+            datatype = Type.get_type(type_name)
             if datatype is None:
-                raise FormatError, ERR_BAD_TYPE(line=lineno, type=type_name)
+                raise FormatError, ERR_BAD_TYPE.gettext(line=lineno, type=type_name)
             # Length
             length = record['length']
             if length is None:
                 # Write down default at this time
                 record['length'] = length = 20
             if not ValidInteger.is_valid(length):
-                raise FormatError, ERR_BAD_LENGTH(line=lineno, length=length)
+                raise FormatError, ERR_BAD_LENGTH.gettext(line=lineno, length=length)
             if issubclass(datatype, SqlEnumerate):
                 # Enumerate Options
                 enum_option = record['enum_options']
@@ -340,8 +356,7 @@ class Schema(Folder):
                     # Write down default at the time of writing
                     record['enum_repr'] = enum_repr = 'radio'
                 if not EnumerateRepresentation.is_valid(enum_repr):
-                    raise FormatError, ERR_BAD_ENUM_REPR(line=lineno,
-                            enum_repr=enum_repr)
+                    raise FormatError, ERR_BAD_ENUM_REPR.gettext(line=lineno, enum_repr=enum_repr)
             elif issubclass(datatype, NumDecimal):
                 # Decimals
                 decimals = record['decimals']
@@ -405,87 +420,71 @@ class Schema(Folder):
         # Second round on references
         # Starting from 1 + header
         lineno = 2
-        get_record_value = handler.get_record_value
-        for record in handler.get_records():
-            dependency = get_record_value(record, 'dependency')
+        for row in handler.get_rows():
+            dependency = row.get_value('dependency')
             if dependency:
                 try:
                     Expression.is_valid(dependency, locals_)
                 except Exception, err:
-                    raise FormatError, ERR_BAD_DEPENDENCY(line=lineno,
-                            err=err)
-            formula = get_record_value(record, 'formula')
+                    raise FormatError, ERR_BAD_DEPENDENCY.gettext(line=lineno, err=err)
+            formula = row.get_value('formula')
             if formula:
                 try:
                     datatype.sum
                 except AttributeError:
-                    raise FormatError, ERR_NO_FORMULA(line=lineno,
-                            type=type_name)
+                    raise FormatError, ERR_NO_FORMULA.gettext(line=lineno, type=type_name)
                 try:
                     Expression.is_valid(formula, locals_)
                 except Exception, err:
-                    raise FormatError, ERR_BAD_FORMULA(line=lineno, err=err)
+                    raise FormatError, ERR_BAD_FORMULA.gettext(line=lineno, err=err)
             lineno += 1
 
 
     def get_schema_pages(self):
-        raise NotImplementedError
-
-    #def _get_schema_pages(self):
-    #    schema = {}
-    #    pages = {}
-    #    get_record_value = self.get_record_value
-    #    for record in self.get_records():
-    #        # The name
-    #        name = get_record_value(record, 'name')
-    #        # The datatype
-    #        type_name = get_record_value(record, 'type')
-    #        datatype = self.get_type(type_name)
-    #        multiple = False
-    #        # TypeError: issubclass() arg 1 must be a class
-    #        if isinstance(datatype, Numeric):
-    #            pass
-    #        elif issubclass(datatype, SqlEnumerate):
-    #            enum_options = get_record_value(record, 'enum_options')
-    #            representation = get_record_value(record, 'enum_repr')
-    #            multiple = (representation == 'checkbox')
-    #            datatype = datatype(options=enum_options,
-    #                    representation=representation)
-    #        elif issubclass(datatype, EnumBoolean):
-    #            datatype = datatype(representation='radio')
-    #            multiple = False
-    #        # The page number (now automatic)
-    #        page_number = Variable.get_page_number(name)
-    #        pages.setdefault(page_number, set()).add(name)
-    #        page_numbers = (page_number,)
-    #        # Add to the datatype
-    #        default = get_record_value(record, 'default')
-    #        if multiple:
-    #            default = [default]
-    #        length = get_record_value(record, 'length')
-    #        size = get_record_value(record, 'size') or length
-    #        schema[name] = datatype(multiple=multiple,
-    #            type=type_name,
-    #            default=datatype.decode(default),
-    #            # Read only for Scrib
-    #            readonly=False,
-    #            pages=page_numbers,
-    #            title=get_record_value(record, 'title'),
-    #            help=get_record_value(record, 'help'),
-    #            length=length,
-    #            decimals=get_record_value(record, 'decimals'),
-    #            mandatory=get_record_value(record, 'mandatory'),
-    #            size=size,
-    #            dependency=get_record_value(record, 'dependency'),
-    #            formula=get_record_value(record, 'formula'))
-    #    return schema, pages
-
-
-    #def get_schema_pages(self):
-    #    """Keep the result in memory. The resource is deleted when new
-    #    parameters are uploaded anyway.
-    #    """
-    #    schema, pages = self._schema_pages
-    #    if schema is None:
-    #        schema, pages = self._schema_pages = self._get_schema_pages()
-    #    return schema, pages
+        schema = {}
+        pages = {}
+        handler = self.get_value('data')
+        for row in handler.get_rows():
+            # The name
+            name = row.get_value('name')
+            # The datatype
+            type_name = row.get_value('type')
+            datatype = Type.get_type(type_name)
+            multiple = False
+            # TypeError: issubclass() arg 1 must be a class
+            if isinstance(datatype, Numeric):
+                pass
+            elif issubclass(datatype, SqlEnumerate):
+                enum_options = row.get_value('enum_options')
+                representation = row.get_value('enum_repr')
+                multiple = (representation == 'checkbox')
+                datatype = datatype(options=enum_options,
+                        representation=representation)
+            elif issubclass(datatype, EnumBoolean):
+                datatype = datatype(representation='radio')
+                multiple = False
+            # The page number (now automatic)
+            page_number = Variable.get_page_number(name)
+            pages.setdefault(page_number, set()).add(name)
+            page_numbers = (page_number,)
+            # Add to the datatype
+            default = row.get_value('default')
+            if multiple:
+                default = [default]
+            length = row.get_value('length')
+            size = row.get_value('size') or length
+            schema[name] = datatype(multiple=multiple,
+                type=type_name,
+                default=datatype.decode(default),
+                # Read only for Scrib
+                readonly=False,
+                pages=page_numbers,
+                title=row.get_value('title'),
+                help=row.get_value('help'),
+                length=length,
+                decimals=row.get_value('decimals'),
+                mandatory=row.get_value('mandatory'),
+                size=size,
+                dependency=row.get_value('dependency'),
+                formula=row.get_value('formula'))
+        return schema, pages

@@ -59,12 +59,18 @@ class ControlLevel(Enumerate):
 
 class ControlsHandler(CSVFile):
 
+    skip_header = True
+    has_header = True
+    class_csv_guess = True
+
     schema = {
         'number': Unicode(mandatory=True, title=MSG(u"Number")),
         'title': Unicode(mandatory=True, title=MSG(u"Title")),
         'expression': Expression(mandatory=True, title=MSG(u"Expression")),
         'level': ControlLevel(mandatory=True, title=MSG(u"Level")),
         'variable': Variable(mandatory=True, title=MSG(u"Main Variable"))}
+
+    columns = ['number', 'title', 'expression', 'level', 'variable']
 
 
 
@@ -79,69 +85,44 @@ class Controls(Folder):
     extension = Char_Field
     filename = Char_Field
 
-    # To import from CSV
-    columns = ['number', 'title', 'expression', 'level', 'variable']
 
-    def init_resource(self, body=None, filename=None, extension=None,
-            skip_header=True, **kw):
-        # Init proxy
-        proxy = super(Controls, self)
-        proxy.init_resource(filename=filename, extension=extension, **kw)
-        schema_resource = self.parent.get_resource('schema')
-        # Load CSV
-        schema, pages = schema_resource.get_schema_pages()
-        namespace = {}
-        for key in schema:
-            namespace[key] = 0
-        self._load_from_csv(body, namespace=namespace,
-                skip_header=skip_header)
-
-
-    def _load_from_csv(self, body, namespace, skip_header=True):
-        handler = self.handler
+    def _load_from_csv(self):
+        handler = self.get_value('data')
         # Consistency check
         # Starting from 1
         lineno = 2
-        for line in parse(body, self.columns, handler.record_properties,
-                skip_header=skip_header):
-            record = {}
-            for index, key in enumerate(self.columns):
-                record[key] = line[index]
+        for row in handler.get_rows():
             # Title
-            title = record['title'] = record['title'].strip()
+            title = row.get_value('title').strip()
             if not title:
-                raise FormatError, ERR_EMPTY_TITLE(line=lineno)
+                raise FormatError, ERR_EMPTY_TITLE.gettext(line=lineno)
             # Expression
-            expression = record['expression']
+            expression = row.get_value('expression')
             if not expression:
-                raise FormatError, ERR_EMPTY_EXPRESSION(line=lineno)
+                raise FormatError, ERR_EMPTY_EXPRESSION.gettext(line=lineno)
             try:
                 Expression.is_valid(expression, namespace)
             except Exception, err:
-                raise FormatError, ERR_BAD_EXPRESSION(line=lineno,
-                        err=err)
+                raise FormatError, ERR_BAD_EXPRESSION.gettext(line=lineno, err=err)
             # Level
-            level = record['level']
+            level = row.get_value('level')
             if not ControlLevel.is_valid(level):
-                raise FormatError, ERR_BAD_LEVEL(line=lineno,
-                        level=level)
+                raise FormatError, ERR_BAD_LEVEL.gettext(line=lineno, level=level)
             # Variable
-            variable = record['variable']
+            variable = row.get_value('variable')
             if not variable:
-                raise FormatError, ERR_EMPTY_VARIABLE(line=lineno)
-            handler.add_record(record)
+                raise FormatError, ERR_EMPTY_VARIABLE.gettext(line=lineno)
             lineno += 1
 
 
 
     def get_controls(self):
-        handler = self.handler
-        get_record_value = handler.get_record_value
-        for record in handler.get_records():
-            number = get_record_value(record, 'number')
-            title = get_record_value(record, 'title')
-            expr = get_record_value(record, 'expression')
-            level = get_record_value(record, 'level')
-            variable = get_record_value(record, 'variable')
+        handler = self.get_value('data')
+        for row in handler.get_rows():
+            number = row.get_value('number')
+            title = row.get_value('title')
+            expr = row.get_value('expression')
+            level = row.get_value('level')
+            variable = row.get_value('variable')
             page = variable[0]
             yield (number, title, expr, level, page, variable)
