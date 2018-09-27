@@ -17,6 +17,10 @@
 # Import from the Standard Library
 from cStringIO import StringIO
 
+# Import from xlwt
+from xlwt import Workbook, easyxf
+from xlwt.Style import default_style
+
 # Import from itools
 from itools.core import freeze, is_prototype, merge_dicts, prototype, OrderedDict
 from itools.csv import CSVFile
@@ -24,72 +28,13 @@ from itools.datatypes import Enumerate, String
 from itools.gettext import MSG
 from itools.stl import stl
 from itools.web import ERROR
-from itools.xml import XMLParser, xml_to_text
 
 # Import from ikaaro
 from ikaaro.buttons import BrowseButton
 from ikaaro.utils import make_stl_template
 from ikaaro.widgets import SelectWidget
 
-"""
-Generic CSV view to export a browse list.
-
-To define it:
-
-    csv_columns = freeze([
-        CSVColumn('firstname', title=MSG(u"First Name")),
-        CSVColumn('lastname', title=MSG(u"Last Name")),
-        CSVColumn('gender', title=MSG(u"Gender", datatype=Gender))])
-
-Two ways to integrate it:
-
-- Inject the result of "get_csv_namespace" to get a form to choose format and
-  click the export button, e.g.:
-
-  def get_namespace(self, resource, context):
-      namespace = {}
-      [...]
-      namespace['csv'] = self.get_csv_namespace(resource, context)
-      return namespace
-
-  ${csv}
-
-- Add the button to your actions.
-
-The schema and columns are similar to CSVFile."""
-
-
 ERR_NO_DATA = ERROR(u"No data to export.")
-
-
-class CSVColumn(prototype):
-    datatype = String
-
-
-    def __init__(cls, name=None, **kw):
-        if name:
-            cls.name = name
-
-
-    def encode(cls, value):
-        """Encode to a unicode or a Python value compatible with str().
-        """
-        # TODO in 0.70 read datatype from class_schema
-        datatype = cls.datatype
-        # Replace enumerate name by value
-        if issubclass(datatype, Enumerate):
-            value = datatype.get_value(value)
-        if value is None:
-            return ''
-        # Default encoders
-        value_type = type(value)
-        if value_type is XMLParser or value_type is list:
-            return xml_to_text(value)
-        if is_prototype(value, MSG):
-            value = value.gettext()
-        return value
-
-
 
 csv_writer_registry = OrderedDict()
 
@@ -97,6 +42,57 @@ def register_csv_writer(writer, name=None):
     if name is None:
         name = writer.name
     csv_writer_registry[name] = writer
+
+
+
+class XLSWriter(object):
+    name = 'xls'
+    title = MSG(u"MS Excel")
+    mimetype = 'application/vnd.ms-excel'
+    extension = 'xls'
+    header_style = easyxf('font: bold on')
+
+
+    def __init__(cls, columns, name):
+        cls.columns = columns
+        cls.workbook = workbook = Workbook()
+        # Taken from xlwt.Utils.valid_sheet_name
+        # Sheet name limited to 31 chars
+        if len(name) > 31:
+            name = u"{sheetname}...".format(sheetname=name[:28])
+        # XXX escape bug
+        #   en.po locale/locale.pot:78:13: Séquence de contrôle invalide
+        # msgmerge: 1 erreur fatale trouvée
+        for c in ur"'[]:\\?/*\x00":
+            name = name.replace(c, u".")
+        cls.sheet = workbook.add_sheet(name)
+        # XXX
+        cls.y = 0
+
+
+    def get_nrows(cls):
+        return cls.y
+
+
+    def add_row(cls, row, is_header=False):
+        sheet = cls.sheet
+        if is_header is True:
+            style = cls.header_style
+        else:
+            style = default_style
+        for x, value in enumerate(row):
+            column = cls.columns[x]
+            value = column.encode(value)
+            sheet.write(cls.y, x, value, style)
+        cls.y += 1
+
+
+    def to_str(cls):
+        body = StringIO()
+        cls.workbook.save(body)
+        return body.getvalue()
+
+register_csv_writer(XLSWriter)
 
 
 
@@ -149,116 +145,8 @@ class CSV_XLS_Writer(CSV_ODS_Writer):
 register_csv_writer(CSV_XLS_Writer)
 
 
-
-try:
-    from lpod.document import odf_new_document
-    from lpod.style import odf_create_style
-    from lpod.table import odf_create_table, odf_create_row
-    from lpod.const import ODF_SPREADSHEET
-
-    class ODSWriter(object):
-        name = 'ods'
-        title = MSG(u"OpenDocument Spreadsheet")
-        mimetype = ODF_SPREADSHEET
-        extension = 'ods'
-        header_style = odf_create_style('table-cell', area='text', bold=True)
-
-
-        def __init__(cls, columns, name):
-            cls.columns = columns
-            cls.document = document = odf_new_document('spreadsheet')
-            cls.table = table = odf_create_table(name)
-            document.get_body().append(table)
-            document.insert_style(cls.header_style, automatic=True)
-
-
-        def get_nrows(cls):
-            return cls.table.get_height()
-
-
-        def add_row(cls, row, is_header=False):
-            if is_header is True:
-                style = cls.header_style
-            else:
-                style = None
-            values = []
-            for i, value in enumerate(row):
-                column = cls.columns[i]
-                values.append(column.encode(value))
-            row = odf_create_row()
-            row.set_values(values, style=style)
-            cls.table.append_row(row)
-
-
-        def to_str(cls):
-            body = StringIO()
-            cls.document.save(body)
-            return body.getvalue()
-
-    register_csv_writer(ODSWriter)
-except ImportError:
-    pass
-
-
-
-try:
-    from xlwt import Workbook, easyxf
-    from xlwt.Style import default_style
-
-    class XLSWriter(object):
-        name = 'xls'
-        title = MSG(u"MS Excel")
-        mimetype = 'application/vnd.ms-excel'
-        extension = 'xls'
-        header_style = easyxf('font: bold on')
-
-
-        def __init__(cls, columns, name):
-            cls.columns = columns
-            cls.workbook = workbook = Workbook()
-            # Taken from xlwt.Utils.valid_sheet_name
-            # Sheet name limited to 31 chars
-            if len(name) > 31:
-                name = u"{sheetname}...".format(sheetname=name[:28])
-            # XXX escape bug
-            #   en.po locale/locale.pot:78:13: Séquence de contrôle invalide
-            # msgmerge: 1 erreur fatale trouvée
-            for c in ur"'[]:\\?/*\x00":
-                name = name.replace(c, u".")
-            cls.sheet = workbook.add_sheet(name)
-            # XXX
-            cls.y = 0
-
-
-        def get_nrows(cls):
-            return cls.y
-
-
-        def add_row(cls, row, is_header=False):
-            sheet = cls.sheet
-            if is_header is True:
-                style = cls.header_style
-            else:
-                style = default_style
-            for x, value in enumerate(row):
-                column = cls.columns[x]
-                value = column.encode(value)
-                sheet.write(cls.y, x, value, style)
-            cls.y += 1
-
-
-        def to_str(cls):
-            body = StringIO()
-            cls.workbook.save(body)
-            return body.getvalue()
-
-    register_csv_writer(XLSWriter)
-except ImportError:
-    pass
-
-
-
 class CSVFormat(Enumerate):
+
     formats = csv_writer_registry.keys()
 
 
@@ -295,6 +183,7 @@ class CSVExportButton(BrowseButton):
 
 
 class CSVExportFormatButton(SelectWidget, CSVExportButton):
+
     template = (make_stl_template("""
         ${label}:
         <select id="${id}-format" name="csv_format">
