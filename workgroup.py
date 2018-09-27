@@ -19,12 +19,12 @@
 from itools.gettext import MSG
 
 # Import from ikaaro
-from ikaaro.fields import Char_Field, Boolean_Field
+from ikaaro.config_common import NewResource_Local
+from ikaaro.fields import Char_Field
 from ikaaro.folder import Folder
 
 # Import from goodforms
 from application import Application
-from base_views import FrontView
 from workgroup_views import Workgroup_NewInstance, Workgroup_View
 from workgroup_views import Workgroup_Edit
 
@@ -34,20 +34,23 @@ class Workgroup(Folder):
     class_id = 'Workgroup'
     class_title = MSG(u"GoodForms Workgroup")
     class_description = MSG(u"Create your client space to manage collection applications and submit them.")
-    class_views = ['view', 'edit', 'show', 'new_resource']
+    class_views = ['view', 'edit', 'new_resource']
 
     # Fields
-    logo = Char_Field
-    accept_terms_of_use = Boolean_Field
+    favicon = Char_Field(title=MSG(u'Favicon'))
+    logo = Char_Field(title=MSG(u'Logo'))
+    style = Char_Field(title=MSG(u'Style'))
+
 
     def get_document_types(self):
         return [Application]
+
 
     def get_logo_icon(self, size=48):
         return None
 
     # Views
-    new_instance = Workgroup_NewInstance()
     view = Workgroup_View()
     edit = Workgroup_Edit()
-    show = FrontView(title=MSG(u"Your Collection Applications"))
+    new_resource = NewResource_Local(title=MSG(u'Create an application'))
+    new_instance = Workgroup_NewInstance()

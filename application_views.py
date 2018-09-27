@@ -72,7 +72,10 @@ class Application_NewInstance(AutoAdd):
         except ValueError, e:
             context.message = ERROR(u'Cannot load: {x}').gettext(x=unicode(e))
             return
-        goto = goto.resolve2('0/;pageA#menu')
+        except Exception:
+            # FIXME (just for debug)
+            pass
+        goto = str(child.abspath)
         return context.come_back(INFO_NEW_APPLICATION, goto)
 
 
@@ -385,8 +388,7 @@ class Application_Export(BaseView):
 
 class Application_Edit(AutoEdit):
 
-
-    fields = ['subscription', 'file']
+    fields = ['title']
 
 
 
