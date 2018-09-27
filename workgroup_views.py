@@ -22,7 +22,6 @@ from itools.web import INFO, ERROR
 # Import from ikaaro
 from ikaaro.autoadd import AutoAdd
 from ikaaro.autoedit import AutoEdit
-from ikaaro import messages
 
 # Import from agitiols
 from agitools.autotable import AutoTable
@@ -45,13 +44,8 @@ class Workgroup_NewInstance(AutoAdd):
         proxy = super(Workgroup_NewInstance, self)
         goto = proxy.action(resource, context, form)
         workgroup = resource.get_resource(form['name'])
-        # Set default language
-        accept = context.accept_language
-        ws_languages = context.root.get_value('website_languages')
         # FIXME
         current_language = 'en'
-        #current_language = accept.select_language(ws_languages)
-        #workgroup.set_value('website_languages', (current_language,))
         # Set title in current language
         workgroup.set_value('title', form['title']['en'], language=current_language)
         # Come back

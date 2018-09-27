@@ -18,7 +18,6 @@
 
 # Import from itools
 from itools.gettext import MSG
-from itools.uri import Reference
 from itools.web import STLView
 
 # Import from ikaaro
@@ -26,10 +25,6 @@ from ikaaro.buttons import Remove_BrowseButton
 
 # Import from agitools
 from agitools.autotable import AutoTable
-
-# Import from goodforms
-from application import Application
-from workgroup import Workgroup
 
 
 class Root_ViewAdmin(STLView):
