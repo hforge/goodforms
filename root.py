@@ -23,7 +23,7 @@ from ikaaro.autoedit import AutoEdit
 from ikaaro.root import Root as BaseRoot
 
 # Import from goodforms
-from root_views import Root_View, Root_Show
+from root_views import Root_Show
 from root_views import Root_ViewAdmin
 from root_views import Root_ShowAllWorkgroups, Root_ShowAllApplications
 from workgroup import Workgroup
@@ -34,7 +34,7 @@ class Root(BaseRoot):
     class_id = 'goodforms'
     class_skin = 'goodforms'
     class_title = MSG(u'Goodforms')
-    class_views = ['view', 'view_admin', 'edit', 'show', 'show_all_workgroups', 'show_all_applications']
+    class_views = ['view_admin', 'edit', 'show', 'show_all_workgroups', 'show_all_applications']
 
     def get_user_role(self, name):
         return u'XXX'
@@ -53,7 +53,6 @@ class Root(BaseRoot):
 
 
     # Views
-    view = Root_View()
     view_admin = Root_ViewAdmin()
     _fields = ['title']
     edit = AutoEdit(fields=_fields)
