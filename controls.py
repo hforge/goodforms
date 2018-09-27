@@ -21,11 +21,13 @@
 
 # Import from itools
 from itools.core import freeze
+from itools.csv import CSVFile
 from itools.datatypes import Enumerate, Unicode
 from itools.gettext import MSG
 from itools.web import ERROR
 
 # Import from ikaaro
+from ikaaro.fields import Char_Field, File_Field
 from ikaaro.folder import Folder
 
 # Import from goodforms
@@ -35,17 +37,14 @@ from utils import FormatError
 
 
 ERR_EMPTY_TITLE = ERROR(u'In controls, line {line}, title is missing.')
-ERR_EMPTY_EXPRESSION = ERROR(u'In controls, line {line}, expression is '
-        u'missing.')
-ERR_BAD_EXPRESSION = ERROR(u'In controls, line {line}, syntax error in '
-        u'expression: {err}')
-ERR_BAD_LEVEL = ERROR(u'In controls, line {line}, unexpected level '
-        u'"{level}".')
-ERR_EMPTY_VARIABLE = ERROR(u'In controls, line {line}, main variable is '
-        u'missing.')
+ERR_EMPTY_EXPRESSION = ERROR(u'In controls, line {line}, expression is missing.')
+ERR_BAD_EXPRESSION = ERROR(u'In controls, line {line}, syntax error in expression: {err}')
+ERR_BAD_LEVEL = ERROR(u'In controls, line {line}, unexpected level "{level}".')
+ERR_EMPTY_VARIABLE = ERROR(u'In controls, line {line}, main variable is missing.')
 
 
 class ControlLevel(Enumerate):
+
     options = [
         {'name': '0', 'value': u"Informative"},
         {'name': '1', 'value': u"Warning"},
@@ -59,10 +58,9 @@ class ControlLevel(Enumerate):
 
 
 
-class ControlsHandler(Folder):
+class ControlsHandler(CSVFile):
 
-    # Fields
-    record_properties = {
+    schema = {
         'number': Unicode(mandatory=True, title=MSG(u"Number")),
         'title': Unicode(mandatory=True, title=MSG(u"Title")),
         'expression': Expression(mandatory=True, title=MSG(u"Expression")),
@@ -77,13 +75,26 @@ class Controls(Folder):
     class_title = MSG(u"Controls")
     class_handler = ControlsHandler
 
+    # Fields
+    data = File_Field(class_handler=ControlsHandler)
+    extension = Char_Field
+    filename = Char_Field
+
     # To import from CSV
     columns = ['number', 'title', 'expression', 'level', 'variable']
 
-    # Views
-    add_record = None
-    edit_record = None
-    edit = None
+    def init_resource(self, body=None, filename=None, extension=None,
+            skip_header=True, **kw):
+        # Init proxy proxy = super(Controls, self)
+        proxy.init_resource(filename=filename, extension=extension, **kw)
+        schema_resource = self.parent.get_resource('schema')
+        # Load CSV
+        schema, pages = schema_resource.get_schema_pages()
+        namespace = {}
+        for key in schema:
+            namespace[key] = 0
+        self._load_from_csv(body, namespace=namespace,
+                skip_header=skip_header)
 
 
     def _load_from_csv(self, body, namespace, skip_header=True):
@@ -121,18 +132,6 @@ class Controls(Folder):
             handler.add_record(record)
             lineno += 1
 
-
-    def init_resource(self, body=None, filename=None, extension=None,
-            skip_header=True, **kw):
-        proxy = super(Controls, self)
-        proxy.init_resource(filename=filename, extension=extension, **kw)
-        schema_resource = self.parent.get_resource('schema')
-        schema, pages = schema_resource.get_schema_pages()
-        namespace = {}
-        for key in schema:
-            namespace[key] = 0
-        self._load_from_csv(body, namespace=namespace,
-                skip_header=skip_header)
 
 
     def get_controls(self):
