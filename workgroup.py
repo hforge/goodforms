@@ -25,7 +25,6 @@ from ikaaro.folder import Folder
 # Import from goodforms
 from application import Application
 from base_views import FrontView
-from form import Form
 from workgroup_views import Workgroup_NewInstance, Workgroup_View
 from workgroup_views import Workgroup_Edit
 

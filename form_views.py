@@ -24,34 +24,27 @@ from itools.core import merge_dicts, freeze
 from itools.datatypes import String, Enumerate
 from itools.gettext import MSG
 from itools.log import log_debug
-from itools.web import BaseView, STLView, STLView, INFO, ERROR
-from itools.handlers import checkid
+from itools.web import BaseView, STLView, INFO, ERROR
 
 # Import from ikaaro
 
 # Import from goodforms
-from buttons import InputControlLink, PagePrintLink, FormPrintLink
+from buttons import InputControlLink
 from buttons import SaveButton
 from datatypes import Numeric, FileImage
 from utils import get_page_number, force_encode, is_print, set_print
 from widgets import is_mandatory_filled
-from workflow import WorkflowState, EMPTY, PENDING, FINISHED, EXPORTED
+from workflow import WorkflowState, PENDING, FINISHED, EXPORTED
 from customization import custom_flag
 
 
 # Messages
-ERR_INVALID_FIELDS = ERROR(u"The following fields are invalid: {fields}.",
-        format='replace_html')
-ERR_MANDATORY_FIELDS = ERROR(u"The following fields are mandatory: "
-        u"{fields}.", format='replace_html')
-ERR_BAD_SUMS = ERROR(u"The following sums are invalid: {fields}.",
-        format='replace_html')
-MSG_SAVED = INFO(u"The page is saved. Check your input in the "
-        u'<a href=";send">Input Control</a> tab.', format='html')
-MSG_FINISHED = INFO(u"Your form is finished. "
-        u"Your correspondent has been informed.")
-MSG_EXPORTED_ITAAPY = ERROR(u'To export to a SQL database, contact <a '
-        u'href="http://www.itaapy.com/contact">Itaapy</a>', format='html')
+ERR_INVALID_FIELDS = ERROR(u"The following fields are invalid: {fields}.", format='replace_html')
+ERR_MANDATORY_FIELDS = ERROR(u"The following fields are mandatory: {fields}.", format='replace_html')
+ERR_BAD_SUMS = ERROR(u"The following sums are invalid: {fields}.", format='replace_html')
+MSG_SAVED = INFO(u'The page is saved. Check your input in the <a href=";send">Input Control</a> tab.', format='html')
+MSG_FINISHED = INFO(u"Your form is finished. Your correspondent has been informed.")
+MSG_EXPORTED_ITAAPY = ERROR(u'To export to a SQL database, contact the administrator', format='html')
 ERR_INVALID_FORMULA = ERROR(u"{name} is not equal to {formula}")
 ERR_MANDATORY_FIELD = ERROR(u"{name} is mandatory")
 ERR_INVALID_FIELD = ERROR(u"{name} is invalid")
@@ -71,6 +64,7 @@ Multiple = Single(multiple=True)
 
 
 class Form_View(STLView):
+
     access = 'is_allowed_to_view'
     access_POST = 'is_allowed_to_edit'
     template = '/ui/goodforms/form/view.xml'
@@ -370,6 +364,7 @@ class Form_View(STLView):
 
 
 class Form_Send(STLView):
+
     access = 'is_allowed_to_view'
     access_POST = 'is_allowed_to_edit'
     template = '/ui/goodforms/form/send.xml'
@@ -505,6 +500,7 @@ Summary of the "{application_title}" campaign:
 
 
 class Form_Export(BaseView):
+
     access = 'is_allowed_to_view'
     title = MSG(u"Download form")
 
@@ -535,6 +531,7 @@ class Form_Export(BaseView):
 
 
 class Form_Print(STLView):
+
     access = 'is_allowed_to_view'
     title=MSG(u"Print form")
     template = '/ui/goodforms/form/print.xml'

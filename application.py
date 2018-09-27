@@ -16,14 +16,10 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 # Import from standard library
-from copy import deepcopy
 
 # Import from itools
-from itools.core import merge_dicts, freeze
-from itools.datatypes import String, DateTime, Integer
 from itools.gettext import MSG
-from itools.uri import Path
-from itools.web import ERROR, get_context
+from itools.web import ERROR
 
 # Import from ikaaro
 from ikaaro.fields import Char_Field, Integer_Field

@@ -16,36 +16,21 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 # Import from itools
-from itools.core import merge_dicts, freeze
-from itools.database import PhraseQuery
-from itools.datatypes import Boolean, Unicode, Email, String
 from itools.gettext import MSG
-from itools.stl import stl
 from itools.web import INFO, ERROR
-from itools.xml import XMLParser
 
 # Import from ikaaro
 from ikaaro.autoadd import AutoAdd
 from ikaaro.autoedit import AutoEdit
 from ikaaro import messages
-from ikaaro.folder_views import Folder_BrowseContent
-from ikaaro.widgets import TextWidget, MultilineWidget, PasswordWidget
-from ikaaro.widgets import ReadOnlyWidget, CheckboxWidget
 
 # Import from agitiols
 from agitools.autotable import AutoTable
-from agitools.order import OrderAutoTable
-
-# Import from goodforms
-from application import Application
 
 
-MSG_NEW_WORKGROUP = INFO(u'Your client space is created. You can '
-        u'add your logo.')
+MSG_NEW_WORKGROUP = INFO(u'Your client space is created. You can add your logo.')
 MSG_ERR_NOT_IMAGE = ERROR(u'Not an image or invalid image.')
-MSG_BAD_PASSWORD = ERROR(u'You already have an account but your password '
-        u'did not match. Try <a href="/;login">log in</a> first.',
-        format='html')
+MSG_BAD_PASSWORD = ERROR(u'You already have an account but your password did not match. Try <a href="/;login">log in</a> first.', format='html')
 
 
 class Workgroup_NewInstance(AutoAdd):

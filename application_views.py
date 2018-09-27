@@ -16,40 +16,29 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 # Import from the Standard Library
-from email.utils import parseaddr
 from urllib import quote
 
 # Import from itools
-from itools.core import merge_dicts, is_prototype, freeze
-from itools.database import PhraseQuery, TextQuery, StartQuery, AndQuery
-from itools.database import OrQuery, NotQuery
-from itools.datatypes import Integer, Unicode, Email, String
+from itools.core import is_prototype, freeze
+from itools.datatypes import String
 from itools.gettext import MSG
 from itools.handlers.utils import transmap
-from itools.stl import stl
-from itools.uri import get_reference, get_uri_path
-from itools.web import INFO, ERROR, BaseView, STLView, get_context
+from itools.web import INFO, ERROR, BaseView, get_context
 
 # Import from ikaaro
 from ikaaro.autoadd import AutoAdd
 from ikaaro.autoedit import AutoEdit
-from ikaaro.autoform import AutoForm
-from ikaaro.datatypes import FileDataType
 from ikaaro.folder_views import GoToSpecificDocument
-from ikaaro.messages import MSG_PASSWORD_MISMATCH
-from ikaaro.widgets import FileWidget, TextWidget, SelectWidget, file_widget
 
 # Import from agitools
 from agitools.autotable import AutoTable
 
 # Import from goodforms
-from buttons import ExportODSButton, ExportXLSButton, AddUsersButton
-from datatypes import Subscription, EmailField
+from buttons import ExportODSButton, ExportXLSButton
 from form import Form
-from formpage import FormPage
 from rw import ODSWriter, XLSWriter
-from utils import force_encode, is_print, FormatError
-from workflow import WorkflowState, NOT_REGISTERED, EMPTY
+from utils import force_encode, FormatError
+from workflow import WorkflowState, NOT_REGISTERED
 from customization import custom_flag
 
 

@@ -18,7 +18,7 @@
 
 # Import from itools
 from itools.core import merge_dicts,freeze
-from itools.datatypes import String, Unicode, Email, XMLContent
+from itools.datatypes import Unicode, Email, XMLContent
 from itools.gettext import MSG
 from itools.uri import encode_query, get_reference, Reference
 from itools.web import STLView
@@ -26,7 +26,7 @@ from itools.xml import XMLParser
 
 # Import from ikaaro
 from ikaaro.autoform import AutoForm
-from ikaaro.widgets import TextWidget, MultilineWidget
+from ikaaro.widgets import TextWidget
 from ikaaro.buttons import Remove_BrowseButton
 
 # Import from agitools
@@ -85,7 +85,6 @@ class Root_View(AutoForm):
         namespace = proxy.get_namespace(resource, context)
 
         # widgets
-        widgets_dict = {}
         namespace['widgets_dict'] = {}
 
         # extra anonymous requirements

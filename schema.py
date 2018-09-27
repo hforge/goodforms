@@ -23,12 +23,10 @@
 import re
 
 # Import from itools
-from itools.core import freeze, is_prototype
 from itools.csv import CSVFile
 from itools.datatypes import Enumerate, String, Integer, Boolean, Date
 from itools.datatypes import Unicode
 from itools.gettext import MSG
-from itools.handlers import checkid
 from itools.web import ERROR
 
 # Import from ikaaro
@@ -37,8 +35,8 @@ from ikaaro.folder import Folder
 
 # Import from goodforms
 from datatypes import NumInteger, NumDecimal, NumTime, NumShortTime, Text
-from datatypes import NumDate, NumShortDate, NumDigit, UnicodeSQL, EnumBoolean, Email, EmailField
-from datatypes import SqlEnumerate, Numeric, FileImage
+from datatypes import NumDate, NumShortDate, NumDigit, UnicodeSQL, EnumBoolean, EmailField
+from datatypes import SqlEnumerate, FileImage
 from utils import SI, FormatError
 
 

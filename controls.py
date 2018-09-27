@@ -20,7 +20,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 # Import from itools
-from itools.core import freeze
 from itools.csv import CSVFile
 from itools.datatypes import Enumerate, Unicode
 from itools.gettext import MSG
@@ -85,7 +84,8 @@ class Controls(Folder):
 
     def init_resource(self, body=None, filename=None, extension=None,
             skip_header=True, **kw):
-        # Init proxy proxy = super(Controls, self)
+        # Init proxy
+        proxy = super(Controls, self)
         proxy.init_resource(filename=filename, extension=extension, **kw)
         schema_resource = self.parent.get_resource('schema')
         # Load CSV
