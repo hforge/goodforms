@@ -171,7 +171,12 @@ class Form(Folder):
         handler = self.get_form().get_value('data')
         fields = {}
         for name in schema:
-            fields[name] = handler.get_value(name, schema)
+            # XXX We should init handler
+            if handler:
+                value = handler.get_value(name, schema)
+            else:
+                value = u''
+            fields[name] = value
         return fields
 
 

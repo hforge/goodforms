@@ -94,13 +94,6 @@ class Form_View(STLView):
                 if field[0] == self.page_number]
 
 
-    def get_application_menu(self, resource, context):
-        parent = resource.parent
-        if resource.name == parent.default_form:
-            return parent.menu.GET(parent, context)
-        return None
-
-
     def get_menu(self, resource, context):
         menu = []
         view_name = context.view_name or 'pageA'
@@ -151,8 +144,7 @@ class Form_View(STLView):
                 skip_print=skip_print, readonly=readonly)
         namespace['hidden_fields'] = self.get_hidden_fields(resource,
                 context)
-        namespace['application_menu'] = self.get_application_menu(resource,
-                context)
+        namespace['application_menu'] = 'XXX'
         namespace['menu'] = self.get_menu(resource, context)
         namespace['toolbar'] = self.get_toolbar_namespace(resource, context,
                 readonly)
@@ -215,16 +207,21 @@ class Form_View(STLView):
 
     def action(self, resource, context, form):
         schema, pages = resource.get_schema_pages()
-        fields = resource.get_fields(schema)
+        fields = resource.get_form_fields(schema)
         page_number = form['page_number']
         # Detect special page number for raw data pre loading
         if page_number == 'NOPAGE':
             return self.raw_action(resource, context, form)
-        handler = resource.get_form().handler
+        form = resource.get_form()
+        handler = form.get_value('data')
+        if not handler:
+            # XXX FIXME WE SHOULD INIT HANDLER
+            form.set_value('data', '')
+            handler = form.get_value('data')
         formpage = resource.get_formpage(page_number)
 
         # First save everything even invalid
-        for field in formpage.get_fields():
+        for field in formpage.get_page_fields():
             datatype = schema[field]
             value = fields[field]
             # Avoid "TypeError: issubclass() arg 1 must be a class"
@@ -262,7 +259,7 @@ class Form_View(STLView):
         invalid = []
         mandatory = []
         bad_sums = []
-        for field in formpage.get_fields():
+        for field in formpage.get_page_fields():
             computed = False
             datatype = schema[field]
             if resource.is_disabled_by_type(field, schema, datatype):
@@ -358,8 +355,9 @@ class Form_View(STLView):
             context.message = messages
         else:
             context.message = MSG_SAVED
+        # FIXME
         # if resource.get_workflow_state() == EMPTY:
-        resource.set_workflow_state(PENDING)
+        #resource.set_workflow_state(PENDING)
 
 
 
@@ -387,10 +385,9 @@ class Form_Send(STLView):
         # Invalid fields
         for name, datatype, reason in resource.get_invalid_fields():
             if reason == 'sum_invalid':
-                title = ERR_INVALID_FORMULA(name=name,
-                        formula=datatype.formula)
+                title = ERR_INVALID_FORMULA.gettext(name=name, formula=datatype.formula)
             elif reason == 'mandatory':
-                title = ERR_MANDATORY_FIELD(name=name)
+                title = ERR_MANDATORY_FIELD.gettext(name=name)
             else:
                 if custom_flag('hide_invalid_empty'):
                     # maybe empty field

@@ -36,7 +36,7 @@ from ikaaro.folder import Folder
 # Import from goodforms
 from datatypes import NumInteger, NumDecimal, NumTime, NumShortTime, Text
 from datatypes import NumDate, NumShortDate, NumDigit, UnicodeSQL, EnumBoolean, EmailField
-from datatypes import SqlEnumerate, FileImage
+from datatypes import SqlEnumerate, FileImage, Numeric
 from utils import SI, FormatError
 
 
@@ -411,7 +411,6 @@ class Schema(Folder):
                     raise FormatError, ERR_BAD_DEFAULT(line=lineno,
                             default=unicode(default, 'utf_8'))
                 record['default'] = default
-            handler.add_record(record)
             if record['enum_repr'] == 'checkbox':
                 locals_[name] = []
             else:

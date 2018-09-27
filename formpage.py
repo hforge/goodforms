@@ -62,35 +62,36 @@ def is_disabled(row):
 class FormPageHandler(CSVFile):
 
     schema = freeze({'null': Unicode})
+    columns = ['null']
 
 
-    def _load_state_from_file(self, file, encoding='UTF-8'):
-        # Read the data, and find out the encoding
-        data = file.read()
-        self.encoding = guess_encoding(data)
-
-        # Sniff number of columns
-        lines = data.splitlines(True)
-        reader = read_csv(lines)
-        line = reader.next()
-        self.columns = columns = ['null'] * len(line)
-
-        for line in parse(data, columns, self.schema,
-                guess=self.class_csv_guess, skip_header=self.skip_header,
-                encoding=self.encoding):
-            self._add_row(line)
-
-
-    def to_str(self, encoding='UTF-8', separator=',', newline='\n'):
-        # FIXME WHY ?
-        lines = []
-        for row in self.get_rows():
-            line = []
-            for value in row:
-                data = Unicode.encode(value, encoding=encoding)
-                line.append('"%s"' % data.replace('"', '""'))
-            lines.append(separator.join(line))
-        return newline.join(lines)
+#    def _load_state_from_file(self, file, encoding='UTF-8'):
+#        # Read the data, and find out the encoding
+#        data = file.read()
+#        self.encoding = guess_encoding(data)
+#
+#        # Sniff number of columns
+#        lines = data.splitlines(True)
+#        reader = read_csv(lines)
+#        line = reader.next()
+#        self.columns = columns = ['null'] * len(line)
+#
+#        for line in parse(data, columns, self.schema,
+#                guess=self.class_csv_guess, skip_header=self.skip_header,
+#                encoding=self.encoding):
+#            self._add_row(line)
+#
+#
+#    def to_str(self, encoding='UTF-8', separator=',', newline='\n'):
+#        # FIXME WHY ?
+#        lines = []
+#        for row in self.get_rows():
+#            line = []
+#            for value in row:
+#                data = Unicode.encode(value, encoding=encoding)
+#                line.append('"%s"' % data.replace('"', '""'))
+#            lines.append(separator.join(line))
+#        return newline.join(lines)
 
 
 
@@ -104,18 +105,9 @@ class FormPage(Folder):
     filename = Char_Field
     extension = Char_Field
 
-
-    def init_resource(self, body=None, filename=None, extension=None, **kw):
-        # Proxy
-        proxy = super(FormPage, self)
-        proxy.init_resource(filename=filename, extension=extension, **kw)
-        # Load from CSV
-        self._load_from_csv(body)
-
-
-    def _load_from_csv(self, body):
+    def _load_from_csv(self):
+        handler = self.get_value('data')
         title = self.get_title()
-        handler = self.handler
         handler.load_state_from_string(body)
         schema_resource = self.parent.get_resource('schema')
         schema, pages = schema_resource.get_schema_pages()
@@ -136,8 +128,9 @@ class FormPage(Folder):
         return page_number.upper()
 
 
-    def get_fields(self):
-        for row in self.handler.get_rows():
+    def get_page_fields(self):
+        handler = self.get_value('data')
+        for row in handler.get_rows():
             for column in row:
                 column = column.strip()
                 if column.startswith(FIELD_PREFIX):
@@ -163,7 +156,7 @@ class FormPage(Folder):
             readonly = True
 
         schema = form.get_schema()
-        fields = form.get_fields(schema)
+        fields = form.get_form_fields(schema)
         globals_ = form.get_globals()
         locals_ = form.get_locals(schema, fields)
         floating_locals = form.get_floating_locals(schema, fields)
@@ -171,7 +164,8 @@ class FormPage(Folder):
         # Calcul du (des) tableau(x)
         tables = []
         tables.append([])
-        for y, row in enumerate(self.handler.get_rows()):
+        handler = self.get_value('data')
+        for y, row in enumerate(handler.get_rows()):
             columns = []
             for x, column in enumerate(row):
                 tabindex = str(x * 100 + y + 1)

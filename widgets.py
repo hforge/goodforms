@@ -356,7 +356,12 @@ def file_widget(context, form, datatype, name, value, schema, fields,
 def get_input_widget(name, form, schema, fields, context, tabindex=None,
         readonly=False, skip_print=False):
     # Always take data from the handler, we store wrong values anyway
-    value = form.get_form().handler.get_value(name, schema)
+    form = form.get_form()
+    handler = form.get_value('data')
+    if handler:
+        value = handler.get_value(name, schema)
+    else:
+        value = ''
     datatype = schema[name]
     readonly = readonly or datatype.readonly
     widget = None
