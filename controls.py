@@ -115,7 +115,6 @@ class Controls(Folder):
             lineno += 1
 
 
-
     def get_controls(self):
         handler = self.get_value('data')
         for row in handler.get_rows():

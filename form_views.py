@@ -435,7 +435,7 @@ class Form_Send(STLView):
                 'infos': infos}
         # ACLs
         user = context.user
-        is_allowed_to_export = context.root.is_allowed_to_export(user, resource)
+        is_allowed_to_export = True
         namespace['is_allowed_to_export'] = is_allowed_to_export
         # State
         namespace['statename'] = statename = resource.get_workflow_state()

@@ -29,6 +29,7 @@ from itools.handlers import File as FileHandler
 from itools.web import get_context
 
 # Import from ikaaro
+from ikaaro.autoedit import AutoEdit
 from ikaaro.fields import Text_Field, File_Field
 from ikaaro.file_views import File_NewInstance
 from ikaaro.folder import Folder
@@ -119,7 +120,7 @@ class Form(Folder):
 
     class_id = 'Form'
     class_title = MSG(u"Form")
-    class_views = ['pageA', 'export', 'show', 'view_print', 'send']
+    class_views = ['edit', 'pageA', 'export', 'view_print', 'send']
 
     # Fields
     data = File_Field(class_handler=FormHandler)
@@ -167,7 +168,7 @@ class Form(Folder):
 
 
     def get_form_fields(self, schema):
-        handler = self.get_form().handler
+        handler = self.get_form().get_value('data')
         fields = {}
         for name in schema:
             fields[name] = handler.get_value(name, schema)
@@ -268,16 +269,16 @@ class Form(Folder):
     def get_form_title(self):
         param = self.get_param_folder()
         if self.name == param.default_form:
-            return MSG(u"{application}: <em>Test Form</em>",
-                    format='replace_html', application=param.get_title())
+            msg = MSG(u"{application}: <em>Test Form</em>", format='replace_html')
+            return msg.gettext(application=param.get_title())
         form_title = None
         user = self.get_resource('/users/' + self.name, soft=True)
         if user is not None:
             form_title = user.get_title()
         if form_title is None:
             form_title = self.get_title()
-        return MSG(u"{application}: {form}", application=param.get_title(),
-                form=form_title)
+        msg = MSG(u"{application}: {form}")
+        return msg.gettext(application=param.get_title(), form=form_title)
 
 
     ######################################################################
@@ -292,9 +293,9 @@ class Form(Folder):
 
 
     def is_first_time(self):
-        handler = self.get_form().handler
-        # Force loading
-        handler._raw_fields
+        handler = self.get_form().get_value('data')
+        if not handler:
+            return True
         return handler.timestamp is None
 
 
@@ -465,10 +466,8 @@ class Form(Folder):
         return name
 
     # Views
+    edit = AutoEdit(fields=['title'])
     new_instance = File_NewInstance
     send = Form_Send()
     export = Form_Export()
     view_print = Form_Print()
-    show = GoToSpecificDocument(access='is_allowed_to_edit',
-            title=MSG(u"Manage your Data Collection Application"),
-            specific_document='..', specific_view='view')
