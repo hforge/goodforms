@@ -16,6 +16,7 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 # Import from the Standard Library
+import traceback
 from urllib import quote
 
 # Import from itools
@@ -74,6 +75,7 @@ class Application_NewInstance(AutoAdd):
             return
         except Exception:
             # FIXME (just for debug)
+            print traceback.format_exc()
             pass
         goto = str(child.abspath)
         return context.come_back(INFO_NEW_APPLICATION, goto)
