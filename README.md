@@ -5,7 +5,7 @@ Dependencies
 =====================
 
   - itools (V 0.78)
-  - ikaaro (V 0.68)
+  - ikaaro (V 0.78)
   - lpod-python (master)
 
 Installation
