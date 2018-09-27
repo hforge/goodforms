@@ -86,24 +86,18 @@ class Application_View(AutoTable):
 
     access = 'is_allowed_to_edit'
     title = MSG(u"Manage your Data Collection Application")
-    #template = '/ui/goodforms/application/view.xml'
 
     # Search Form
     search_schema = {}
     search_fields = []
 
     # Configuration
-    base_classes = Form.class_id
-
-    # FIXME
-    #search_template = '/ui/goodforms/application/search.xml'
+    base_classes = ('Form',)
 
     # Table
     table_fields = ['name', 'state', 'mtime', 'firstname', 'lastname', 'company', 'email']
 
-    # FIXME
-    table_actions = []
-    #table_actions = freeze([ExportODSButton, ExportXLSButton])
+    table_actions = freeze([ExportODSButton, ExportXLSButton])
 
 
     def get_page_title(self, resource, context):
@@ -113,142 +107,13 @@ class Application_View(AutoTable):
 
 
     def get_item_value(self, resource, context, item, column):
-        brain, item_resource = item
         if column == 'name':
-            return (brain.name, context.get_link(item_resource))
-        elif column in ('state', 'firstname', 'lastname', 'company',
-                'email'):
-            user = context.root.get_user(brain.name)
-            if column == 'state':
-                if user is not None and not user.get_value('password'):
-                    return WorkflowState.get_value(NOT_REGISTERED)
-                return 'XXX'
-            elif column in ('firstname', 'lastname', 'company'):
-                if user is None:
-                    return u""
-                return user.get_value(column)
-            elif column == 'email':
-                if user is None:
-                    return u""
-                email = user.get_value('email')
-                application_title = resource.get_title()
-                subject = MAILTO_SUBJECT.gettext(
-                        workgroup_title=resource.parent.get_title(),
-                        application_title=application_title)
-                subject = quote(subject.encode('utf8'))
-                application_url = resource.get_spread_url(context, email)
-                body = MAILTO_BODY.gettext(
-                        application_title=application_title,
-                        application_url=application_url)
-                body = quote(body.encode('utf8'))
-                url = 'mailto:{0}?subject={1}&body={2}'.format(email,
-                        subject, body)
-                return (email, url)
+            return (item.name, context.get_link(item))
+        elif column in ('state', 'firstname', 'lastname', 'company', 'email'):
+            return u'XXX'
+        # Proxy
         proxy = super(Application_View, self)
         return proxy.get_item_value(resource, context, item, column)
-
-
-
-    def get_key_sorted_by_name(self):
-        def key(item):
-            return int(item.name)
-        return key
-
-
-    def get_key_sorted_by_state(self):
-        get_user = get_context().root.get_user
-        def key(item, cache={}):
-            name =  item.name
-            if name in cache:
-                return cache[name]
-            user = get_user(name)
-            if user is not None and not user.get_value('password'):
-                state = NOT_REGISTERED
-            else:
-                state = item.workflow_state
-            title = WorkflowState.get_value(state)
-            value = title.gettext().lower().translate(transmap)
-            cache[name] = value
-            return value
-        return key
-
-
-    def get_key_sorted_by_user(self):
-        get_user = get_context().root.get_user
-        def key(item, cache={}):
-            name = item.name
-            if name in cache:
-                return cache[name]
-            user = get_user(name)
-            if user is None:
-                value = None
-            else:
-                value = user.get_title().lower().translate(transmap)
-            cache[name] = value
-            return value
-        return key
-
-
-    def get_key_sorted_by_email(self):
-        get_user = get_context().root.get_user
-        def key(item, cache={}):
-            name = item.name
-            if name in cache:
-                return cache[name]
-            user = get_user(name)
-            if user is None:
-                value = None
-            else:
-                email = user.get_value('email').lower()
-                # Group by domain
-                username, domain = email.split('@')
-                value = (domain, username)
-            cache[name] = value
-            return value
-        return key
-
-
-    #def get_search_namespace(self, resource, context):
-    #    namespace = {}
-    #    namespace['state_widget'] = SelectWidget('search_state',
-    #            datatype=WorkflowState, value=context.query['search_state'])
-    #    return namespace
-
-
-    #def get_namespace(self, resource, context):
-    #    namespace = {}
-    #    namespace['menu'] = resource.menu.GET(resource, context)
-    #    namespace['n_forms'] = resource.get_n_forms()
-    #    namespace['max_users'] = resource.get_value('max_users')
-    #    namespace['spread_url'] = resource.get_spread_url(context)
-
-    #    # Search
-    #    search_template = resource.get_resource(self.search_template)
-    #    search_namespace = self.get_search_namespace(resource, context)
-    #    namespace['search'] = stl(search_template, search_namespace)
-
-    #    # Batch
-    #    results = self.get_items(resource, context)
-    #    query = context.query
-    #    if results or query['search_state'] or query['search_term']:
-    #        template = resource.get_resource(self.batch_template)
-    #        batch_namespace = self.get_batch_namespace(resource, context,
-    #                results)
-    #        namespace['batch'] = stl(template, batch_namespace)
-    #    else:
-    #        namespace['batch'] = None
-
-    #    # Table
-    #    if results:
-    #        items = self.sort_and_batch(resource, context, results)
-    #        template = resource.get_resource(self.table_template)
-    #        table_namespace = self.get_table_namespace(resource, context,
-    #                items)
-    #        namespace['table'] = stl(template, table_namespace)
-    #    else:
-    #        namespace['table'] = None
-
-    #    return namespace
 
 
     def action_export(self, resource, context, form, writer_cls=ODSWriter):
