@@ -22,34 +22,24 @@ from __future__ import print_function
 from decimal import InvalidOperation
 
 # Import from itools
-from itools.core import merge_dicts, freeze
-from itools.datatypes import Unicode
+from itools.core import freeze
 from itools.fs import FileName
 from itools.gettext import MSG
-from itools.handlers import checkid, File as FileHandler
+from itools.handlers import File as FileHandler
+from itools.web import get_context
 
 # Import from ikaaro
-from ikaaro.fields import Text_Field
-from ikaaro.file import File
+from ikaaro.fields import Text_Field, File_Field
 from ikaaro.file_views import File_NewInstance
 from ikaaro.folder import Folder
 from ikaaro.folder_views import GoToSpecificDocument
 from ikaaro.utils import generate_name
 
 # Import from goodforms
-from datatypes import Numeric, NumDecimal, NumInteger, FileImage, SqlEnumerate
+from datatypes import Numeric, NumDecimal, FileImage, SqlEnumerate
 from form_views import Form_View, Form_Send, Form_Export, Form_Print
 from utils import SI, get_page_number, parse_control
 from workflow import WorkflowState_Field, FINISHED
-
-
-
-class MultipleForm(Folder):
-    class_id = 'MultipleForm'
-
-
-    def is_first_time(self):
-        return not len(self.get_names())
 
 
 
@@ -125,26 +115,16 @@ class FormHandler(FileHandler):
 
 
 
-class Form(File):
+class Form(Folder):
 
     class_id = 'Form'
     class_title = MSG(u"Form")
-    class_views = ['pageA', 'export', 'show']
-    class_handler = FormHandler
+    class_views = ['pageA', 'export', 'show', 'view_print', 'send']
 
     # Fields
+    data = File_Field(class_handler=FormHandler)
     form_state = Text_Field(indexed=True, stored=True)
     workflow = WorkflowState_Field
-
-    # Views
-    new_instance = File_NewInstance
-    send = Form_Send()
-    export = Form_Export()
-    print = Form_Print()
-    show = GoToSpecificDocument(access='is_allowed_to_edit',
-            title=MSG(u"Manage your Data Collection Application"),
-            specific_document='..', specific_view='view')
-
 
     def __getattr__(self, name):
         """Vues des pages du formulaire dynamiques
@@ -484,10 +464,20 @@ class Form(File):
         used = parent.get_names()
         #name = checkid(name) or 'invalid'
         name = generate_name(name, used)
-        cls = get_resource_class(mimetype)
+        context = get_context()
+        cls = context.database.get_resource_class(mimetype)
         metadata = {
                 'format': mimetype,
                 'filename': filename,
                 'extension': extension}
         parent.make_resource(name, cls, body=body, **metadata)
         return name
+
+    # Views
+    new_instance = File_NewInstance
+    send = Form_Send()
+    export = Form_Export()
+    view_print = Form_Print()
+    show = GoToSpecificDocument(access='is_allowed_to_edit',
+            title=MSG(u"Manage your Data Collection Application"),
+            specific_document='..', specific_view='view')
