@@ -349,7 +349,7 @@ class Form_View(STLView):
             if fields:
                 bad_types.update(fields)
                 fields = [pattern.format(name=f) for f in sorted(fields)]
-                messages.append(message(fields=", ".join(fields)))
+                messages.append(message.gettext(fields=", ".join(fields)))
         if messages:
             context.bad_types = bad_types
             context.message = messages
