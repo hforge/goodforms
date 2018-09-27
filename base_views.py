@@ -19,11 +19,8 @@
 from operator import itemgetter
 
 # Import from itools
-from itools.core import merge_dicts, freeze
-from itools.datatypes import Email, String
-from itools.stl import stl
-from itools.uri import get_reference, get_uri_path, Reference
-from itools.web import INFO, ERROR
+from itools.uri import get_reference
+from itools.web import ERROR
 
 # Import from ikaaro
 from ikaaro.folder import Folder
@@ -32,9 +29,6 @@ from ikaaro.resource_ import DBResource
 from ikaaro.resource_views import DBResource_Links, DBResource_Backlinks
 from ikaaro.revisions_views import DBResource_CommitLog
 from ikaaro.views import IconsView as BaseIconsView
-
-# Import from goodforms
-from datatypes import EmailField
 
 
 MSG_NO_RESOURCE = ERROR(u'No {class_title} available.')
