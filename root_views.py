@@ -29,7 +29,6 @@ from agitools.autotable import AutoTable
 
 # Import from goodforms
 from application import Application
-from base_views import FrontView
 from workgroup import Workgroup
 
 
@@ -38,45 +37,6 @@ class Root_ViewAdmin(STLView):
     access = 'is_admin'
     title = MSG(u'Administration')
     template = "/ui/goodforms/root/admin_view.xml"
-
-
-
-class Root_Show(FrontView):
-
-    template = '/ui/goodforms/root/show.xml'
-    title = MSG(u"Your Client Space")
-    cls = Workgroup
-    size = 128
-    cols = 5
-
-
-    def get_namespace(self, resource, context):
-        proxy = super(Root_Show, self)
-        namespace = proxy.get_namespace(resource, context)
-        if isinstance(namespace, Reference):
-            return namespace
-
-        namespace['size'] = self.size
-
-        members = []
-        guests = []
-        for item in namespace['items']:
-            if item['icon'] is None:
-                item['icon'] = None
-            if item['role'] == 'members':
-                rows = members
-            else:
-                rows = guests
-            if not rows:
-                rows.append([])
-            rows[-1].append(item)
-            if len(rows[-1]) == self.cols:
-                rows.append([])
-        namespace['members'] = members
-        namespace['guests'] = guests
-        return namespace
-
-
 
 
 

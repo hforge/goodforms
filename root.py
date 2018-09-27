@@ -24,7 +24,6 @@ from ikaaro.config_common import NewResource_Local
 from ikaaro.root import Root as BaseRoot
 
 # Import from goodforms
-from root_views import Root_Show
 from root_views import Root_ViewAdmin
 from root_views import Root_ShowAllWorkgroups, Root_ShowAllApplications
 from workgroup import Workgroup
@@ -35,7 +34,7 @@ class Root(BaseRoot):
     class_id = 'goodforms'
     class_skin = 'goodforms'
     class_title = MSG(u'Goodforms')
-    class_views = ['view_admin', 'edit', 'show', 'show_all_workgroups',
+    class_views = ['view_admin', 'edit', 'show_all_workgroups',
         'show_all_applications', 'new_resource']
 
     def get_user_role(self, name):
@@ -58,7 +57,6 @@ class Root(BaseRoot):
     view_admin = Root_ViewAdmin()
     _fields = ['title']
     edit = AutoEdit(fields=_fields)
-    show = Root_Show()
     show_all_workgroups = Root_ShowAllWorkgroups()
     show_all_applications = Root_ShowAllApplications()
     new_resource = NewResource_Local(title=MSG(u'Create workgroup'))
