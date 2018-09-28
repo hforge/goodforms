@@ -23,6 +23,7 @@ from decimal import InvalidOperation
 
 # Import from itools
 from itools.core import freeze
+from itools.datatypes import DateTime
 from itools.fs import FileName
 from itools.gettext import MSG
 from itools.handlers import File as FileHandler
@@ -47,11 +48,6 @@ from workflow import WorkflowState_Field, FINISHED
 
 
 class FormHandler(FileHandler):
-
-    ######################################################################
-    # Load/Save
-    def new(self, encoding='UTF-8', **raw_fields):
-        self._raw_fields = raw_fields
 
 
     def _load_state_from_file(self, file):
@@ -130,6 +126,16 @@ class Form(Folder):
     form_state = Text_Field(indexed=True, stored=True)
     workflow = WorkflowState_Field
 
+
+    def init_resource(self, *args, **kw):
+        # Proxy
+        proxy = super(Form, self)
+        proxy.init_resource(*args, **kw)
+        # init
+        context = get_context()
+        self.set_value('data', 'ctime:{0}'.format(context.timestamp))
+
+
     def __getattr__(self, name):
         """Vues des pages du formulaire dynamiques
         """
@@ -162,6 +168,7 @@ class Form(Folder):
 
     def get_schema(self):
         schema, pages = self.get_schema_pages()
+        schema['ctime'] = DateTime
         return schema
 
 
