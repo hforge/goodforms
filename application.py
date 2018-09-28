@@ -19,46 +19,23 @@
 
 # Import from itools
 from itools.gettext import MSG
-from itools.web import ERROR
 
 # Import from ikaaro
 from ikaaro.config_common import NewResource_Local
-from ikaaro.fields import Char_Field, Integer_Field
+from ikaaro.fields import Integer_Field, File_Field, Char_Field
 from ikaaro.folder import Folder
 
 # Import from agitools
-from agitools.fields import File_Field
 from agitools.utils_views import IconsView
 
 # Import from goodforms
 from application_views import Application_Edit, Applications_View
 from application_views import Application_NewInstance, Application_EditODS
-from controls import Controls
 from datatypes import Subscription_Field
-from form import Forms, Form
+from form import Form, Forms
 from form_views import Forms_View
-from formpage import FormPage
-from rw import get_reader_and_cls
-from schema import Schema
-from utils import FormatError
+from model import FormModel
 from workflow import EMPTY, PENDING, FINISHED
-
-
-ERR_NOT_ODS_XLS = ERROR(u"Not an ODS or XLS file.")
-ERR_WRONG_NUMBER_COLUMNS = ERROR(u'In the "{name}" sheet, wrong number of columns. Do you use the latest template?')
-ERR_FIRST_PAGE = ERROR(u'First form page must be named "A", not "{page}".')
-ERR_PAGE_NAME = ERROR(u'In the "{name}" sheet, page "{page}" is not related to any variable in the schema.')
-
-
-def find_title(table):
-    for values in table.iter_values():
-        for value in values:
-            value = value.strip() if value is not None else u""
-            if value.startswith(u'**'):
-                continue
-            elif value.startswith(u"*"):
-                return value[1:].strip()
-    return None
 
 
 class Application(Folder):
@@ -68,74 +45,37 @@ class Application(Folder):
     class_description = MSG(u"Create from an OpenDocument Spreadsheet file")
     class_views =  ['view', 'edit', 'edit_ods', 'view_admin']
 
-    # Configuration obsolete ?
+    # FIXME Configuration obsolete ?
     allowed_users = 10
 
-    # Configuration
-    schema_class = Schema
-    controls_class = Controls
-
     # Fields
-    max_users = Integer_Field(default=allowed_users)
-    data = File_Field(title=MSG(u'Fichier ODS'), multilingual=False, required=True)
     subscription = Subscription_Field
+    data = File_Field(title=MSG(u'Fichier ODS'), multilingual=False, required=True)
+    filename = Char_Field
+    mimetype = Char_Field
 
+    # FIXME: Remove field
+    max_users = Integer_Field(default=allowed_users)
 
-    def _load_from_file(self, data, context):
-        filename, mimetype, body = data
-        reader, cls = get_reader_and_cls(mimetype)
-        if reader is None:
-            raise FormatError(ERR_NOT_ODS_XLS)
-        # Split tables
-        document = reader(body)
-        tables = iter(document.get_tables())
-        # Controls and Schema
-        for name, title, cls in [
-                ('schema', u"Schema", self.schema_class),
-                ('controls', u"Controls", self.controls_class)]:
-            table = tables.next()
-            table.rstrip(aggressive=True)
-            field = cls.get_field('data')
-            if table.get_width() != len(field.class_handler.columns):
-                error = ERR_WRONG_NUMBER_COLUMNS.gettext(name=table.get_name())
-                raise FormatError(error)
-            # Create schema or controls
-            data = table.to_csv()
-            kw = {'title': {'en': title},
-                  'data': data}
-            r = self.make_resource(name, cls, **kw)
-            r._load_from_csv()
-        schema_resource = self.get_resource('schema')
-        schema, pages = schema_resource.get_schema_pages()
-        # Pages
-        for i, table in enumerate(tables):
-            table.rstrip(aggressive=True)
-            name = table.get_name().split(None, 1)
-            # Page number
-            if len(name) == 1:
-                page_number = name[0]
-                title = None
-            else:
-                page_number, title = name
-            if i == 0 and page_number != 'A':
-                raise FormatError, ERR_FIRST_PAGE.gettext(page=page_number)
-            if page_number not in pages:
-                raise FormatError, ERR_PAGE_NAME.gettext(name=name, page=page_number)
-            # Name
-            name = 'page' + page_number.lower().encode()
-            # Title
-            if title is None:
-                # Find a "*Title"
-                title = find_title(table)
-                if title is None:
-                    title = u"Page {0}".format(page_number)
-            kw = {'title': {'en': title},
-                  'data': table.to_csv()}
-            self.make_resource(name, FormPage, **kw)
-        # Initial form
+    def init_resource(self, *args, **kw):
+        proxy = super(Application, self)
+        proxy.init_resource(*args, **kw)
+        # Initial forms answers containers
         self.make_resource('forms', Forms)
-        # Ok
-        return False
+
+
+    def load_ods_file(self, data, context):
+        if self.get_resource('model', soft=True):
+            self.del_resource('model')
+        # Create model container
+        model = self.make_resource('model', FormModel)
+        # Save informations
+        filename, mimetype, body = data
+        self.set_value('data', body)
+        self.set_value('filename', filename)
+        self.set_value('mimetype', mimetype)
+        # Analyse it
+        model.load_ods_file(context)
 
 
     def get_form(self):

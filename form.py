@@ -145,7 +145,7 @@ class Form(Folder):
     def get_param_folder(self):
         """Return the folder resource where parameters are stored.
         """
-        return self.parent.parent
+        return self.parent.parent.get_resource('model')
 
 
     def get_schema_resource(self):

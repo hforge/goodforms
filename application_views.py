@@ -65,7 +65,7 @@ class Application_NewInstance(AutoAdd):
         if child is None:
             return
         try:
-            child._load_from_file(form['data'], context)
+            child.load_ods_file(form['data'], context)
         except ValueError, e:
             context.message = ERROR(u'Cannot load: {x}').gettext(x=unicode(e))
             return
@@ -96,7 +96,6 @@ class Application_EditODS(AutoEdit):
         self.check_edit_conflict(resource, context, form)
         if context.edit_conflict:
             return
-        data = form['data']
-        resource._load_from_file(data, context)
+        child.load_ods_file(form['data'], context)
         # Ok
         context.message = MSG(u'Ok')
