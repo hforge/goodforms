@@ -59,11 +59,6 @@ class FormModel(Folder):
     class_views = ['view']
     class_icon_css = 'fa-cog'
 
-    # Configuration
-    schema_class = Schema
-    controls_class = Controls
-
-
     def load_ods_file(self, context):
         application = self.parent
         mimetype = application.get_value('mimetype')
@@ -77,8 +72,8 @@ class FormModel(Folder):
         tables = iter(document.get_tables())
         # Controls and Schema
         for name, title, cls in [
-                ('schema', u"Schema", self.schema_class),
-                ('controls', u"Controls", self.controls_class)]:
+                ('schema', u"Schema", Schema),
+                ('controls', u"Controls", Controls)]:
             table = tables.next()
             table.rstrip(aggressive=True)
             field = cls.get_field('data')
