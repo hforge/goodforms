@@ -79,6 +79,7 @@ class Controls(Folder):
     class_id = 'Controls'
     class_title = MSG(u"Controls")
     class_handler = ControlsHandler
+    class_views = ['edit']
 
     # Fields
     data = File_Field(class_handler=ControlsHandler)

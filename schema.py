@@ -298,6 +298,7 @@ class Schema(Folder):
     class_id = 'Schema'
     class_version = '20090123'
     class_title = MSG(u"Schema")
+    class_views = ['edit']
 
     # Fields
     data = File_Field(class_handler=SchemaHandler)
@@ -313,9 +314,6 @@ class Schema(Folder):
         lineno = 2
         locals_ = {}
         for line in handler.get_rows():
-            print '================='
-            print line
-            print '================='
             record = {}
             for index, key in enumerate(handler.columns):
                 record[key] = line[index]
