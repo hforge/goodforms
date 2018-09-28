@@ -312,7 +312,7 @@ class Schema_DebugView(STLView):
 
 class Schema(Folder):
 
-    class_id = 'Schema'
+    class_id = 'schema'
     class_title = MSG(u"Schema")
     class_views = ['debug']
     class_icon_css = 'fa-bars'

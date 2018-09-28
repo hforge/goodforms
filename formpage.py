@@ -123,7 +123,7 @@ class FormPage_DebugView(BaseView):
 
 class FormPage(Folder):
 
-    class_id = 'FormPage'
+    class_id = 'form-page'
     class_title = MSG(u"Form Page")
     class_views = ['debug']
 

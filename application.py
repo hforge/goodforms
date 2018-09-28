@@ -40,7 +40,7 @@ from workflow import EMPTY, PENDING, FINISHED
 
 class Application(Folder):
 
-    class_id = 'Application'
+    class_id = 'application'
     class_title = MSG(u"Collection Application")
     class_description = MSG(u"Create from an OpenDocument Spreadsheet file")
     class_views =  ['view_admin', 'edit', 'edit_ods', 'view']

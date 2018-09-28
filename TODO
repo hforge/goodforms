@@ -1,4 +1,3 @@
-- Replace class_id my minuscules
 - Check if resources class names are ok
 - Display namespace with parsed informations on debug with, will help to develop good API
 - Works on ACLs: Allow to set forms as public

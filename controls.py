@@ -88,7 +88,7 @@ class Controls_DebugView(STLView):
 
 class Controls(Folder):
 
-    class_id = 'Controls'
+    class_id = 'controls'
     class_title = MSG(u"Controls")
     class_icon_css = 'fa-cog'
     class_views = ['debug']
