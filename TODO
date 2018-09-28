@@ -1,0 +1,26 @@
+- Replace class_id my minuscules
+- Check if resources class names are ok
+- Display namespace with parsed informations on debug with, will help to develop good API
+- Works on ACLs: Allow to set forms as public
+- Remove useless ERROR messages (many seems useless)
+- See what to do with agitools dependecies
+- Works on skin (add bootstrap / fontawesome)
+- Only support ODS not XLS (so remove the useless code) - remove xlwt ?
+- Remove unused Buttons
+- Remove allowed_users mechanism
+- Remove unused methods
+- Move all datatypes code into Datatypes
+- Add fields.py for fields ?
+- Fix export of forms
+- Fix print of form
+- Clean CSS
+- Add online demo for goodforms
+- Check XXX / FIXME / TODO on code
+- Update copyrights
+- Fix workflow
+- Fix display form main view (multipages...)
+- Add beter ODS samples into data/
+- Fix company field in User class
+- Remove unused widgets/datatypes
+- Try to generate FR po to check if templates are OK
+- Export only in CSV/ODS not others formats
