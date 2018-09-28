@@ -99,6 +99,7 @@ class FormPage(Folder):
 
     class_id = 'FormPage'
     class_title = MSG(u"Form Page")
+    class_views = ['edit']
 
     # Fields
     data = File_Field(class_handler=FormPageHandler)
