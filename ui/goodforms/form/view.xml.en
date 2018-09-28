@@ -41,8 +41,6 @@
         <strong>Create Your Own Form</strong><br/>
         The form you have filled in was simply created from the upload of
         this <a href="../parameters/;download">XLS/ODS file</a>.<br/>
-        <a href="/;new_resource?type=Workgroup">Create your form</a>
-        within 2 minutes.
       </p>
       <p id="form-buttons">
         <stl:block stl:repeat="action actions">${action}</stl:block>

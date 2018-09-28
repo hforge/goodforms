@@ -20,13 +20,14 @@ from itools.gettext import MSG
 
 # Import from ikaaro
 from ikaaro.autoedit import AutoEdit
-from ikaaro.config_common import NewResource_Local
 from ikaaro.root import Root as BaseRoot
 
+# Import from agitools
+from agitools.utils_views import IconsView
+
 # Import from goodforms
+from application import Applications
 from root_views import Root_ViewAdmin
-from root_views import Root_ShowAllWorkgroups, Root_ShowAllApplications
-from workgroup import Workgroup
 
 
 class Root(BaseRoot):
@@ -34,15 +35,15 @@ class Root(BaseRoot):
     class_id = 'goodforms'
     class_skin = 'goodforms'
     class_title = MSG(u'Goodforms')
-    class_views = ['view_admin', 'edit', 'show_all_workgroups',
-        'show_all_applications', 'new_resource']
+    class_views = ['view', 'view_admin', 'edit' ]
+
+    def init_resource(self, *args, **kw):
+        super(Root, self).init_resource(*args, **kw)
+        self.make_resource('applications', Applications)
+
 
     def get_user_role(self, name):
         return u'XXX'
-
-
-    def get_document_types(self):
-        return [Workgroup]
 
 
     def get_page_title(self):
@@ -54,9 +55,7 @@ class Root(BaseRoot):
 
 
     # Views
+    view = IconsView
     view_admin = Root_ViewAdmin()
     _fields = ['title']
     edit = AutoEdit(fields=_fields)
-    show_all_workgroups = Root_ShowAllWorkgroups()
-    show_all_applications = Root_ShowAllApplications()
-    new_resource = NewResource_Local(title=MSG(u'Create workgroup'))

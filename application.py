@@ -22,6 +22,7 @@ from itools.gettext import MSG
 from itools.web import ERROR
 
 # Import from ikaaro
+from ikaaro.config_common import NewResource_Local
 from ikaaro.fields import Char_Field, Integer_Field
 from ikaaro.folder import Folder
 
@@ -29,7 +30,7 @@ from ikaaro.folder import Folder
 from agitools.fields import File_Field
 
 # Import from goodforms
-from application_views import Application_Edit, Application_Export
+from application_views import Application_Edit, Application_Export, Applications_View
 from application_views import Application_NewInstance, Application_View
 from application_views import Application_RedirectToForm
 from controls import Controls
@@ -205,3 +206,20 @@ class Application(Folder):
     edit = Application_Edit()
     export = Application_Export()
     show = Application_RedirectToForm()
+
+
+
+class Applications(Folder):
+
+    class_id = 'applications'
+    class_title = MSG(u"Formulaires")
+    class_views = ['view', 'new_resource']
+    class_icon_name = 'applications'
+    class_icon_css = 'fa-pencil'
+
+    def get_document_types(self):
+        return [Application]
+
+    # Views
+    view = Applications_View
+    new_resource = NewResource_Local(title=MSG(u'Create an application'))

@@ -33,6 +33,7 @@ from ikaaro.folder_views import GoToSpecificDocument
 
 # Import from agitools
 from agitools.autotable import AutoTable
+from agitools.buttons import Remove_BrowseButton
 
 # Import from goodforms
 from buttons import ExportODSButton, ExportXLSButton
@@ -56,6 +57,12 @@ MAILTO_SUBJECT = MSG(u'{workgroup_title}, form "{application_title}"')
 MAILTO_BODY = MSG(u'Please fill in the form "{application_title}" available here:\r\n <{application_url}>.\r\n')
 
 
+class Applications_View(AutoTable):
+
+    title = MSG(u'Applications')
+    base_classes = ('Application',)
+    table_fields = ['checkbox', 'title']
+    table_actions = [Remove_BrowseButton]
 
 
 class Application_NewInstance(AutoAdd):
