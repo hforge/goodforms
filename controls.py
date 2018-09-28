@@ -88,7 +88,7 @@ class Controls(Folder):
 
     class_id = 'Controls'
     class_title = MSG(u"Controls")
-    class_handler = ControlsHandler
+    class_icon_css = 'fa-cog'
     class_views = ['debug']
 
     # Fields

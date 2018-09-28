@@ -35,6 +35,9 @@ from itools.xml import XMLParser
 from ikaaro.folder import Folder
 from ikaaro.fields import Char_Field, File_Field
 
+# Import from agitools
+from agitools.autotable import AutoTable
+
 # Import from goodforms
 from datatypes import NumTime
 from schema import Variable
@@ -59,12 +62,23 @@ def is_disabled(row):
 
 
 
+
+class FormPages_View(AutoTable):
+
+    access = 'is_admin'
+    title = MSG(u'Pages')
+    base_classes = ('FormPage',)
+    table_fields = ['title']
+    table_actions = []
+
+
 class FormPageHandler(CSVFile):
 
     schema = freeze({'null': Unicode})
     columns = ['null']
 
 
+# FIXME
 #    def _load_state_from_file(self, file, encoding='UTF-8'):
 #        # Read the data, and find out the encoding
 #        data = file.read()
@@ -369,3 +383,15 @@ class FormPage(Folder):
 
     # Views
     debug = FormPage_DebugView
+
+
+
+class FormPages(Folder):
+
+    class_id = 'form-pages'
+    class_title = MSG(u"Form Pages")
+    class_views = ['view']
+    class_icon_css = 'fa-building-o'
+
+    # View
+    view = FormPages_View

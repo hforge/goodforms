@@ -27,7 +27,7 @@ from agitools.utils_views import IconsView
 
 # Import from goodforms
 from controls import Controls
-from formpage import FormPage
+from formpage import FormPages, FormPage
 from rw import get_reader_and_cls
 from schema import Schema
 from utils import FormatError
@@ -57,6 +57,7 @@ class FormModel(Folder):
     class_id = 'form-model'
     class_title = MSG(u"Model")
     class_views = ['view']
+    class_icon_css = 'fa-cog'
 
     # Configuration
     schema_class = Schema
@@ -93,6 +94,7 @@ class FormModel(Folder):
         schema_resource = self.get_resource('schema')
         schema, pages = schema_resource.get_schema_pages()
         # Pages
+        pages_container = self.make_resource('pages', FormPages)
         for i, table in enumerate(tables):
             table.rstrip(aggressive=True)
             name = table.get_name().split(None, 1)
@@ -116,7 +118,7 @@ class FormModel(Folder):
                     title = u"Page {0}".format(page_number)
             kw = {'title': {'en': title},
                   'data': table.to_csv()}
-            self.make_resource(name, FormPage, **kw)
+            pages_container.make_resource(name, FormPage, **kw)
         # Ok
         return False
 

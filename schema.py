@@ -311,6 +311,7 @@ class Schema(Folder):
     class_version = '20090123'
     class_title = MSG(u"Schema")
     class_views = ['debug']
+    class_icon_css = 'fa-bars'
 
     # Fields
     data = File_Field(class_handler=SchemaHandler)

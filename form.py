@@ -264,7 +264,7 @@ class Form(Folder):
         """
         if page_number is None:
             return None
-        name = 'page%s' % page_number.lower()
+        name = 'pages/page%s' % page_number.lower()
         return self.get_param_folder().get_resource(name, soft=True)
 
 
@@ -485,7 +485,7 @@ class Forms(Folder):
     class_id = 'forms'
     class_title = MSG(u"Form answers")
     class_views = ['view', 'new_resource', 'export']
-    class_icon_css = 'fa-car'
+    class_icon_css = 'fa-user'
 
     def get_document_types(self):
         return [Form]
