@@ -517,9 +517,10 @@ class Form_Export(BaseView):
 
     def GET(self, resource, context):
         encoding = 'cp1252'
-        if not resource.is_ready():
-            msg = MSG(u"Your form is not finished yet.")
-            return context.come_back(msg, goto='/')
+        # FIXME
+        #if not resource.is_ready():
+        #    msg = MSG(u"Your form is not finished yet.")
+        #    return context.come_back(msg, goto='/')
         # construct the csv
         csv = CSVFile()
         csv.add_row(["Chapitre du formulaire", "rubrique", "valeur"])
