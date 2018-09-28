@@ -28,7 +28,7 @@ from itools.csv import CSVFile, parse
 from itools.datatypes import XMLAttribute, Unicode
 from itools.gettext import MSG
 from itools.handlers import guess_encoding
-from itools.web import ERROR
+from itools.web import ERROR, BaseView
 from itools.xml import XMLParser
 
 # Import from ikaaro
@@ -95,11 +95,23 @@ class FormPageHandler(CSVFile):
 
 
 
+class FormPage_DebugView(BaseView):
+
+    access = 'is_admin'
+    def GET(self, resource, context):
+        # TODO: We can use this view to display analysed controls as STLView
+        controls = list(resource.get_page_fields())
+        context.set_content_type('text/plain')
+        return str(controls)
+
+
+
+
 class FormPage(Folder):
 
     class_id = 'FormPage'
     class_title = MSG(u"Form Page")
-    class_views = ['edit']
+    class_views = ['debug']
 
     # Fields
     data = File_Field(class_handler=FormPageHandler)
@@ -353,3 +365,7 @@ class FormPage(Folder):
         namespace['first_time'] = form.is_first_time()
         namespace['skip_print'] = skip_print
         return namespace
+
+
+    # Views
+    debug = FormPage_DebugView

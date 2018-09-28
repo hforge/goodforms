@@ -27,7 +27,7 @@ from itools.csv import CSVFile
 from itools.datatypes import Enumerate, String, Integer, Boolean, Date
 from itools.datatypes import Unicode
 from itools.gettext import MSG
-from itools.web import ERROR
+from itools.web import ERROR, BaseView
 
 # Import from ikaaro
 from ikaaro.fields import File_Field, Char_Field
@@ -293,12 +293,24 @@ class SchemaHandler(CSVFile):
 
 
 
+
+class Schema_DebugView(BaseView):
+
+    access = 'is_admin'
+    def GET(self, resource, context):
+        # TODO: We can use this view to display analysed schema with namespace / datatypes...
+        schema, pages = resource.get_schema_pages()
+        context.set_content_type('text/plain')
+        return str(schema)
+
+
+
 class Schema(Folder):
 
     class_id = 'Schema'
     class_version = '20090123'
     class_title = MSG(u"Schema")
-    class_views = ['edit']
+    class_views = ['debug']
 
     # Fields
     data = File_Field(class_handler=SchemaHandler)
@@ -307,7 +319,6 @@ class Schema(Folder):
 
     def _load_from_csv(self):
         handler = self.get_value('data')
-        print handler.to_str()
         # Consistency check
         # First round on variables
         # Starting from 1 + header
@@ -485,3 +496,7 @@ class Schema(Folder):
                 dependency=row.get_value('dependency'),
                 formula=row.get_value('formula'))
         return schema, pages
+
+
+    # Views
+    debug = Schema_DebugView()

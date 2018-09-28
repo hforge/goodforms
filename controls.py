@@ -23,7 +23,7 @@
 from itools.csv import CSVFile
 from itools.datatypes import Enumerate, Unicode
 from itools.gettext import MSG
-from itools.web import ERROR
+from itools.web import ERROR, BaseView
 
 # Import from ikaaro
 from ikaaro.fields import Char_Field, File_Field
@@ -74,12 +74,22 @@ class ControlsHandler(CSVFile):
 
 
 
+class Controls_DebugView(BaseView):
+
+    access = 'is_admin'
+    def GET(self, resource, context):
+        # TODO: We can use this view to display analysed controls as STLView
+        controls = list(resource.get_controls())
+        context.set_content_type('text/plain')
+        return str(controls)
+
+
 class Controls(Folder):
 
     class_id = 'Controls'
     class_title = MSG(u"Controls")
     class_handler = ControlsHandler
-    class_views = ['edit']
+    class_views = ['debug']
 
     # Fields
     data = File_Field(class_handler=ControlsHandler)
@@ -126,3 +136,7 @@ class Controls(Folder):
             variable = row.get_value('variable')
             page = variable[0]
             yield (number, title, expr, level, page, variable)
+
+
+    # Views
+    debug = Controls_DebugView
