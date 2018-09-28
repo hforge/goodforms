@@ -86,11 +86,6 @@ class Application(Folder):
         reader, cls = get_reader_and_cls(mimetype)
         if reader is None:
             raise FormatError(ERR_NOT_ODS_XLS)
-        # Save ODS file
-        kw = {'data': body,
-              'filename': filename,
-              'title': {'en': u"Parameters"}}
-        self.make_resource('parameters', cls, **kw)
         # Split tables
         document = reader(body)
         tables = iter(document.get_tables())
