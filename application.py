@@ -67,8 +67,10 @@ class Application(Folder):
     def load_ods_file(self, data, context):
         if self.get_resource('model', soft=True):
             self.del_resource('model')
+            context.database.save_changes()
         # Create model container
-        model = self.make_resource('model', FormModel)
+        self.make_resource('model', FormModel)
+        model = self.get_resource('model')
         # Save informations
         filename, mimetype, body = data
         self.set_value('data', body)

@@ -96,6 +96,6 @@ class Application_EditODS(AutoEdit):
         self.check_edit_conflict(resource, context, form)
         if context.edit_conflict:
             return
-        child.load_ods_file(form['data'], context)
+        resource.load_ods_file(form['data'], context)
         # Ok
         context.message = MSG(u'Ok')
