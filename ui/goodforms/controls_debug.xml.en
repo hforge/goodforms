@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<stl:block xmlns="http://www.w3.org/1999/xhtml"
+           xmlns:stl="http://www.hforge.org/xml-namespaces/stl">
+
+  <table cellpadding="0" cellspacing="0" class="table table-bordered table-condensed">
+    <tr>
+      <th>Name</th>
+    </tr>
+    <tr stl:repeat="item controls">
+      <td>${item}</td>
+    </tr>
+  </table>
+
+  <table cellpadding="0" cellspacing="0" class="table table-bordered table-condensed">
+    <tr>
+      <th>Erreur</th>
+    </tr>
+    <tr stl:repeat="error errors">
+      <td>${error}</td>
+    </tr>
+  </table>
+
+</stl:block>

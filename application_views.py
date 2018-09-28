@@ -32,7 +32,8 @@ from agitools.buttons import Remove_BrowseButton
 from agitools.fields import Fake_Field
 
 
-INFO_NEW_APPLICATION = INFO(u'Your application is created. You are now on the test form.')
+INFO_NEW_APPLICATION = INFO(u'Your application is created !')
+INFO_NEW_APPLICATION_WITH_ERRORS = INFO(u'Your application is created but theres errors')
 
 
 class Applications_View(AutoTable):
@@ -65,7 +66,7 @@ class Application_NewInstance(AutoAdd):
         if child is None:
             return
         try:
-            child.load_ods_file(form['data'], context)
+            errors = child.load_ods_file(form['data'], context)
         except ValueError, e:
             context.message = ERROR(u'Cannot load: {x}').gettext(x=unicode(e))
             return
@@ -73,8 +74,12 @@ class Application_NewInstance(AutoAdd):
             # FIXME (just for debug)
             print traceback.format_exc()
             pass
+        if errors:
+            msg = INFO_NEW_APPLICATION_WITH_ERRORS
+        else:
+            msg = INFO_NEW_APPLICATION
         goto = str(child.abspath)
-        return context.come_back(INFO_NEW_APPLICATION, goto)
+        return context.come_back(msg, goto)
 
 
 
@@ -96,6 +101,11 @@ class Application_EditODS(AutoEdit):
         self.check_edit_conflict(resource, context, form)
         if context.edit_conflict:
             return
-        resource.load_ods_file(form['data'], context)
+        errors = resource.load_ods_file(form['data'], context)
+        if errors:
+            msg = INFO_NEW_APPLICATION_WITH_ERRORS
+        else:
+            msg = INFO_NEW_APPLICATION
         # Ok
-        context.message = MSG(u'Ok')
+        goto = str(resource.abspath)
+        return context.come_back(msg, goto)

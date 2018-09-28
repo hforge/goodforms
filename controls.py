@@ -23,7 +23,7 @@
 from itools.csv import CSVFile
 from itools.datatypes import Enumerate, Unicode
 from itools.gettext import MSG
-from itools.web import ERROR, BaseView
+from itools.web import ERROR, STLView
 
 # Import from ikaaro
 from ikaaro.fields import Char_Field, File_Field
@@ -74,14 +74,16 @@ class ControlsHandler(CSVFile):
 
 
 
-class Controls_DebugView(BaseView):
+class Controls_DebugView(STLView):
 
     access = 'is_admin'
-    def GET(self, resource, context):
-        # TODO: We can use this view to display analysed controls as STLView
+    template = '/ui/goodforms/controls_debug.xml'
+
+    def get_namespace(self, resource, context):
         controls = list(resource.get_controls())
-        context.set_content_type('text/plain')
-        return str(controls)
+        return {'controls': controls,
+                'errors': resource.get_errors()}
+
 
 
 class Controls(Folder):
@@ -98,6 +100,14 @@ class Controls(Folder):
 
 
     def _load_from_csv(self):
+        errors = self.get_errors()
+        if errors:
+            error = errors[0]
+            raise FormatError(error)
+
+
+    def get_errors(self):
+        errors = []
         handler = self.get_value('data')
         # Consistency check
         # Starting from 1
@@ -106,24 +116,31 @@ class Controls(Folder):
             # Title
             title = row.get_value('title').strip()
             if not title:
-                raise FormatError, ERR_EMPTY_TITLE.gettext(line=lineno)
+                err = ERR_EMPTY_TITLE.gettext(line=lineno)
+                errors.append(err)
             # Expression
             expression = row.get_value('expression')
             if not expression:
-                raise FormatError, ERR_EMPTY_EXPRESSION.gettext(line=lineno)
+                err = ERR_EMPTY_EXPRESSION.gettext(line=lineno)
+                errors.append(err)
             try:
                 Expression.is_valid(expression, namespace)
             except Exception, err:
-                raise FormatError, ERR_BAD_EXPRESSION.gettext(line=lineno, err=err)
+                err = ERR_BAD_EXPRESSION.gettext(line=lineno, err=err)
+                errors.append(err)
             # Level
             level = row.get_value('level')
             if not ControlLevel.is_valid(level):
-                raise FormatError, ERR_BAD_LEVEL.gettext(line=lineno, level=level)
+                err = ERR_BAD_LEVEL.gettext(line=lineno, level=level)
+                errors.append(err)
             # Variable
             variable = row.get_value('variable')
             if not variable:
-                raise FormatError, ERR_EMPTY_VARIABLE.gettext(line=lineno)
+                err = ERR_EMPTY_VARIABLE.gettext(line=lineno)
+                errors.append(err)
             lineno += 1
+        # Ok
+        return errors
 
 
     def get_controls(self):

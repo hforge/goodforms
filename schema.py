@@ -27,7 +27,7 @@ from itools.csv import CSVFile
 from itools.datatypes import Enumerate, String, Integer, Boolean, Date
 from itools.datatypes import Unicode
 from itools.gettext import MSG
-from itools.web import ERROR, BaseView
+from itools.web import ERROR, STLView
 
 # Import from ikaaro
 from ikaaro.fields import File_Field, Char_Field
@@ -294,14 +294,19 @@ class SchemaHandler(CSVFile):
 
 
 
-class Schema_DebugView(BaseView):
+class Schema_DebugView(STLView):
 
     access = 'is_admin'
-    def GET(self, resource, context):
-        # TODO: We can use this view to display analysed schema with namespace / datatypes...
-        schema, pages = resource.get_schema_pages()
-        context.set_content_type('text/plain')
-        return str(schema)
+    template = '/ui/goodforms/schema_debug.xml'
+
+    def get_namespace(self, resource, context):
+        errors = resource.get_errors()
+        if errors:
+            schema = {}
+        else:
+            schema, pages = resource.get_schema_pages()
+        return {'schema': schema.keys(),
+                'errors': errors}
 
 
 
@@ -319,6 +324,13 @@ class Schema(Folder):
     filename = Char_Field
 
     def _load_from_csv(self):
+        errors = self.get_errors()
+        if errors:
+            error = errors[0]
+            raise FormatError(error)
+
+    def get_errors(self):
+        errors = []
         handler = self.get_value('data')
         # Consistency check
         # First round on variables
@@ -334,9 +346,13 @@ class Schema(Folder):
             if name is None:
                 continue
             if not Variable.is_valid(name):
-                raise FormatError, ERR_BAD_NAME.gettext(line=lineno, name=name)
+                err = ERR_BAD_NAME.gettext(line=lineno, name=name)
+                errors.append(err)
+                continue
             if name in locals_:
-                raise FormatError, ERR_DUPLICATE_NAME.gettext(line=lineno, name=name)
+                err = ERR_DUPLICATE_NAME.gettext(line=lineno, name=name)
+                errors.append(err)
+                continue
             # Type
             type_name = record['type']
             if type_name is None:
@@ -344,19 +360,25 @@ class Schema(Folder):
                 record['type'] = type_name = 'str'
             datatype = Type.get_type(type_name)
             if datatype is None:
-                raise FormatError, ERR_BAD_TYPE.gettext(line=lineno, type=type_name)
+                err = ERR_BAD_TYPE.gettext(line=lineno, type=type_name)
+                errors.append(err)
+                continue
             # Length
             length = record['length']
             if length is None:
                 # Write down default at this time
                 record['length'] = length = 20
             if not ValidInteger.is_valid(length):
-                raise FormatError, ERR_BAD_LENGTH.gettext(line=lineno, length=length)
+                err = ERR_BAD_LENGTH.gettext(line=lineno, length=length)
+                errors.append(err)
+                continue
             if issubclass(datatype, SqlEnumerate):
                 # Enumerate Options
                 enum_option = record['enum_options']
                 if enum_option is None:
-                    raise FormatError, ERR_MISSING_OPTIONS(line=lineno)
+                    err = ERR_MISSING_OPTIONS(line=lineno)
+                    errors.append(err)
+                    continue
                 # Split on "/"
                 enum_options = EnumerateOptions.split(enum_option['value'])
                 record['enum_options'] = enum_options
@@ -366,7 +388,9 @@ class Schema(Folder):
                     # Write down default at the time of writing
                     record['enum_repr'] = enum_repr = 'radio'
                 if not EnumerateRepresentation.is_valid(enum_repr):
-                    raise FormatError, ERR_BAD_ENUM_REPR.gettext(line=lineno, enum_repr=enum_repr)
+                    err = ERR_BAD_ENUM_REPR.gettext(line=lineno, enum_repr=enum_repr)
+                    errors.append(err)
+                    continue
             elif issubclass(datatype, NumDecimal):
                 # Decimals
                 decimals = record['decimals']
@@ -374,16 +398,18 @@ class Schema(Folder):
                     # Write down default at the time of writing
                     record['decimals'] = decimals = 2
                 if not ValidInteger.is_valid(decimals):
-                    raise FormatError, ERR_BAD_DECIMALS(line=lineno,
-                            decimals=decimals)
+                    err = ERR_BAD_DECIMALS.gettext(line=lineno, decimals=decimals)
+                    errors.append(err)
+                    continue
             # Mandatory
             mandatory = record['mandatory']
             if mandatory is None:
                 # Write down default at the time of writing
                 record['mandatory'] = mandatory = True
             if not Mandatory.is_valid(mandatory):
-                raise FormatError, ERR_BAD_MANDATORY(line=lineno,
-                        mandatory=mandatory)
+                err = ERR_BAD_MANDATORY.gettext(line=lineno, mandatory=mandatory)
+                errors.append(err)
+                continue
             # Size
             size = record['size']
             if size is None:
@@ -393,7 +419,9 @@ class Schema(Folder):
                 else:
                     record['size'] = size = length
             if not ValidInteger.is_valid(size):
-                raise FormatError, ERR_BAD_SIZE(line=lineno, size=size)
+                err = ERR_BAD_SIZE.gettext(line=lineno, size=size)
+                errors.append(err)
+                continue
             # Default value
             default = record['default'] = record['default'].strip()
             if default:
@@ -418,8 +446,9 @@ class Schema(Folder):
                 elif issubclass(datatype, NumDigit):
                     datatype = datatype(length=length)
                 if not datatype.is_valid(default):
-                    raise FormatError, ERR_BAD_DEFAULT(line=lineno,
-                            default=unicode(default, 'utf_8'))
+                    err = ERR_BAD_DEFAULT.gettext(line=lineno, default=unicode(default, 'utf_8'))
+                    errors.append(err)
+                    continue
                 record['default'] = default
             if record['enum_repr'] == 'checkbox':
                 locals_[name] = []
@@ -435,18 +464,26 @@ class Schema(Folder):
                 try:
                     Expression.is_valid(dependency, locals_)
                 except Exception, err:
-                    raise FormatError, ERR_BAD_DEPENDENCY.gettext(line=lineno, err=err)
+                    err = ERR_BAD_DEPENDENCY.gettext(line=lineno, err=err)
+                    errors.append(err)
+                    continue
             formula = row.get_value('formula')
             if formula:
                 try:
                     datatype.sum
                 except AttributeError:
-                    raise FormatError, ERR_NO_FORMULA.gettext(line=lineno, type=type_name)
+                    err = ERR_NO_FORMULA.gettext(line=lineno, type=type_name)
+                    errors.append(err)
+                    continue
                 try:
                     Expression.is_valid(formula, locals_)
                 except Exception, err:
-                    raise FormatError, ERR_BAD_FORMULA.gettext(line=lineno, err=err)
+                    err = ERR_BAD_FORMULA.gettext(line=lineno, err=err)
+                    errors.append(err)
+                    continue
             lineno += 1
+        # Ok
+        return errors
 
 
     def get_schema_pages(self):

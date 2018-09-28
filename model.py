@@ -60,6 +60,7 @@ class FormModel(Folder):
     class_icon_css = 'fa-cog'
 
     def load_ods_file(self, context):
+        errors = []
         application = self.parent
         mimetype = application.get_value('mimetype')
         reader, cls = get_reader_and_cls(mimetype)
@@ -85,7 +86,12 @@ class FormModel(Folder):
             kw = {'title': {'en': title},
                   'data': data}
             r = self.make_resource(name, cls, **kw)
-            r._load_from_csv()
+            errors.extend(r.get_errors())
+            # TODO Will raise on errors: I prefer load CSV,
+            # do not allow to fill forms but to display all errors
+            #r._load_from_csv()
+        if errors:
+            return errors
         schema_resource = self.get_resource('schema')
         schema, pages = schema_resource.get_schema_pages()
         # Pages
@@ -115,7 +121,7 @@ class FormModel(Folder):
                   'data': table.to_csv()}
             pages_container.make_resource(name, FormPage, **kw)
         # Ok
-        return False
+        return errors
 
 
     # Views

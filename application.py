@@ -77,7 +77,7 @@ class Application(Folder):
         self.set_value('filename', filename)
         self.set_value('mimetype', mimetype)
         # Analyse it
-        model.load_ods_file(context)
+        return model.load_ods_file(context)
 
 
     def get_form(self):
