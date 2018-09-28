@@ -272,13 +272,14 @@ class Application_Export(BaseView):
 
 class Application_Edit(AutoEdit):
 
+    title = MSG(u'Edit my form application')
     fields = ['title', 'subscription']
 
 
 class Application_EditODS(AutoEdit):
 
-    fields = ['data']
     title = MSG(u'Change ODS file')
+    fields = ['data']
 
     def action(self, resource, context, form):
         # Check edit conflict
@@ -289,22 +290,3 @@ class Application_EditODS(AutoEdit):
         resource._load_from_file(data, context)
         # Ok
         context.message = MSG(u'Ok')
-
-
-
-class Application_RedirectToForm(GoToSpecificDocument):
-    access = 'is_allowed_to_view'
-    title = MSG(u"Show Test Form")
-
-
-    def get_form_name(self, user, resource):
-        root = resource.get_resource('/')
-        if root.is_allowed_to_edit(user, resource):
-            return resource.default_form
-        if resource.get_resource(user.name, soft=True) is not None:
-            return user.name
-        return None
-
-
-    def get_specific_document(self, resource, context):
-        return self.get_form_name(context.user, resource)

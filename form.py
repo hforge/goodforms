@@ -29,9 +29,10 @@ from itools.handlers import File as FileHandler
 from itools.web import get_context
 
 # Import from ikaaro
+from ikaaro.autoadd import AutoAdd
 from ikaaro.autoedit import AutoEdit
+from ikaaro.config_common import NewResource_Local
 from ikaaro.fields import Text_Field, File_Field
-from ikaaro.file_views import File_NewInstance
 from ikaaro.folder import Folder
 from ikaaro.folder_views import GoToSpecificDocument
 from ikaaro.utils import generate_name
@@ -273,9 +274,6 @@ class Form(Folder):
 
     def get_form_title(self):
         param = self.get_param_folder()
-        if self.name == param.default_form:
-            msg = MSG(u"{application}: <em>Test Form</em>", format='replace_html')
-            return msg.gettext(application=param.get_title())
         form_title = None
         user = self.get_resource('/users/' + self.name, soft=True)
         if user is not None:
@@ -472,7 +470,24 @@ class Form(Folder):
 
     # Views
     edit = AutoEdit(fields=['title'])
-    new_instance = File_NewInstance
+    _fields = ['title']
+    new_instance = AutoAdd(fields=_fields, automatic_resource_name=True)
     send = Form_Send()
     export = Form_Export()
     view_print = Form_Print()
+
+
+
+class Forms(Folder):
+
+    class_id = 'forms'
+    class_title = MSG(u"Form answers")
+    class_views = ['view', 'new_resource']
+    class_icon_css = 'fa-car'
+
+    def get_document_types(self):
+        return [Form]
+
+    # Views
+    #view = Forms_View # TODO
+    new_resource = NewResource_Local(title=MSG(u'Create an answer to form'))

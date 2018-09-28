@@ -32,10 +32,9 @@ from agitools.fields import File_Field
 # Import from goodforms
 from application_views import Application_Edit, Application_Export, Applications_View
 from application_views import Application_NewInstance, Application_View, Application_EditODS
-from application_views import Application_RedirectToForm
 from controls import Controls
 from datatypes import Subscription_Field
-from form import Form
+from form import Forms, Form
 from formpage import FormPage
 from rw import get_reader_and_cls
 from schema import Schema
@@ -65,11 +64,10 @@ class Application(Folder):
     class_id = 'Application'
     class_title = MSG(u"Collection Application")
     class_description = MSG(u"Create from an OpenDocument Spreadsheet file")
-    class_views =  ['view', 'show', 'edit', 'edit_ods', 'export']
+    class_views =  ['view', 'edit', 'edit_ods', 'export']
 
     # Configuration obsolete ?
     allowed_users = 10
-    default_form = '0'
 
     # Configuration
     schema_class = Schema
@@ -138,20 +136,19 @@ class Application(Folder):
                   'data': table.to_csv()}
             self.make_resource(name, FormPage, **kw)
         # Initial form
-        name = self.default_form
-        if self.get_resource(name, soft=True) is None:
-            self.make_resource(name, Form)
+        self.make_resource('forms', Forms)
+        # Ok
         return False
 
 
     def get_form(self):
-        return self.get_resource(self.default_form, soft=True)
+        # OBSOLETE METHOD FIXME
+        raise NotImplementedError
 
 
     def get_forms(self):
         for form in self.search_resources(cls=Form):
-            if form.name != self.default_form:
-                yield form
+            yield form
 
 
     def get_n_forms(self):
@@ -207,7 +204,6 @@ class Application(Folder):
     edit = Application_Edit()
     edit_ods = Application_EditODS()
     export = Application_Export()
-    show = Application_RedirectToForm()
 
 
 
