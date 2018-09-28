@@ -26,6 +26,7 @@ from itools.datatypes import DataType, Unicode, Enumerate, Email
 from itools.gettext import MSG
 
 # Import from ikaaro
+from ikaaro.fields import Select_Field
 from ikaaro.datatypes import FileDataType
 
 
@@ -855,14 +856,13 @@ class SqlEnumerate(Enumerate):
 
 
 
-class Subscription(Enumerate):
+class Subscription_Field(Select_Field):
+
+    title = MSG(u'Subscription')
     options = [
-        {'name': 'restricted',
-            'value': MSG(u"Restricted (users must be subscribed)")},
-        {'name': 'open',
-            'value': MSG(u"Open (accounts are created on demand)")},
-        {'name': 'demo',
-            'value': MSG(u"Demo (public demo)")}]
+        {'name': 'restricted', 'value': MSG(u"Restricted (users must be subscribed)")},
+        {'name': 'open', 'value': MSG(u"Open (accounts are created on demand)")},
+        {'name': 'demo', 'value': MSG(u"Demo (public demo)")}]
 
 
 

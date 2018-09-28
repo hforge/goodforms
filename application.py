@@ -31,10 +31,10 @@ from agitools.fields import File_Field
 
 # Import from goodforms
 from application_views import Application_Edit, Application_Export, Applications_View
-from application_views import Application_NewInstance, Application_View
+from application_views import Application_NewInstance, Application_View, Application_EditODS
 from application_views import Application_RedirectToForm
 from controls import Controls
-from datatypes import Subscription
+from datatypes import Subscription_Field
 from form import Form
 from formpage import FormPage
 from rw import get_reader_and_cls
@@ -65,18 +65,20 @@ class Application(Folder):
     class_id = 'Application'
     class_title = MSG(u"Collection Application")
     class_description = MSG(u"Create from an OpenDocument Spreadsheet file")
-    class_views =  ['view', 'show', 'edit', 'export', 'register']
+    class_views =  ['view', 'show', 'edit', 'edit_ods', 'export']
+
+    # Configuration obsolete ?
+    allowed_users = 10
+    default_form = '0'
 
     # Configuration
-    allowed_users = 10
     schema_class = Schema
     controls_class = Controls
-    default_form = '0'
 
     # Fields
     max_users = Integer_Field(default=allowed_users)
-    subscription = Subscription
     data = File_Field(title=MSG(u'Fichier ODS'), multilingual=False, required=True)
+    subscription = Subscription_Field
 
 
     def _load_from_file(self, data, context):
@@ -203,6 +205,7 @@ class Application(Folder):
     view = Application_View()
     new_instance = Application_NewInstance()
     edit = Application_Edit()
+    edit_ods = Application_EditODS()
     export = Application_Export()
     show = Application_RedirectToForm()
 

@@ -34,6 +34,7 @@ from ikaaro.folder_views import GoToSpecificDocument
 # Import from agitools
 from agitools.autotable import AutoTable
 from agitools.buttons import Remove_BrowseButton
+from agitools.fields import Fake_Field
 
 # Import from goodforms
 from buttons import ExportODSButton, ExportXLSButton
@@ -61,13 +62,24 @@ class Applications_View(AutoTable):
 
     title = MSG(u'Applications')
     base_classes = ('Application',)
-    table_fields = ['checkbox', 'title']
+    table_fields = ['checkbox', 'title', 'subscription', 'nb_answers']
     table_actions = [Remove_BrowseButton]
+
+    # Fields
+    nb_answers = Fake_Field(title=MSG(u'Nb answers'))
+
+    def get_item_value(self, resource, context, item, column):
+        if column == 'nb_answers':
+            return u'TODO' #TODO
+        # Proxy
+        proxy = super(Applications_View, self)
+        return proxy.get_item_value(resource, context, item, column)
+
 
 
 class Application_NewInstance(AutoAdd):
 
-    fields = ['title', 'data']
+    fields = ['title', 'subscription', 'data']
     goto_view = None
     automatic_resource_name = True
 
@@ -260,7 +272,23 @@ class Application_Export(BaseView):
 
 class Application_Edit(AutoEdit):
 
-    fields = ['title']
+    fields = ['title', 'subscription']
+
+
+class Application_EditODS(AutoEdit):
+
+    fields = ['data']
+    title = MSG(u'Change ODS file')
+
+    def action(self, resource, context, form):
+        # Check edit conflict
+        self.check_edit_conflict(resource, context, form)
+        if context.edit_conflict:
+            return
+        data = form['data']
+        resource._load_from_file(data, context)
+        # Ok
+        context.message = MSG(u'Ok')
 
 
 
