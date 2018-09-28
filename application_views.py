@@ -39,7 +39,7 @@ class Applications_View(AutoTable):
 
     title = MSG(u'Applications')
     base_classes = ('Application',)
-    table_fields = ['checkbox', 'title', 'subscription', 'nb_answers']
+    table_fields = ['checkbox', 'title', 'subscription', 'nb_answers', 'ctime']
     table_actions = [Remove_BrowseButton]
 
     # Fields
