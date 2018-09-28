@@ -102,7 +102,7 @@ class Application_View(AutoTable):
     base_classes = ('Form',)
 
     # Table
-    table_fields = ['name', 'state', 'mtime', 'firstname', 'lastname', 'company', 'email']
+    table_fields = ['checkbox', 'name', 'form_state', 'mtime']
 
     table_actions = freeze([ExportODSButton, ExportXLSButton])
 
@@ -116,8 +116,6 @@ class Application_View(AutoTable):
     def get_item_value(self, resource, context, item, column):
         if column == 'name':
             return (item.name, context.get_link(item))
-        elif column in ('state', 'firstname', 'lastname', 'company', 'email'):
-            return u'XXX'
         # Proxy
         proxy = super(Application_View, self)
         return proxy.get_item_value(resource, context, item, column)

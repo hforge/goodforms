@@ -74,8 +74,7 @@ class Application(Folder):
     default_form = '0'
 
     # Fields
-    author = Char_Field(indexed=True, stored=True)
-    max_users=  Integer_Field(default=allowed_users)
+    max_users = Integer_Field(default=allowed_users)
     subscription = Subscription
     data = File_Field(title=MSG(u'Fichier ODS'), multilingual=False, required=True)
 
@@ -201,8 +200,8 @@ class Application(Folder):
 
 
     # Views
-    new_instance = Application_NewInstance()
     view = Application_View()
+    new_instance = Application_NewInstance()
     edit = Application_Edit()
     export = Application_Export()
     show = Application_RedirectToForm()
