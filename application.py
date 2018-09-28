@@ -28,13 +28,15 @@ from ikaaro.folder import Folder
 
 # Import from agitools
 from agitools.fields import File_Field
+from agitools.utils_views import IconsView
 
 # Import from goodforms
-from application_views import Application_Edit, Application_Export, Applications_View
-from application_views import Application_NewInstance, Application_View, Application_EditODS
+from application_views import Application_Edit, Applications_View
+from application_views import Application_NewInstance, Application_EditODS
 from controls import Controls
 from datatypes import Subscription_Field
 from form import Forms, Form
+from form_views import Forms_View
 from formpage import FormPage
 from rw import get_reader_and_cls
 from schema import Schema
@@ -64,7 +66,7 @@ class Application(Folder):
     class_id = 'Application'
     class_title = MSG(u"Collection Application")
     class_description = MSG(u"Create from an OpenDocument Spreadsheet file")
-    class_views =  ['view', 'edit', 'edit_ods', 'export']
+    class_views =  ['view', 'edit', 'edit_ods', 'view_admin']
 
     # Configuration obsolete ?
     allowed_users = 10
@@ -197,13 +199,12 @@ class Application(Folder):
         return spread_url
 
 
-
     # Views
-    view = Application_View()
+    view = Forms_View()
     new_instance = Application_NewInstance()
     edit = Application_Edit()
     edit_ods = Application_EditODS()
-    export = Application_Export()
+    view_admin = IconsView
 
 
 

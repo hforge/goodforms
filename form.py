@@ -39,7 +39,8 @@ from ikaaro.utils import generate_name
 
 # Import from goodforms
 from datatypes import Numeric, NumDecimal, FileImage, SqlEnumerate
-from form_views import Form_View, Form_Send, Form_Export, Form_Print
+from form_views import Forms_View, Form_View, Form_Send, Form_Export, Form_Print
+from form_views import Forms_Export
 from utils import SI, get_page_number, parse_control
 from workflow import WorkflowState_Field, FINISHED
 
@@ -121,6 +122,7 @@ class Form(Folder):
 
     class_id = 'Form'
     class_title = MSG(u"Form")
+    class_description = MSG(u'Form answer')
     class_views = ['edit', 'pageA', 'export', 'view_print', 'send']
 
     # Fields
@@ -143,7 +145,7 @@ class Form(Folder):
     def get_param_folder(self):
         """Return the folder resource where parameters are stored.
         """
-        return self.parent
+        return self.parent.parent
 
 
     def get_schema_resource(self):
@@ -482,12 +484,13 @@ class Forms(Folder):
 
     class_id = 'forms'
     class_title = MSG(u"Form answers")
-    class_views = ['view', 'new_resource']
+    class_views = ['view', 'new_resource', 'export']
     class_icon_css = 'fa-car'
 
     def get_document_types(self):
         return [Form]
 
     # Views
-    #view = Forms_View # TODO
+    view = Forms_View
     new_resource = NewResource_Local(title=MSG(u'Create an answer to form'))
+    export = Forms_Export

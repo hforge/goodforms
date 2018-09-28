@@ -21,24 +21,28 @@ from decimal import InvalidOperation
 # Import from itools
 from itools.csv import CSVFile
 from itools.core import merge_dicts, freeze
+from itools.core import is_prototype
 from itools.datatypes import String, Enumerate
 from itools.gettext import MSG
 from itools.log import log_debug
 from itools.web import BaseView, STLView, INFO, ERROR
 
-# Import from ikaaro
+# Import from agitools
+from agitools.autotable import AutoTable
 
 # Import from goodforms
 from buttons import InputControlLink
+from buttons import ExportODSButton, ExportXLSButton
 from buttons import SaveButton
 from datatypes import Numeric, FileImage
 from utils import get_page_number, force_encode, is_print, set_print
 from widgets import is_mandatory_filled
-from workflow import WorkflowState, PENDING, FINISHED, EXPORTED
+from workflow import WorkflowState, NOT_REGISTERED, PENDING, FINISHED, EXPORTED
 from customization import custom_flag
-
+from rw import ODSWriter, XLSWriter
 
 # Messages
+MSG_APPLICATION_TITLE = MSG(u'<span class="application-title">Title of your application:</span> {title}', format='replace_html')
 ERR_INVALID_FIELDS = ERROR(u"The following fields are invalid: {fields}.", format='replace_html')
 ERR_MANDATORY_FIELDS = ERROR(u"The following fields are mandatory: {fields}.", format='replace_html')
 ERR_BAD_SUMS = ERROR(u"The following sums are invalid: {fields}.", format='replace_html')
@@ -48,6 +52,16 @@ MSG_EXPORTED_ITAAPY = ERROR(u'To export to a SQL database, contact the administr
 ERR_INVALID_FORMULA = ERROR(u"{name} is not equal to {formula}")
 ERR_MANDATORY_FIELD = ERROR(u"{name} is mandatory")
 ERR_INVALID_FIELD = ERROR(u"{name} is invalid")
+ERR_NO_DATA = ERROR(u"No data to collect for now.")
+ERR_NO_MORE_ALLOWED = ERROR(u'You have reached the maximum allowed users. <a href="./;order">Buy new credits</a> if you want to add more users.', format='html')
+ERR_PASSWORD_MISSING = ERROR(u"The password is missing.")
+ERR_BAD_EMAIL = ERROR(u"The given username is not an e-mail address.")
+ERR_SUBSCRIPTION_FULL = ERROR(u"No more users are allowed to register.")
+ERR_NOT_ALLOWED = ERROR(u"You are not allowed to register.")
+ERR_ALREADY_REGISTERED = ERROR(u"You are already registered. Log in using your password.")
+MSG_APPLICATION_TITLE = MSG(u'<span class="application-title">Title of your application:</span> {title}', format='replace_html')
+MAILTO_SUBJECT = MSG(u'{workgroup_title}, form "{application_title}"')
+MAILTO_BODY = MSG(u'Please fill in the form "{application_title}" available here:\r\n <{application_url}>.\r\n')
 
 
 class Single(String):
@@ -431,7 +445,6 @@ class Form_Send(STLView):
                 'warnings': warnings,
                 'infos': infos}
         # ACLs
-        user = context.user
         is_allowed_to_export = True
         namespace['is_allowed_to_export'] = is_allowed_to_export
         # State
@@ -552,3 +565,170 @@ class Form_Print(STLView):
         namespace = {}
         namespace['forms'] = forms
         return namespace
+
+
+
+
+class Forms_View(AutoTable):
+
+    title = MSG(u"Forms answers")
+
+    # Search Form
+    search_schema = {}
+    search_fields = []
+
+    # Configuration
+    base_classes = ('Form',)
+
+    # Table
+    table_fields = ['checkbox', 'name', 'form_state', 'mtime']
+
+    table_actions = freeze([ExportODSButton, ExportXLSButton])
+
+
+    def get_page_title(self, resource, context):
+        title = resource.get_page_title()
+        return MSG_APPLICATION_TITLE.gettext(title=title)
+
+
+
+    def get_item_value(self, resource, context, item, column):
+        if column == 'name':
+            return (item.name, context.get_link(item))
+        # Proxy
+        proxy = super(Forms_View, self)
+        return proxy.get_item_value(resource, context, item, column)
+
+
+    def action_export(self, resource, context, form, writer_cls=ODSWriter):
+        name = MSG(u"{title} Users").gettext(title=resource.get_title())
+        writer = writer_cls(name)
+
+        header = [title.gettext() for column, title in self.table_columns]
+        writer.add_row(header, is_header=True)
+        results = self.get_items(resource, context)
+        context.query['batch_size'] = 0
+        for item in self.sort_and_batch(resource, context, results):
+            row = []
+            for column, title in self.table_columns:
+                if column == 'state':
+                    item_brain, item_resource = item
+                    user = context.root.get_user(item_brain.name)
+                    if (user is not None
+                            and user.get_value('password') is None):
+                        state = NOT_REGISTERED
+                    else:
+                        state = item_brain.workflow_state
+                    value = WorkflowState.get_value(state)
+                else:
+                    value = self.get_item_value(resource, context, item,
+                            column)
+                if type(value) is tuple:
+                    value = value[0]
+                if type(value) is unicode:
+                    pass
+                elif is_prototype(value, MSG):
+                    value = value.gettext()
+                elif type(value) is str:
+                    value = unicode(value)
+                else:
+                    raise NotImplementedError, str(type(value))
+                row.append(value)
+            writer.add_row(row)
+
+        body = writer.to_str()
+
+        context.set_content_type(writer_cls.mimetype)
+        context.set_content_disposition('attachment',
+                filename="{0}-users.{1}".format(resource.name,
+                    writer_cls.extension))
+
+        return body
+
+
+    def action_export_xls(self, resource, context, form):
+        return self.action_export(resource, context, form,
+                writer_cls=XLSWriter)
+
+
+
+
+class Forms_Export(BaseView):
+
+    access = 'is_admin'
+    title = MSG(u"Export Collected Data")
+    query_schema = freeze({ 'format': String})
+
+    def GET(self, resource, context):
+        for form in resource.parent.get_forms():
+            state = form.get_workflow_state()
+            if state != 'private':
+                break
+        else:
+            return context.come_back(ERR_NO_DATA)
+
+        format = context.query['format']
+        if format == 'xls':
+            writer_cls = XLSWriter
+        else:
+            writer_cls = ODSWriter
+        name = MSG(u"{title} Data").gettext(title=resource.get_title())
+        writer = writer_cls(name)
+
+        schema_resource = resource.get_resource('schema')
+        schema, pages = schema_resource.get_schema_pages()
+        # Main header
+        header = [title.gettext()
+                for title in (MSG(u"Form"), MSG(u"First Name"),
+                    MSG(u"Last Name"), MSG(u"E-mail"), MSG(u"State"))]
+        for name in sorted(schema):
+            header.append(name.replace('_', ''))
+        try:
+            writer.add_row(header, is_header=True)
+        except FormatError, exception:
+            return context.come_back(ERROR(unicode(exception)))
+        # Subheader with titles
+        header = [""] * 5
+        for name, datatype in sorted(schema.iteritems()):
+            header.append(datatype.title)
+        writer.add_row(header, is_header=True)
+        # optionnaly add a header in results with goodforms type for each column:
+        if custom_flag('header_data_type'):
+            header = [""] * 5
+            for name, datatype in sorted(schema.iteritems()):
+                header.append(datatype.type)
+            writer.add_row(header, is_header=True)
+        users = resource.get_resource('/users')
+        for form in resource.get_forms():
+            user = users.get_resource(form.name, soft=True)
+            if user:
+                get_value = user.get_value
+                email = get_value('email')
+                firstname = get_value('firstname')
+                lastname = get_value('lastname')
+            else:
+                email = ""
+                firstname = ""
+                lastname = form.name
+            state = WorkflowState.get_value(form.get_workflow_state())
+            state = state.gettext()
+            row = [form.name, firstname, lastname, email, state]
+            handler = form.handler
+            for name, datatype in sorted(schema.iteritems()):
+                value = handler.get_value(name, schema)
+                if datatype.multiple:
+                    value = '\n'.join(value.decode('utf-8')
+                            for value in datatype.get_values(value))
+                else:
+                    data = force_encode(value, datatype, 'utf_8')
+                    value = unicode(data, 'utf_8')
+                row.append(value)
+            writer.add_row(row)
+
+        body = writer.to_str()
+
+        context.set_content_type(writer.mimetype)
+        context.set_content_disposition('attachment',
+                filename="{0}.{1}".format(resource.name, writer.extension))
+
+        return body
