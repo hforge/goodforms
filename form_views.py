@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # Import from the Standard Library
+from datetime import datetime
 from decimal import InvalidOperation
 
 # Import from itools
@@ -528,6 +529,8 @@ class Form_Export(BaseView):
         form = resource.get_form()
         handler = resource.get_value('data')
         for name, datatype in sorted(schema.iteritems()):
+            if name in ('ctime', 'mtime'):
+                continue
             value = handler.get_value(name, schema)
             data = force_encode(value, datatype, encoding)
             if type(data) is not str:
@@ -633,6 +636,10 @@ class Forms_View(AutoTable):
                     value = value.gettext()
                 elif type(value) is str:
                     value = unicode(value)
+                elif type(value) is datetime:
+                    return context.format_datetime(value)
+                elif value is None:
+                    value = ''
                 else:
                     raise NotImplementedError, str(type(value))
                 row.append(value)

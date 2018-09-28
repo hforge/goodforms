@@ -46,4 +46,5 @@ class WorkflowState(Enumerate):
 
 class WorkflowState_Field(Select_Field):
 
+    title = MSG(u'WF State')
     datatype = WorkflowState

@@ -18,7 +18,6 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 # Import from the Standard Library
-from __future__ import print_function
 from decimal import InvalidOperation
 
 # Import from itools
@@ -46,9 +45,7 @@ from utils import SI, get_page_number, parse_control
 from workflow import WorkflowState_Field, FINISHED
 
 
-
 class FormHandler(FileHandler):
-
 
     def _load_state_from_file(self, file):
         """Load known values, the rest will be the default values.
@@ -122,8 +119,8 @@ class Form(Folder):
     class_views = ['edit', 'pageA', 'export', 'view_print', 'send']
 
     # Fields
-    data = File_Field(class_handler=FormHandler)
-    form_state = Text_Field(indexed=True, stored=True)
+    data = File_Field(title=MSG(u'Form'), class_handler=FormHandler)
+    form_state = Text_Field(title=MSG(u'State'), indexed=True, stored=True)
     workflow = WorkflowState_Field
 
 
@@ -348,6 +345,8 @@ class Form(Folder):
         schema = self.get_schema()
         fields = self.get_form_fields(schema)
         for name in sorted(fields):
+            if name in ('ctime', 'mtime'):
+                continue
             if pages and name[0] not in pages:
                 continue
             if name[0] in exclude:
