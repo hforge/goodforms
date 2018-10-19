@@ -500,6 +500,54 @@ class Forms(Folder):
     def get_document_types(self):
         return [Form]
 
+
+    ######################################################################
+    # API
+    def get_param_folder(self):
+        """Return the folder resource where parameters are stored.
+        """
+        return self.parent.get_resource('model')
+
+
+    def get_pages_folder(self):
+        return self.get_param_folder().get_resource('pages')
+
+
+    def get_schema_resource(self):
+        """Return the CSV schema resource.
+        """
+        return self.get_param_folder().get_resource('schema')
+
+
+    def get_schema_pages(self):
+        """Load the schema from the CSV.
+        """
+        return self.get_schema_resource().get_schema_pages()
+
+
+    def get_schema(self):
+        schema, pages = self.get_schema_pages()
+        schema['ctime'] = DateTime
+        return schema
+
+
+    def get_pages(self):
+        schema, pages = self.get_schema_pages()
+        return pages
+
+
+    def get_controls_resource(self):
+        """Return the CSV controls resource.
+        """
+        return self.get_param_folder().get_resource('controls')
+
+
+    def get_controls(self):
+        """Load the controls from the CSV.
+        """
+        return self.get_controls_resource().get_controls()
+
+
     # Views
     view = Forms_View
     new_resource = NewResource_Local(title=MSG(u'Create an answer to form'))
