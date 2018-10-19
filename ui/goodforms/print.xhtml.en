@@ -29,10 +29,10 @@
         ${message}
         <table cellpadding="0" cellspacing="0" border="0" width="100%">
           <tr>
-            <td id="content" valign="top">
+            <td id="content" style="vertical-align: top">
               ${body}
             </td>
-            <td id="right" valign="top" stl:if="context_menus">
+            <td id="right" style="vertical-align: top" stl:if="context_menus">
               <stl:block stl:repeat="menu context_menus">${menu}</stl:block>
             </td>
           </tr>

@@ -20,7 +20,7 @@
     <link rel="shortcut icon" href="/ui/platform/favicon.ico" type="image/x-icon"></link>
   </head>
   <body>
-    <a name="top"/>
+    <a id="top"/>
     ${modal}
     <!-- Header -->
     ${adminbar}
@@ -31,11 +31,12 @@
         ${breadcrumb}
         <div class="clearfix"/>
         <div class="row">
-          <div id="right" valign="top" stl:if="menus"
+          <div id="right" style="vertical-align: top" stl:if="menus"
                class="left-sidebar col-lg-3 col-md-3 col-sm-12">
             <stl:block stl:repeat="menu menus">${menu}</stl:block>
           </div>
-          <div id="left" valign="top" class="${main_row_class} col-sm-12">
+          <div id="left" style="vertical-align: top"
+               class="${main_row_class} col-sm-12">
             <div id="left-content">
               <!--
               <h1 stl:if="not tabs">${view_title}</h1>
