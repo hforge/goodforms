@@ -39,7 +39,7 @@ INFO_NEW_APPLICATION_WITH_ERRORS = INFO(u'Your application is created but theres
 class Applications_View(AutoTable):
 
     title = MSG(u'Applications')
-    base_classes = ('Application',)
+    base_classes = ('application',)
     table_fields = ['checkbox', 'title', 'subscription', 'nb_answers', 'ctime']
     table_actions = [Remove_BrowseButton]
 
@@ -83,12 +83,11 @@ class Application_NewInstance(AutoAdd):
 
 
 
-
-
 class Application_Edit(AutoEdit):
 
     title = MSG(u'Edit my form application')
     fields = ['title', 'subscription']
+
 
 
 class Application_EditODS(AutoEdit):

@@ -583,7 +583,7 @@ class Forms_View(AutoTable):
     search_fields = []
 
     # Configuration
-    base_classes = ('Form',)
+    base_classes = ('form',)
 
     # Table
     table_fields = ['checkbox', 'name', 'form_state', 'mtime']

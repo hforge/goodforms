@@ -49,13 +49,14 @@ class Application(Folder):
     allowed_users = 10
 
     # Fields
-    subscription = Subscription_Field
-    data = File_Field(title=MSG(u'Fichier ODS'), multilingual=False, required=True)
-    filename = Char_Field
-    mimetype = Char_Field
+    subscription = Subscription_Field()
+    data = File_Field(title=MSG(u'ODS file'), multilingual=False, required=True)
+    filename = Char_Field()
+    mimetype = Char_Field()
 
     # FIXME: Remove field
     max_users = Integer_Field(default=allowed_users)
+
 
     def init_resource(self, *args, **kw):
         proxy = super(Application, self)
@@ -141,14 +142,14 @@ class Application(Folder):
     new_instance = Application_NewInstance()
     edit = Application_Edit()
     edit_ods = Application_EditODS()
-    view_admin = IconsView
+    view_admin = IconsView()
 
 
 
 class Applications(Folder):
 
     class_id = 'applications'
-    class_title = MSG(u"Formulaires")
+    class_title = MSG(u"Forms")
     class_views = ['view', 'new_resource']
     class_icon_name = 'applications'
     class_icon_css = 'fa-pencil'
@@ -157,5 +158,5 @@ class Applications(Folder):
         return [Application]
 
     # Views
-    view = Applications_View
+    view = Applications_View()
     new_resource = NewResource_Local(title=MSG(u'Create an application'))

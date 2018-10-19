@@ -120,7 +120,6 @@ class FormPage_DebugView(BaseView):
 
 
 
-
 class FormPage(Folder):
 
     class_id = 'form-page'
@@ -238,7 +237,6 @@ class FormPage(Folder):
                                     fields, context, tabindex=tabindex,
                                     readonly=readonly, skip_print=skip_print)
                     else:
-                        # 0004922 Fiche école ne fonctionne plus
                         column = column.replace(u'\n', u'')
                         try:
                             if u"/" in column:
