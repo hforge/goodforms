@@ -151,6 +151,10 @@ class Form(Folder):
         return self.parent.parent.get_resource('model')
 
 
+    def get_pages_folder(self):
+        return self.get_param_folder().get_resource('pages')
+
+
     def get_schema_resource(self):
         """Return the CSV schema resource.
         """
@@ -247,7 +251,7 @@ class Form(Folder):
         """Return the ordered list of form page numbers.
         """
         page_numbers = []
-        folder = self.get_param_folder()
+        folder = self.get_pages_folder()
         for name in folder.get_names():
             page_number = get_page_number(name)
             if page_number is None:
@@ -258,7 +262,7 @@ class Form(Folder):
 
 
     def get_formpages(self):
-        folder = self.get_param_folder()
+        folder = self.get_pages_folder()
         for page_number in self.get_page_numbers():
             yield folder.get_resource('page' + page_number.lower())
 
