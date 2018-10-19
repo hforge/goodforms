@@ -65,6 +65,7 @@ class Application_NewInstance(AutoAdd):
         child = self.make_new_resource(resource, context, form)
         if child is None:
             return
+        errors = None
         try:
             errors = child.load_ods_file(form['data'], context)
         except ValueError, e:

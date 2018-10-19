@@ -62,40 +62,37 @@ def is_disabled(row):
 
 
 
-
 class FormPages_View(AutoTable):
 
     access = 'is_admin'
     title = MSG(u'Pages')
-    base_classes = ('FormPage',)
+    base_classes = ('form-page',)
     table_fields = ['title']
     table_actions = []
+
 
 
 class FormPageHandler(CSVFile):
 
     schema = freeze({'null': Unicode})
-    columns = ['null']
+
+    def _load_state_from_file(self, file, encoding='UTF-8'):
+        # Read the data, and find out the encoding
+        data = file.read()
+        self.encoding = guess_encoding(data)
+
+        # Sniff number of columns
+        lines = data.splitlines(True)
+        reader = read_csv(lines)
+        line = reader.next()
+        self.columns = columns = ['null'] * len(line)
+
+        for line in parse(data, columns, self.schema,
+                guess=self.class_csv_guess, has_header=self.has_header,
+                encoding=self.encoding):
+            self._add_row(line)
 
 
-# FIXME
-#    def _load_state_from_file(self, file, encoding='UTF-8'):
-#        # Read the data, and find out the encoding
-#        data = file.read()
-#        self.encoding = guess_encoding(data)
-#
-#        # Sniff number of columns
-#        lines = data.splitlines(True)
-#        reader = read_csv(lines)
-#        line = reader.next()
-#        self.columns = columns = ['null'] * len(line)
-#
-#        for line in parse(data, columns, self.schema,
-#                guess=self.class_csv_guess, skip_header=self.skip_header,
-#                encoding=self.encoding):
-#            self._add_row(line)
-#
-#
 #    def to_str(self, encoding='UTF-8', separator=',', newline='\n'):
 #        # FIXME WHY ?
 #        lines = []
@@ -131,11 +128,11 @@ class FormPage(Folder):
     filename = Char_Field
     extension = Char_Field
 
-    def _load_from_csv(self):
-        handler = self.get_value('data')
+    def _load_from_csv(self, body):
+        handler = FormPageHandler()
         title = self.get_title()
         handler.load_state_from_string(body)
-        schema_resource = self.parent.get_resource('schema')
+        schema_resource = self.get_schema()
         schema, pages = schema_resource.get_schema_pages()
         # Consistency check
         for lineno, row in enumerate(handler.get_rows()):
@@ -144,8 +141,20 @@ class FormPage(Folder):
                 if column.startswith(Variable.FIELD_PREFIX):
                     name = Variable.decode(column)
                     if name and name not in schema:
-                        raise FormatError, ERR_BAD_NAME(title=title,
+                        raise FormatError, ERR_BAD_NAME.gettext(title=title,
                                 line=lineno, name=name)
+        self.set_value('data', handler)
+
+
+    def init_resource(self, **kw):
+        data = kw.pop('data')
+        proxy = super(FormPage, self)
+        proxy.init_resource(**kw)
+        self._load_from_csv(data)
+
+
+    def get_schema(self):
+        return self.get_resource('../../schema')
 
 
     def get_page_number(self):
