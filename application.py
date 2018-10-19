@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright (C) 2010 Hervé Cauwelier <herve@itaapy.com>
+# Copyright (C) 2018 Nicolas Deram <nderam@gmail.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -18,7 +19,9 @@
 # Import from standard library
 
 # Import from itools
+from itools.database import PhraseQuery
 from itools.gettext import MSG
+from itools.web import get_context
 
 # Import from ikaaro
 from ikaaro.config_common import NewResource_Local
@@ -87,8 +90,9 @@ class Application(Folder):
 
 
     def get_forms(self):
-        for form in self.search_resources(cls=Form):
-            yield form
+        query = PhraseQuery('base_classes', 'form')
+        search = get_context().search(query)
+        return search.get_resources()
 
 
     def get_n_forms(self):
