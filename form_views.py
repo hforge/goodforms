@@ -101,7 +101,7 @@ class Form_View(STLView):
 
     def get_hidden_fields(self, resource, context):
         schema = resource.get_schema()
-        handler = resource.get_form().handler
+        handler = resource.get_form().get_value('data')
         return [{
             'name': field,
             'value': handler.get_value(field, schema)}
@@ -173,7 +173,7 @@ class Form_View(STLView):
         """
         schema, pages = resource.get_schema_pages()
         fields = resource.get_fields(schema)
-        handler = resource.get_form().handler
+        handler = resource.get_form().get_value('data')
         # First save everything even invalid
         for field in fields:
             if context.get_form_value(field) is None:
@@ -669,7 +669,8 @@ class Forms_Export(BaseView):
     query_schema = freeze({ 'format': String})
 
     def GET(self, resource, context):
-        for form in resource.parent.get_forms():
+        app = resource.parent
+        for form in app.get_forms():
             state = form.get_workflow_state()
             if state != 'private':
                 break
@@ -684,8 +685,7 @@ class Forms_Export(BaseView):
         name = MSG(u"{title} Data").gettext(title=resource.get_title())
         writer = writer_cls(name)
 
-        schema_resource = resource.get_resource('schema')
-        schema, pages = schema_resource.get_schema_pages()
+        schema = resource.get_schema()
         # Main header
         header = [title.gettext()
                 for title in (MSG(u"Form"), MSG(u"First Name"),
@@ -699,16 +699,20 @@ class Forms_Export(BaseView):
         # Subheader with titles
         header = [""] * 5
         for name, datatype in sorted(schema.iteritems()):
+            if name in ('ctime', 'mtime'):
+                continue
             header.append(datatype.title)
         writer.add_row(header, is_header=True)
         # optionnaly add a header in results with goodforms type for each column:
         if custom_flag('header_data_type'):
             header = [""] * 5
             for name, datatype in sorted(schema.iteritems()):
+                if name in ('ctime', 'mtime'):
+                    continue
                 header.append(datatype.type)
             writer.add_row(header, is_header=True)
         users = resource.get_resource('/users')
-        for form in resource.get_forms():
+        for form in app.get_forms():
             user = users.get_resource(form.name, soft=True)
             if user:
                 get_value = user.get_value
@@ -722,8 +726,10 @@ class Forms_Export(BaseView):
             state = WorkflowState.get_value(form.get_workflow_state())
             state = state.gettext()
             row = [form.name, firstname, lastname, email, state]
-            handler = form.handler
+            handler = form.get_value('data')
             for name, datatype in sorted(schema.iteritems()):
+                if name in ('ctime', 'mtime'):
+                    continue
                 value = handler.get_value(name, schema)
                 if datatype.multiple:
                     value = '\n'.join(value.decode('utf-8')
