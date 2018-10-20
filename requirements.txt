@@ -1,1 +1,3 @@
+git+https://github.com/hforge/itools.git@master#egg=itools
+git+https://github.com/hforge/ikaaro.git@master#egg=ikaaro
 xlwt
