@@ -25,11 +25,11 @@ from itools.web import INFO, ERROR
 # Import from ikaaro
 from ikaaro.autoadd import AutoAdd
 from ikaaro.autoedit import AutoEdit
+from ikaaro.fields import Char_Field
 
 # Import from agitools
 from agitools.autotable import AutoTable
 from agitools.buttons import Remove_BrowseButton
-from agitools.fields import Fake_Field
 
 
 INFO_NEW_APPLICATION = INFO(u'Your application is created !')
@@ -44,7 +44,7 @@ class Applications_View(AutoTable):
     table_actions = [Remove_BrowseButton]
 
     # Fields
-    nb_answers = Fake_Field(title=MSG(u'Nb answers'))
+    nb_answers = Char_Field(title=MSG(u'Nb answers'))
 
     def get_item_value(self, resource, context, item, column):
         if column == 'nb_answers':
