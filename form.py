@@ -123,7 +123,6 @@ class Form(Folder):
     form_state = Text_Field(title=MSG(u'State'), indexed=True, stored=True)
     workflow = WorkflowState_Field
 
-
     def init_resource(self, *args, **kw):
         # Proxy
         proxy = super(Form, self)

@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright (C) 2010 Hervé Cauwelier <herve@itaapy.com>
+# Copyright (C) 2018 Nicolas Deram <nderam@gmail.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -16,11 +17,14 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 # Import from the Standard Library
+from email.utils import parseaddr
 import traceback
 
 # Import from itools
+from itools.core import freeze
+from itools.datatypes import Unicode
 from itools.gettext import MSG
-from itools.web import INFO, ERROR
+from itools.web import INFO, ERROR, STLView
 
 # Import from ikaaro
 from ikaaro.autoadd import AutoAdd
@@ -31,9 +35,17 @@ from ikaaro.fields import Char_Field
 from agitools.autotable import AutoTable
 from agitools.buttons import Remove_BrowseButton
 
+# Import from here
+from buttons import AddUsersButton
+from datatypes import EmailField
+from user import GoodFormsUser
+
 
 INFO_NEW_APPLICATION = INFO(u'Your application is created !')
-INFO_NEW_APPLICATION_WITH_ERRORS = INFO(u'Your application is created but theres errors')
+INFO_NEW_APPLICATION_WITH_ERRORS = INFO(u'Your application is created but '
+                                        u'theres errors')
+MSG_APPLICATION_TITLE = MSG(u'''<span class="application-title">Title of your
+application:</span> {title}''', format='replace_html')
 
 
 class Applications_View(AutoTable):
@@ -111,3 +123,74 @@ class Application_EditODS(AutoEdit):
         # Ok
         goto = str(resource.abspath)
         return context.come_back(msg, goto)
+
+
+
+class Application_Register(STLView):
+    access = 'is_allowed_to_edit'
+    title = MSG(u"Subscribe Users")
+    template = '/ui/goodforms/application_register.xml'
+
+    schema = freeze({
+        'new_users': Unicode})
+    actions = freeze([AddUsersButton])
+
+
+    def get_page_title(self, resource, context):
+        title = resource.get_page_title()
+        return MSG_APPLICATION_TITLE.gettext(title=title)
+
+
+    def get_actions_namespace(self, resource, context):
+        actions = []
+        for button in self.actions:
+            actions.append(button(resource=resource, context=context))
+        return actions
+
+
+    def get_namespace(self, resource, context):
+        proxy = super(Application_Register, self)
+        namespace = proxy.get_namespace(resource, context)
+        #namespace['menu'] = resource.menu.GET(resource, context)
+        namespace['title'] = self.title
+        namespace['n_forms'] = resource.get_n_forms()
+        namespace['new_users'] = context.get_form_value('new_users')
+        namespace['actions'] = self.get_actions_namespace(resource, context)
+        namespace.update(resource.get_stats())
+        return namespace
+
+
+    def action_add_users(self, resource, context, form):
+        new_users = form['new_users'].strip()
+        users = resource.get_resource('/users')
+        root = context.root
+        added = []
+        for lineno, line in enumerate(new_users.splitlines()):
+            lastname, email = parseaddr(line)
+            try:
+                email = email.encode('utf-8')
+            except UnicodeEncodeError:
+                email = None
+            if not email or not EmailField.is_valid(email):
+                context.commit = False
+                message = ERROR(u"Unrecognized line {lineno}: {line}")
+                context.message = message.gettext(lineno=lineno+1, line=line)
+                return
+            if type(lastname) is str:
+                lastname = unicode(lastname)
+            # Is the user already known?
+            user = root.get_user_from_login(email)
+            if user is None:
+                # Register the user
+                user = users.set_user(**{'email': email, 'lastname': lastname})
+            resource.subscribe_user(user)
+            added.append(user.name)
+
+        if not added:
+            context.message = ERROR(u"No user added.")
+            return
+
+        context.body['new_users'] = u""
+
+        message = INFO(u"{n} user(s) added.")
+        context.message = message.gettext(n=len(added))

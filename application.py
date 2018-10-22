@@ -35,6 +35,7 @@ from agitools.utils_views import IconsView
 # Import from goodforms
 from application_views import Application_Edit, Applications_View
 from application_views import Application_NewInstance, Application_EditODS
+from application_views import Application_Register
 from datatypes import Subscription_Field
 from form import Form, Forms
 from form_views import Forms_View
@@ -47,7 +48,7 @@ class Application(Folder):
     class_id = 'application'
     class_title = MSG(u"Collection Application")
     class_description = MSG(u"Create from an OpenDocument Spreadsheet file")
-    class_views =  ['view_admin', 'edit', 'edit_ods', 'view']
+    class_views =  ['view_admin', 'edit', 'edit_ods', 'register', 'view']
 
     # FIXME Configuration obsolete ?
     allowed_users = 10
