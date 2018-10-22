@@ -57,9 +57,6 @@ class Application(Folder):
     filename = Char_Field()
     mimetype = Char_Field()
 
-    # FIXME: Remove field
-    max_users = Integer_Field(default=allowed_users)
-
 
     def init_resource(self, *args, **kw):
         proxy = super(Application, self)
@@ -104,7 +101,6 @@ class Application(Folder):
 
     def get_stats(self):
         stats = {}
-        stats['available_users'] = self.get_value('max_users')
         stats['registered_users'] = 0
         stats['unconfirmed_users'] = 0
         stats['empty_forms'] = 0
@@ -113,17 +109,18 @@ class Application(Folder):
         users = self.get_resource('/users')
         for form in self.get_forms():
             stats['registered_users'] += 1
-            user = users.get_resource(form.name)
-            if user.get_value('password') is None:
-                stats['unconfirmed_users'] += 1
-            else:
-                state = form.get_workflow_state()
-                if state == EMPTY:
-                    stats['empty_forms'] += 1
-                elif state == PENDING:
-                    stats['pending_forms'] += 1
-                elif state == FINISHED:
-                    stats['finished_forms'] += 1
+            user = users.get_resource(form.name, soft=True)
+            if user is not None:
+                if user.get_value('password') is None:
+                    stats['unconfirmed_users'] += 1
+                else:
+                    state = form.get_workflow_state()
+                    if state == EMPTY:
+                        stats['empty_forms'] += 1
+                    elif state == PENDING:
+                        stats['pending_forms'] += 1
+                    elif state == FINISHED:
+                        stats['finished_forms'] += 1
         return stats
 
 
