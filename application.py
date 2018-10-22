@@ -19,7 +19,7 @@
 # Import from standard library
 
 # Import from itools
-from itools.database import PhraseQuery
+from itools.database import AndQuery, PhraseQuery
 from itools.gettext import MSG
 from itools.web import get_context
 
@@ -27,6 +27,7 @@ from itools.web import get_context
 from ikaaro.config_common import NewResource_Local
 from ikaaro.fields import Integer_Field, File_Field, Char_Field
 from ikaaro.folder import Folder
+from ikaaro.utils import get_base_path_query
 
 # Import from agitools
 from agitools.utils_views import IconsView
@@ -87,7 +88,8 @@ class Application(Folder):
 
 
     def search_forms(self):
-        query = PhraseQuery('base_classes', 'form')
+        query = AndQuery(PhraseQuery('base_classes', 'form'),
+                         get_base_path_query(self.abspath))
         return get_context().search(query)
 
 
