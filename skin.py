@@ -46,7 +46,7 @@ class Skin(PlatformSkin):
         #styles = super(Skin, self).get_styles(context)
         styles = []
         styles.append('/ui/goodforms/style_base.css')
-        #styles.append('/ui/goodforms/style.css')
+        styles.append('/ui/goodforms/style.css')
         styles.append('/ui/goodforms/fancybox/jquery.fancybox-1.3.1.css')
         return styles
 
