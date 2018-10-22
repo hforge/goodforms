@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<stl:block xmlns="http://www.w3.org/1999/xhtml" xmlns:stl="http://www.hforge.org/xml-namespaces/stl">
+
+  <!--
+  ${menu}
+  -->
+
+  <h2>${title}</h2>
+
+  <table>
+    <tbody>
+      <tr>
+        <th>New Users</th>
+        <th>Subscribed Users</th>
+      </tr>
+      <tr>
+        <td width="50%" align="left" valign="top">
+          <form action="" method="post">
+            <em>1 user per line, format "User Name" &lt;e-mail&gt;</em><br/>
+            <em>e.g. "John Doe" &lt;john.doe@example.com&gt;</em>
+            <textarea name="new_users" cols="50"
+              rows="20">${new_users}</textarea>
+            <p class="actions">
+              <stl:block stl:repeat="action actions">${action}</stl:block>
+            </p>
+          </form>
+        </td>
+        <td width="50%" align="left" valign="top">
+          <p>You have subscribed ${n_forms} users:</p>
+          <ul>
+            <li>${unconfirmed_users} did not subscribe;</li>
+            <li>${empty_forms} subscribed but did not start the form;</li>
+            <li>${pending_forms} started filling the form;</li>
+            <li>${finished_forms} finished the form.</li>
+          </ul>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</stl:block>

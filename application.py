@@ -144,12 +144,27 @@ class Application(Folder):
         return spread_url
 
 
+    def subscribe_user(self, user):
+        root = self.get_resource('/')
+        username = user.name
+        # Give the role "guests" to see public resources (logo, etc.)
+        if (root.get_user_role(username) is None
+                # Except to top-level admins
+                and not root.is_admin(user, self)):
+            root.set_user_role(username, 'guests')
+        # Add the form
+        if self.get_resource(username, soft=True) is None:
+            self.make_resource(username, Form,
+                    title={'en': user.get_title()})
+
+
     # Views
     view = Forms_View()
     new_instance = Application_NewInstance()
     edit = Application_Edit()
     edit_ods = Application_EditODS()
     view_admin = IconsView()
+    register = Application_Register()
 
 
 
