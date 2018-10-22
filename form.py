@@ -116,7 +116,7 @@ class Form(Folder):
     class_id = 'form'
     class_title = MSG(u"Form")
     class_description = MSG(u'Form answer')
-    class_views = ['edit', 'pageA', 'export', 'view_print', 'send']
+    class_views = ['pageA', 'send', 'view_print', 'export']
 
     # Fields
     data = File_Field(title=MSG(u'Form'), class_handler=FormHandler)
