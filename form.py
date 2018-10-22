@@ -120,8 +120,7 @@ class Form(Folder):
 
     # Fields
     data = File_Field(title=MSG(u'Form'), class_handler=FormHandler)
-    form_state = Text_Field(title=MSG(u'State'), indexed=True, stored=True)
-    workflow = WorkflowState_Field
+    form_state = WorkflowState_Field()
 
     def init_resource(self, *args, **kw):
         # Proxy
@@ -295,13 +294,8 @@ class Form(Folder):
 
     ######################################################################
     # Security
-    def get_workflow_state(self):
-        # FIXME
-        return 'pending'
-
-
     def is_ready(self):
-        return self.get_workflow_state() == FINISHED
+        return self.get_value('form_state') == FINISHED
 
 
     def is_first_time(self):
@@ -493,7 +487,7 @@ class Forms(Folder):
 
     class_id = 'forms'
     class_title = MSG(u"Form answers")
-    class_views = ['view', 'new_resource', 'export']
+    class_views = ['view', 'export']
     class_icon_css = 'fa-user'
 
     def get_document_types(self):
@@ -549,5 +543,4 @@ class Forms(Folder):
 
     # Views
     view = Forms_View
-    new_resource = NewResource_Local(title=MSG(u'Create an answer to form'))
     export = Forms_Export

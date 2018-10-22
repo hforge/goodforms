@@ -34,6 +34,7 @@ MODIFIED = 'modified'
 
 class WorkflowState(Enumerate):
 
+    default = NOT_REGISTERED
     options = [
         {'name': NOT_REGISTERED, 'value': MSG(u"Not Registered")},
         {'name': EMPTY, 'value': MSG(u"Empty")},
@@ -46,5 +47,7 @@ class WorkflowState(Enumerate):
 
 class WorkflowState_Field(Select_Field):
 
-    title = MSG(u'WF State')
+    title = MSG(u'State')
     datatype = WorkflowState
+    indexed = True
+    stored = True

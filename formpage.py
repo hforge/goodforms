@@ -183,7 +183,7 @@ class FormPage(Folder):
         # Lecture seule ?
         root = self.get_resource('/')
         if not skip_print and not root.is_allowed_to_edit(context.user, form):
-            state = form.get_workflow_state()
+            state = form.get_value('form_state')
             if state in (FINISHED, EXPORTED):
                 readonly = True
         # 0005160: affiche les champs même en lecture seule

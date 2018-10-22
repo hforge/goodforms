@@ -40,7 +40,7 @@ from datatypes import Subscription_Field
 from form import Form, Forms
 from form_views import Forms_View
 from model import FormModel
-from workflow import EMPTY, PENDING, FINISHED
+from workflow import NOT_REGISTERED, EMPTY, PENDING, FINISHED
 
 
 class Application(Folder):
@@ -117,7 +117,7 @@ class Application(Folder):
                 if user.get_value('password') is None:
                     stats['unconfirmed_users'] += 1
                 else:
-                    state = form.get_workflow_state()
+                    state = form.get_value('form_state')
                     if state == EMPTY:
                         stats['empty_forms'] += 1
                     elif state == PENDING:
@@ -155,7 +155,8 @@ class Application(Folder):
         # Add the form
         if self.get_resource(username, soft=True) is None:
             self.make_resource(username, Form,
-                    title={'en': user.get_title()})
+                    title={'en': user.get_title()},
+                    form_state=NOT_REGISTERED)
 
 
     # Views

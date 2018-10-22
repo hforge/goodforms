@@ -41,6 +41,7 @@ from widgets import is_mandatory_filled
 from workflow import WorkflowState, NOT_REGISTERED, PENDING, FINISHED, EXPORTED
 from customization import custom_flag
 from rw import ODSWriter, XLSWriter
+from workflow import NOT_REGISTERED, EMPTY, PENDING, FINISHED, EXPORTED
 
 # Messages
 MSG_APPLICATION_TITLE = MSG(u'<span class="application-title">Title of your application:</span> {title}', format='replace_html')
@@ -217,8 +218,10 @@ class Form_View(STLView):
         context.database.change_resource(resource)
         # Transmit list of errors when returning GET
         context.message = MSG_SAVED
-        # if resource.get_workflow_state() == EMPTY:
-        resource.set_workflow_state(PENDING)
+        # Update form state
+        if resource.get_value('form_state') == EMPTY:
+            resource.set_value('form_state', PENDING)
+
 
     def action(self, resource, context, form):
         schema, pages = resource.get_schema_pages()
@@ -370,9 +373,9 @@ class Form_View(STLView):
             context.message = messages
         else:
             context.message = MSG_SAVED
-        # FIXME
-        # if resource.get_workflow_state() == EMPTY:
-        #resource.set_workflow_state(PENDING)
+        # Update form state
+        if resource.get_value('form_state') == EMPTY:
+            resource.set_value('form_state', PENDING)
 
 
 
@@ -449,9 +452,8 @@ class Form_Send(STLView):
         is_allowed_to_export = True
         namespace['is_allowed_to_export'] = is_allowed_to_export
         # State
-        namespace['statename'] = statename = resource.get_workflow_state()
-        namespace['form_state'] = WorkflowState.get_value(
-                resource.get_workflow_state())
+        namespace['statename'] = statename = resource.get_value('form_state')
+        namespace['form_state'] = resource.get_value_title('form_state')
         # Transitions
         namespace['can_send'] = statename == PENDING and not errors
         namespace['can_export'] = is_allowed_to_export and not errors
@@ -465,7 +467,7 @@ class Form_Send(STLView):
     def action_send(self, resource, context, form):
         """Ce qu'il faut faire quand le formulaire est soumis.
         """
-        resource.set_workflow_state(FINISHED)
+        resource.set_value('form_state', FINISHED)
 
         # Notification e-mail
         application = resource.parent
@@ -502,7 +504,7 @@ Summary of the "{application_title}" campaign:
     def action_export(self, resource, context, form):
         """Ce qu'il faut faire quand le formulaire est exporté.
         """
-        resource.set_workflow_state(EXPORTED)
+        resource.set_value('form_state', EXPORTED)
 
         # XXX
         context.commit = False
@@ -623,7 +625,7 @@ class Forms_View(AutoTable):
                             and user.get_value('password') is None):
                         state = NOT_REGISTERED
                     else:
-                        state = item_brain.workflow_state
+                        state = item_brain.form_state
                     value = WorkflowState.get_value(state)
                 else:
                     value = self.get_item_value(resource, context, item,
@@ -671,7 +673,7 @@ class Forms_Export(BaseView):
     def GET(self, resource, context):
         app = resource.parent
         for form in app.get_forms():
-            state = form.get_workflow_state()
+            state = form.get_value('form_state')
             if state != 'private':
                 break
         else:
@@ -723,7 +725,7 @@ class Forms_Export(BaseView):
                 email = ""
                 firstname = ""
                 lastname = form.name
-            state = WorkflowState.get_value(form.get_workflow_state())
+            state = form.get_value_title('form_state')
             state = state.gettext()
             row = [form.name, firstname, lastname, email, state]
             handler = form.get_value('data')
