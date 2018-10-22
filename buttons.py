@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright (C) 2010 Hervé Cauwelier <herve@itaapy.com>
+# Copyright (C) 2018 Nicolas Deram <nderam@gmail.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -111,3 +112,28 @@ class FormPrintLink(PagePrintLink):
     id = "button-form-print"
     href = ";print?view=print"
     content = MSG(u"Print Form")
+
+
+
+class Remove_BrowseButton(Button):
+
+    access = 'is_allowed_to_remove'
+    confirm = MSG(u'Êtes vous sûr ?')
+    css = 'btn btn-danger'
+    icon_class = 'fa-trash-o fa-white'
+    name = 'remove'
+    title = MSG(u'Supprimer')
+
+    template = make_stl_template("""
+        <button name="${action}" class="${css}" value="${name}"
+            onclick="${onclick}">
+          <i class="fa ${icon_class}"/> ${title}
+        </button>""")
+
+    @proto_property
+    def show(self):
+        context = self.context
+        for item in self.items:
+            if context.is_access_allowed(item, self):
+                return True
+        return False

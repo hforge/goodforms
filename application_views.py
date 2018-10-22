@@ -33,10 +33,9 @@ from ikaaro.fields import Char_Field
 
 # Import from agitools
 from agitools.autotable import AutoTable
-from agitools.buttons import Remove_BrowseButton
 
 # Import from here
-from buttons import AddUsersButton
+from buttons import AddUsersButton, Remove_BrowseButton
 from datatypes import EmailField
 from user import GoodFormsUser
 
