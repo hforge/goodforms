@@ -48,7 +48,9 @@ class Applications_View(AutoTable):
 
     def get_item_value(self, resource, context, item, column):
         if column == 'nb_answers':
-            return u'TODO' #TODO
+            return item.get_n_forms()
+        elif column == 'ctime':
+            return context.format_datetime(item.get_value('ctime'))
         # Proxy
         proxy = super(Applications_View, self)
         return proxy.get_item_value(resource, context, item, column)

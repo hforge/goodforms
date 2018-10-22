@@ -89,14 +89,17 @@ class Application(Folder):
         raise NotImplementedError
 
 
-    def get_forms(self):
+    def search_forms(self):
         query = PhraseQuery('base_classes', 'form')
-        search = get_context().search(query)
-        return search.get_resources()
+        return get_context().search(query)
+
+
+    def get_forms(self):
+        return self.search_forms().get_resources()
 
 
     def get_n_forms(self):
-        return len(list(self.get_forms()))
+        return len(self.search_forms())
 
 
     def get_stats(self):
