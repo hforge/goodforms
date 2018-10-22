@@ -860,9 +860,12 @@ class Subscription_Field(Select_Field):
 
     title = MSG(u'Subscription')
     options = [
-        {'name': 'restricted', 'value': MSG(u"Restricted (users must be subscribed)")},
-        {'name': 'open', 'value': MSG(u"Open (accounts are created on demand)")},
-        {'name': 'demo', 'value': MSG(u"Demo (public demo)")}]
+        {'name': 'restricted',
+         'value': MSG(u"Restricted (users must be subscribed)")},
+        {'name': 'open',
+         'value': MSG(u"Open (accounts are created on demand)")},
+        {'name': 'demo',
+         'value': MSG(u"Demo (public demo)")}]
 
 
 

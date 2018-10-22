@@ -52,7 +52,7 @@ class Application(Folder):
     allowed_users = 10
 
     # Fields
-    subscription = Subscription_Field()
+    subscription = Subscription_Field(required=True)
     data = File_Field(title=MSG(u'ODS file'), multilingual=False, required=True)
     filename = Char_Field()
     mimetype = Char_Field()
