@@ -46,3 +46,5 @@ Launch demo instance with docker-compose:
     $ cd docker
     $ docker-compose up -d
     $ firefox http://localhost:8080
+
+The login/password is contact@example.com/password !
