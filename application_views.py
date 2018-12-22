@@ -37,7 +37,6 @@ from agitools.autotable import AutoTable
 # Import from here
 from buttons import AddUsersButton, Remove_BrowseButton
 from datatypes import EmailField
-from user import GoodFormsUser
 
 
 INFO_NEW_APPLICATION = INFO(u'Your application is created !')

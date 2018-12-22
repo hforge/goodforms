@@ -124,6 +124,8 @@ class Controls(Folder):
                 err = ERR_EMPTY_EXPRESSION.gettext(line=lineno)
                 errors.append(err)
             try:
+                # FIXME
+                namespace = {}
                 Expression.is_valid(expression, namespace)
             except Exception, err:
                 err = ERR_BAD_EXPRESSION.gettext(line=lineno, err=err)

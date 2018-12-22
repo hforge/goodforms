@@ -38,10 +38,9 @@ from buttons import SaveButton
 from datatypes import Numeric, FileImage
 from utils import get_page_number, force_encode, is_print, set_print
 from widgets import is_mandatory_filled
-from workflow import WorkflowState, NOT_REGISTERED, PENDING, FINISHED, EXPORTED
 from customization import custom_flag
 from rw import ODSWriter, XLSWriter
-from workflow import NOT_REGISTERED, EMPTY, PENDING, FINISHED, EXPORTED
+from workflow import WorkflowState, NOT_REGISTERED, EMPTY, PENDING, FINISHED, EXPORTED
 
 # Messages
 MSG_APPLICATION_TITLE = MSG(u'<span class="application-title">Title of your application:</span> {title}', format='replace_html')
@@ -528,7 +527,6 @@ class Form_Export(BaseView):
         csv = CSVFile()
         csv.add_row(["Chapitre du formulaire", "rubrique", "valeur"])
         schema = resource.get_schema()
-        form = resource.get_form()
         handler = resource.get_value('data')
         for name, datatype in sorted(schema.iteritems()):
             if name in ('ctime', 'mtime'):
@@ -696,7 +694,7 @@ class Forms_Export(BaseView):
             header.append(name.replace('_', ''))
         try:
             writer.add_row(header, is_header=True)
-        except FormatError, exception:
+        except Exception, exception:
             return context.come_back(ERROR(unicode(exception)))
         # Subheader with titles
         header = [""] * 5

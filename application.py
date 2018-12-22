@@ -25,7 +25,7 @@ from itools.web import get_context
 
 # Import from ikaaro
 from ikaaro.config_common import NewResource_Local
-from ikaaro.fields import Integer_Field, File_Field, Char_Field
+from ikaaro.fields import File_Field, Char_Field
 from ikaaro.folder import Folder
 from ikaaro.utils import get_base_path_query
 

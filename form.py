@@ -31,14 +31,12 @@ from itools.web import get_context
 # Import from ikaaro
 from ikaaro.autoadd import AutoAdd
 from ikaaro.autoedit import AutoEdit
-from ikaaro.config_common import NewResource_Local
-from ikaaro.fields import Text_Field, File_Field
+from ikaaro.fields import File_Field
 from ikaaro.folder import Folder
-from ikaaro.folder_views import GoToSpecificDocument
 from ikaaro.utils import generate_name
 
 # Import from goodforms
-from datatypes import Numeric, NumDecimal, FileImage, SqlEnumerate
+from datatypes import Numeric, NumDecimal, SqlEnumerate
 from form_views import Forms_View, Form_View, Form_Send, Form_Export, Form_Print
 from form_views import Forms_Export
 from utils import SI, get_page_number, parse_control

@@ -133,13 +133,13 @@ class Numeric(DataType):
 
     def __int__(self):
         if self.value is None:
-            raise NotImplemented
+            raise NotImplementedError
         return int(self.value)
 
 
     def __float__(self):
         if self.value is None:
-            raise NotImplemented
+            raise NotImplementedError
         return float(self.value)
 
 
@@ -365,12 +365,12 @@ class Numeric(DataType):
 
     def __cmp__(self, right):
         # Toutes les combinaisons ont été épuisées
-        raise NotImplemented
+        raise NotImplementedError
 
 
     def __bool__(self):
         # FIXME seulement dans Python 3 ?
-        raise NotImplemented
+        raise NotImplementedError
 
 
     def __nonzero__(self):
@@ -378,7 +378,7 @@ class Numeric(DataType):
 
 
     def __len__(self):
-        raise NotImplemented
+        raise NotImplementedError
 
 
     @staticmethod
