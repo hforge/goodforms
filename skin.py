@@ -23,9 +23,6 @@ from itools.web import get_context
 from ikaaro.skins import Skin as BaseSkin
 from ikaaro.skins import register_skin
 
-# Import from agitools
-#from agitools.skins import PlatformSkin
-
 # Import from goodforms
 from utils import is_print
 

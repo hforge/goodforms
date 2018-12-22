@@ -1,7 +1,6 @@
 - Display namespace with parsed informations on debug with, will help to develop good API
 - Works on ACLs: Allow to set forms as public
 - Remove useless ERROR messages (many seems useless)
-- See what to do with agitools dependecies
 - Works on skin (add bootstrap / fontawesome)
 - Only support ODS not XLS (so remove the useless code) - remove xlwt ?
 - Remove unused Buttons
