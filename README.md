@@ -11,14 +11,14 @@ Dependencies
 Installation
 =====================
 
+From unix shell
+----------------------------
+
 Install via git repository:
 
-    $ python setup.py -r requirements.txt
-    $ python setup.py install
+  $ python setup.py -r requirements.txt
+  $ python setup.py install
 
-
-Create a new instance
-=======================
 
 Initialize instance:
 
@@ -31,3 +31,17 @@ Start instance:
 Test GoodForms in Firefox:
 
     $ firefox http://localhost:8080/
+
+
+From docker
+----------------------------
+
+Build docker image:
+
+   $ cd docker
+   $ docker build . -t goodforms:latest
+
+Launch instance with docker-compose:
+
+   $ cd docker
+   $ docker-compose up -d

@@ -1,0 +1,10 @@
+version: '3'
+services:
+  web:
+    container_name: "goodforms"
+    image: "goodforms:latest"
+    volumes:
+       - /tmp/databases/:/databases/
+       - /tmp/share/:/tmp/share/
+    ports:
+        - 8080:8080
