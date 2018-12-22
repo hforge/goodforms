@@ -1,3 +1,3 @@
-git+git://github.com/hforge/itools.git@master#egg=itools
-git+git://github.com/hforge/ikaaro.git@master#egg=ikaaro
+-e git+git://github.com/hforge/itools.git@master#egg=itools
+-e git+git://github.com/hforge/ikaaro.git@master#egg=ikaaro
 xlwt
