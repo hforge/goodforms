@@ -36,7 +36,7 @@ from ikaaro.folder import Folder
 from ikaaro.fields import Char_Field, File_Field
 
 # Import from agitools
-from agitools.autotable import AutoTable
+from ikaaro.views import AutoTable
 
 # Import from goodforms
 from datatypes import NumTime

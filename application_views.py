@@ -30,9 +30,7 @@ from itools.web import INFO, ERROR, STLView
 from ikaaro.autoadd import AutoAdd
 from ikaaro.autoedit import AutoEdit
 from ikaaro.fields import Char_Field
-
-# Import from agitools
-from agitools.autotable import AutoTable
+from ikaaro.views import AutoTable
 
 # Import from here
 from buttons import AddUsersButton, Remove_BrowseButton

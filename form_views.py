@@ -28,8 +28,8 @@ from itools.gettext import MSG
 from itools.log import log_debug
 from itools.web import BaseView, STLView, INFO, ERROR
 
-# Import from agitools
-from agitools.autotable import AutoTable
+# Import from ikaaro
+from ikaaro.views import AutoTable
 
 # Import from goodforms
 from buttons import InputControlLink
