@@ -21,8 +21,7 @@
 # Import from itools
 from itools.core import is_prototype
 from itools.gettext import MSG
-
-# Import from ikaaro
+from itools.web import STLView
 
 # Import from goodforms
 from datatypes import Numeric, UnicodeSQL
@@ -44,6 +43,15 @@ def get_page_number(name):
         return None
     return page_number.upper()
 
+
+
+def group_by_items(items, max_in_a_row=4):
+    if not items:
+        return []
+    groups = []
+    for i in range(0, len(items), max_in_a_row):
+        groups.append(items[i:i+max_in_a_row])
+    return groups
 
 
 def SI(condition, iftrue, iffalse=True):
@@ -98,3 +106,26 @@ class FormatError(ValueError):
         if is_prototype(message, MSG):
             message = message.gettext()
         return super(FormatError, self).__init__(message, *args, **kw)
+
+
+
+class IconsView(STLView):
+
+    access = 'is_authenticated'
+    title = MSG(u'Voir')
+    template = '/ui/goodforms/icons_view.xml'
+    resources_names = []
+
+    def get_namespace(self, resource, context):
+        items = []
+        root = context.root
+        for r in resource.get_resources():
+            if not root.is_allowed_to_view(context.user, r):
+                continue
+            # Check module access
+            kw = {'class_icon_css': getattr(r, 'class_icon_css', 'fa-pencil'),
+                  'title': r.class_title,
+                  'abspath': str(r.abspath),
+                  'link': context.get_link(r)}
+            items.append(kw)
+        return {'items_by_group': group_by_items(items, 6)}

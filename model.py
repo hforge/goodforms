@@ -22,15 +22,13 @@ from itools.web import ERROR
 # Import from ikaaro
 from ikaaro.folder import Folder
 
-# Import from agitools
-from agitools.utils_views import IconsView
-
 # Import from goodforms
 from controls import Controls
 from formpage import FormPages, FormPage
 from rw import get_reader_and_cls
 from schema import Schema
 from utils import FormatError
+from utils import IconsView
 
 
 ERR_NOT_ODS_XLS = ERROR(u"Not an ODS or XLS file.")

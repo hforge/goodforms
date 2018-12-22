@@ -29,9 +29,6 @@ from ikaaro.fields import File_Field, Char_Field
 from ikaaro.folder import Folder
 from ikaaro.utils import get_base_path_query
 
-# Import from agitools
-from agitools.utils_views import IconsView
-
 # Import from goodforms
 from application_views import Application_Edit, Applications_View
 from application_views import Application_NewInstance, Application_EditODS
@@ -40,6 +37,7 @@ from datatypes import Subscription_Field
 from form import Form, Forms
 from form_views import Forms_View
 from model import FormModel
+from utils import IconsView
 from workflow import NOT_REGISTERED, EMPTY, PENDING, FINISHED
 
 

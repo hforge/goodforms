@@ -20,18 +20,18 @@ from itools.core import get_abspath
 from itools.web import get_context
 
 # Import from ikaaro
-#from ikaaro.skins import Skin as BaseSkin
+from ikaaro.skins import Skin as BaseSkin
 from ikaaro.skins import register_skin
 
 # Import from agitools
-from agitools.skins import PlatformSkin
+#from agitools.skins import PlatformSkin
 
 # Import from goodforms
 from utils import is_print
 
 
 
-class Skin(PlatformSkin):
+class Skin(BaseSkin):
 
 
     is_backoffice_skin = False

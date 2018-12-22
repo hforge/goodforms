@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<stl:block xmlns:stl="http://www.hforge.org/xml-namespaces/stl" xmlns="http://www.w3.org/1999/xhtml">
+
+  <div class="big-icons">
+    <div class="row" stl:repeat="items items_by_group">
+      <div class="col-lg-2 col-md-2 col-sm-4 col-xs-12" stl:repeat="item items">
+        <a href="${item/link}">
+          <i class="fa ${item/class_icon_css}"></i><br></br> ${item/title}
+        </a>
+      </div>
+    </div>
+  </div>
+
+</stl:block>

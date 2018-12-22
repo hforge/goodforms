@@ -67,7 +67,7 @@ ENV LIBRARY_PATH=/lib:/usr/lib
 RUN pip install pygit2==0.27.0 pillow==3.0.0
 # FontAwesome
 ADD https://github.com/FortAwesome/Font-Awesome/raw/fa-4/fonts/FontAwesome.otf /usr/share/fonts/
-# Install itools / ikaaro / agitools
+# Install itools / ikaaro
 RUN pip install lxml
 RUN pip install --force-reinstall --upgrade "git+https://github.com/hforge/itools@master#itools"
 RUN pip install --force-reinstall --upgrade "git+https://github.com/hforge/ikaaro@master#ikaaro"

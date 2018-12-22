@@ -22,12 +22,11 @@ from itools.gettext import MSG
 from ikaaro.autoedit import AutoEdit
 from ikaaro.root import Root as BaseRoot
 
-# Import from agitools
-from agitools.utils_views import IconsView
-
 # Import from goodforms
 from application import Applications
 from root_views import Root_ViewAdmin
+from utils import IconsView
+
 
 
 class Root(BaseRoot):

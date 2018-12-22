@@ -35,7 +35,7 @@ from itools.xml import XMLParser
 from ikaaro.folder import Folder
 from ikaaro.fields import Char_Field, File_Field
 
-# Import from agitools
+# Import from ikaaro
 from ikaaro.views import AutoTable
 
 # Import from goodforms

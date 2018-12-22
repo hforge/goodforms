@@ -21,31 +21,31 @@
   </head>
   <body>
     <a id="top"/>
-    ${modal}
     <!-- Header -->
+    <!-- ${modal}
     ${adminbar}
-
-    <!-- Body -->
-    <div id="body" class="${page_css_id}">
-      <div class="container-liquid">
+      class="${page_css_id}"
         ${breadcrumb}
-        <div class="clearfix"/>
-        <div class="row">
           <div id="right" style="vertical-align: top" stl:if="menus"
                class="left-sidebar col-lg-3 col-md-3 col-sm-12">
             <stl:block stl:repeat="menu menus">${menu}</stl:block>
           </div>
-          <div id="left" style="vertical-align: top"
-               class="${main_row_class} col-sm-12">
+    -->
+
+    <!-- Body -->
+    <div id="body">
+      <div class="container-liquid">
+        <div class="clearfix"/>
+        <div class="row">
+          <div id="left" style="vertical-align: top" class="col-sm-12">
             <div id="left-content">
               <!--
               <h1 stl:if="not tabs">${view_title}</h1>
               <h1 stl:if="tabs">${page_title}</h1>
               -->
-              ${tabs}
+              ${location}
               <div class="body-content">
                 ${message}
-                ${navigation_buttons}
                 ${body}
               </div>
               <div class="clear"/>
