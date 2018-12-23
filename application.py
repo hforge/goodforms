@@ -35,7 +35,6 @@ from application_views import Application_NewInstance, Application_EditODS
 from application_views import Application_Register
 from datatypes import Subscription_Field
 from form import Form, Forms
-from form_views import Forms_View
 from model import FormModel
 from utils import IconsView
 from workflow import NOT_REGISTERED, EMPTY, PENDING, FINISHED
@@ -158,7 +157,6 @@ class Application(Folder):
 
 
     # Views
-    view = Forms_View()
     new_instance = Application_NewInstance()
     edit = Application_Edit()
     edit_ods = Application_EditODS()
