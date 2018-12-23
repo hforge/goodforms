@@ -398,7 +398,7 @@ class FormPages(Folder):
     class_id = 'form-pages'
     class_title = MSG(u"Form Pages")
     class_views = ['view']
-    class_icon_css = 'fa-building-o'
+    class_icon_css = 'fa-building'
 
     # View
     view = FormPages_View

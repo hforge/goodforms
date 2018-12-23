@@ -123,7 +123,7 @@ class IconsView(STLView):
             if not root.is_allowed_to_view(context.user, r):
                 continue
             # Check module access
-            kw = {'class_icon_css': getattr(r, 'class_icon_css', 'fa-pencil'),
+            kw = {'class_icon_css': getattr(r, 'class_icon_css', 'fa-pencil-alt'),
                   'title': r.class_title,
                   'abspath': str(r.abspath),
                   'link': context.get_link(r)}

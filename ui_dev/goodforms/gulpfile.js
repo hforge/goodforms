@@ -36,7 +36,7 @@ gulp.task('build-goodforms', function(){
   };
 
   // Copy font awesome fonts
-   gulp.src('node_modules/font-awesome/fonts/*.*')
+   gulp.src('node_modules/@fortawesome/fontawesome-free/webfonts/*.*')
      .pipe(gulp.dest('./dist/fonts/'))
      .pipe(gulp.dest('../../ui/goodforms/dist/fonts/'));
 

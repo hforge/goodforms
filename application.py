@@ -173,7 +173,7 @@ class Applications(Folder):
     class_title = MSG(u"Forms")
     class_views = ['view', 'new_resource']
     class_icon_name = 'applications'
-    class_icon_css = 'fa-pencil'
+    class_icon_css = 'fa-pencil-alt'
 
     def get_document_types(self):
         return [Application]

@@ -120,7 +120,7 @@ class Remove_BrowseButton(Button):
     access = 'is_allowed_to_remove'
     confirm = MSG(u'Êtes vous sûr ?')
     css = 'btn btn-danger'
-    icon_class = 'fa-trash-o fa-white'
+    icon_class = 'fa-trash-alt fa-white'
     name = 'remove'
     title = MSG(u'Supprimer')
 
