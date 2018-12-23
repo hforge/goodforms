@@ -13,3 +13,6 @@ locale/*.mo
 *.xhtml.fr
 *.xml.fr
 environment.json
+ui_dev/goodforms/node_modules/
+ui/goodforms/dist/
+ui_dev/goodforms/dist/

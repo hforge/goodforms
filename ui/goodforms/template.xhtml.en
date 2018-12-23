@@ -33,7 +33,7 @@
 
     <!-- Body -->
     <div id="body">
-      <div class="container-liquid">
+      <div class="container">
         <div class="clearfix"/>
         <div class="row">
           <div id="left" style="vertical-align: top" class="col-sm-12">
@@ -54,8 +54,10 @@
         </div>
 
       </div>
-      <div id="footer">
-        <span>Goodforms</span>
+      <div class="container">
+        <div id="footer">
+          <span>Goodforms</span>
+        </div>
       </div>
     </div>
   </body>
