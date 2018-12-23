@@ -5,6 +5,39 @@ body {
   background-color: #FFF;
 }
 
+#header{
+  background-color: #0056b3;
+  color: #FFF;
+  min-height: 100px;
+  padding: 10px;
+}
+
+#footer{
+  background-color: #0056b3;
+  color: #FFF;
+  min-height: 100px;
+  text-align: left;
+  padding: 10px;
+  margin-top: 20px;
+}
+
+.big-icons{
+  margin-top: 25px;
+  font-size: 15px;
+  i{
+    font-size: 50px;
+  }
+  div{
+    text-align:center;
+    margin-bottom: 40px;
+  }
+  a{
+   color: #333;
+  }
+}
+
+/* To clean */
+
 div#page {
   display: table;
   background: #fff;
@@ -106,48 +139,6 @@ div#page {
  */
 #content {
   color: #666;
-}
-
-#footer {
-  background-color: #0056b3;
-  color: #FFF;
-  height: 127px;
-  text-align: left;
-  padding: 10px;
-  width: auto;
-}
-#footer .container {
-  width: 600px;
-  margin: auto;
-}
-#footer .col {
-  width: 190px;
-  float: left;
-}
-#footer .col h2 {
-  font-size: 12px;
-  color: #fff;
-  font-family: "trebuchet MS";
-  height: 25px;
-  width: 190px;
-  overflow: hidden;
-  margin: 0;
-}
-#footer .col .content {
-  font-size: 11px;
-  color: #fff;
-  font-family: "trebuchet MS";
-  padding-left: 0;
-  margin-left: 0;
-}
-#footer .col .content a {
-  color: #fff;
-}
-#footer .col .content li {
-  list-style: none;
-}
-#footer a {
-  margin: 0;
 }
 
 /*
@@ -372,31 +363,6 @@ h1.title-home {
   border-color: #06090b;
 }
 
-#contact-form {
-  border-collapse: collapse;
-  background: #fff url(images/contact-bg.png) repeat-y right top;
-  box-shadow: 5px 5px 5px 0 #777;
-  -moz-box-shadow: 5px 5px 5px 0 #777;
-  -webkit-box-shadow: 5px 5px 5px 0 #777;
-}
-#contact-form h2 {
-  border: 0;
-  color: #777;
-  margin: 0;
-  padding: 0;
-}
-#contact-form td {
-  vertical-align: top;
-  padding: 5px;
-}
-#contact-form p {
-  margin: 0;
-}
-#contact-form input,
-#contact-form textarea {
-  width: 100%;
-  border-radius: 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px;
-}
 
 #spread-url,
 #choose-format {
@@ -433,47 +399,6 @@ h1.title-home {
   float: right;
   margin-top: -30px;
   background-image: url(/ui/icons/16x16/config.png);
-}
-
-.icons-view {
-  width: 100%;
-  border: 0;
-  border-collapse: collapse;
-}
-.icons-view td {
-  margin: 5px;
-  padding: 5px;
-  text-align: left;
-  vertical-align: top;
-}
-.icons-view img.icon {
-  float: left;
-}
-.icons-view a.item {
-  background: transparent url(images/item-background.png) repeat-x left top;
-  border-radius: 5px;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  display: block;
-  height: 60px;
-  padding: 5px 3px 0 0;
-  text-decoration: none;
-}
-.icons-view a.item:hover,
-.icons-view a.item.active {
-  background: #ddd;
-}
-.icons-view .description {
-  color: #000;
-}
-
-.root-show td {
-  text-align: center;
-  vertical-align: bottom;
-}
-
-#body h1 .application-title {
-  color: #666;
 }
 
 #tooltip {
