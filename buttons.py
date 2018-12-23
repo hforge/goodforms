@@ -79,9 +79,6 @@ class Link(Button):
     id = None
     href = None
     onclick = None
-    template = make_stl_template('''
-        <a id="${id}" href="${href}" class="button ${css}" title="${title}"
-            onclick="${onclick}">${content}</a>''')
 
 
 
@@ -89,7 +86,7 @@ class InputControlLink(Link):
 
     access = 'is_allowed_to_view'
     id = "button-control"
-    css = "button-control"
+    class_icon_css = 'fa-cog'
     href = ";send"
     content = MSG(u"Input Control")
 
@@ -99,7 +96,7 @@ class PagePrintLink(Link):
 
     access = 'is_allowed_to_view'
     id = "button-page-print"
-    css = "button-print"
+    class_icon_css = 'fa-print'
     href = "?view=print"
     title = MSG(u"Print (in a new window)")
     onclick = "return popup(this.href, 800, 600)"

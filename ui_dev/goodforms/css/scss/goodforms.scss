@@ -318,34 +318,6 @@ h1.title-home {
   margin: 0px;
 }
 
-/* Buttons */
-button, .button {
-  background: #fff no-repeat 5px 5px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  box-shadow: 0 0 3px #ccc;
-  -moz-box-shadow: 0 0 3px #ccc;
-  -webkit-box-shadow: 0 0 3px #ccc;
-  cursor: pointer;
-  display: inline-block;
-  font-size: 12px;
-  margin: 3px;
-  padding: 5px;
-  padding-left: 24px !important;
-  text-decoration: none;
-}
-
-.button-control { background-image: url(/ui/goodforms/images/settings16.png); }
-.button-print { background-image: url(/ui/goodforms/images/printer16.png); }
-.button-selector { background-image: url(/ui/icons/16x16/image.png); }
-
-.button-csv {
-  background-image: url(/ui/icons/16x16/excel.png);
-  padding-left: 19px;
-}
-
 .wf-exported { color: #75507b; }
 .wf-modified { color: #3465a4; }
 
