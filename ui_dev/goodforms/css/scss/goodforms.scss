@@ -109,10 +109,11 @@ div#page {
 }
 
 #footer {
-  background: url(/ui/goodforms/images/footer-background.jpg) repeat-x left top;
+  background-color: #0056b3;
+  color: #FFF;
   height: 127px;
   text-align: left;
-  margin-top: 0;
+  padding: 10px;
   width: auto;
 }
 #footer .container {
