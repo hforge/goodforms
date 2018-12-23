@@ -170,7 +170,7 @@ class Application(Folder):
 class Applications(Folder):
 
     class_id = 'applications'
-    class_title = MSG(u"Forms")
+    class_title = MSG(u"Applications")
     class_views = ['view', 'new_resource']
     class_icon_name = 'applications'
     class_icon_css = 'fa-pencil-alt'
