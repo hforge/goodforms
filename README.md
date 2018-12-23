@@ -8,16 +8,35 @@ Dependencies
   - ikaaro (master)
   - lpod-python (master)
 
-Installation
-=====================
+Installation from shell
+=================================
 
-From unix shell
+Install dependencies
+----------------------------
+
+Install itools & ikaaro:
+
+    $ pip install git+https://github.com/hforge/itools.git@master#egg=itools
+    $ pip install git+https://github.com/hforge/ikaaro.git@master#egg=ikaaro
+
+
+1) Install from PIP:
+-------------------------
+
+Install from PIP via the command:
+
+    $ pip install git+https://github.com/hforge/goodforms.git@master#egg=goodforms
+
+
+2) Install from GIT
 ----------------------------
 
 Install via git repository:
 
-      $ python setup.py -r requirements.txt
-      $ python setup.py install
+    $ git clone https://github.com/hforge/goodforms/
+    $ cd goodforms/
+    $ python setup.py -r requirements.txt
+    $ python setup.py install
 
 
 Initialize instance:
@@ -33,8 +52,8 @@ Test GoodForms in Firefox:
     $ firefox http://localhost:8080/
 
 
-With Docker
-----------------------------
+Launch via Docker
+============================
 
 Build docker image "goodforms":
 
