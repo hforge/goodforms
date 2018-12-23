@@ -584,6 +584,7 @@ class Forms_View(AutoTable):
 
     # Configuration
     base_classes = ('form',)
+    base_path_from_resource = False
 
     # Table
     table_fields = ['checkbox', 'name', 'form_state', 'mtime']
