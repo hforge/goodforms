@@ -24,7 +24,6 @@ from ikaaro.root import Root as BaseRoot
 
 # Import from goodforms
 from application import Applications
-from root_views import Root_ViewAdmin
 from utils import IconsView
 
 
@@ -34,7 +33,7 @@ class Root(BaseRoot):
     class_id = 'goodforms'
     class_skin = 'goodforms'
     class_title = MSG(u'Goodforms')
-    class_views = ['view', 'view_admin', 'edit' ]
+    class_views = ['view', 'edit' ]
 
     def init_resource(self, *args, **kw):
         super(Root, self).init_resource(*args, **kw)
@@ -55,6 +54,5 @@ class Root(BaseRoot):
 
     # Views
     view = IconsView
-    view_admin = Root_ViewAdmin()
     _fields = ['title']
     edit = AutoEdit(fields=_fields)
