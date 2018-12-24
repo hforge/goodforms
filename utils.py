@@ -112,7 +112,7 @@ class FormatError(ValueError):
 class IconsView(STLView):
 
     access = 'is_authenticated'
-    title = MSG(u'Voir')
+    title = MSG(u'View')
     template = '/ui/goodforms/icons_view.xml'
     resources_names = []
 
