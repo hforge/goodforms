@@ -40,14 +40,14 @@ class ExportODSButton(BrowseButton):
 
     access = 'is_allowed_to_edit'
     name = 'export'
-    title = MSG(u"Export This List in ODS Format")
+    title = MSG(u"Export this list in OpenDocument Format (ODS)")
 
 
 
 class ExportXLSButton(ExportODSButton):
 
     name = 'export_xls'
-    title = MSG(u"Export This List in XLS Format")
+    title = MSG(u"Export this list in XLS Format")
 
 
 
@@ -115,11 +115,11 @@ class FormPrintLink(PagePrintLink):
 class Remove_BrowseButton(Button):
 
     access = 'is_allowed_to_remove'
-    confirm = MSG(u'Êtes vous sûr ?')
+    confirm = MSG(u'Are you sure?')
     css = 'btn btn-danger'
     icon_class = 'fa-trash-alt fa-white'
     name = 'remove'
-    title = MSG(u'Supprimer')
+    title = MSG(u'Delete')
 
     template = make_stl_template("""
         <button name="${action}" class="${css}" value="${name}"
